@@ -1,0 +1,63 @@
+syntax = "proto3";
+package store;
+option go_package = "./pb";
+
+message OAuth2Token{
+    OAuth2Token refresh_token=1;
+    string token_type=2;
+    string token_value=3;
+    int64 expires_at=4;
+}
+
+message StoreTokenReq{
+    string user_id=1;
+    OAuth2Token access_token=2;
+}
+
+message StoreTokenRes{
+    bool ok=1;
+    string msg=2;
+}
+
+
+message CheckTokenReq{
+    string user_id=1;
+}
+
+message CheckTokenRes{
+    bool ok=1;
+    string msg=2;
+    bool is_exist=3;
+}
+
+
+message GetTokenReq{
+    string user_id=1;
+}
+
+message GetTokenRes{
+    bool ok=1;
+    string msg=2;
+    Data data=3;
+    message Data{
+        OAuth2Token oauth_token=1;
+    }
+}
+
+
+message RemoveTokenReq{
+    string user_id=1;
+}
+
+message RemoveTokenRes{
+    bool ok=1;
+    string msg=2;
+}
+
+
+service TokenStore{
+    rpc StoreToken(StoreTokenReq) returns(StoreTokenRes);
+    rpc CheckToken(CheckTokenReq) returns(CheckTokenRes);
+    rpc GetToken(GetTokenReq) returns(GetTokenRes);
+    rpc RemoveToken(RemoveTokenReq) returns(RemoveTokenRes);
+}

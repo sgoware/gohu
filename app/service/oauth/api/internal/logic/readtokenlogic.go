@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
-
 	"gohu/app/service/oauth/api/internal/svc"
+	"gohu/app/service/oauth/api/internal/token"
 	"gohu/app/service/oauth/api/internal/types"
+	"gohu/app/utils/mapping"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,8 +25,25 @@ func NewReadTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ReadTok
 	}
 }
 
-func (l *ReadTokenLogic) ReadToken(req *types.ReadTokenReq) (resp *types.ReadTokenRes, err error) {
-	// todo: add your logic here and delete this line
+func (l *ReadTokenLogic) ReadToken(req *types.ReadTokenReq) (*types.ReadTokenRes, error) {
+	tokenService := token.GetTokenService()
+	oauthToken, err := tokenService.ReadAccessToken(l.ctx, req.OAuth2Token)
+	if err != nil {
+		logx.Errorf("parse token failed, err: %v", err)
+		return &types.ReadTokenRes{
+			Code: http.StatusBadRequest,
+			Msg:  "invalid token",
+		}, nil
+	}
 
-	return
+	resp := &types.ReadTokenRes{
+		Code: http.StatusOK,
+		Msg:  "check token successfully",
+		Data: types.ReadTokenResData{AccessToken: &types.OAuth2Token{}},
+	}
+	err = mapping.Struct2Struct(oauthToken, resp.Data.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }

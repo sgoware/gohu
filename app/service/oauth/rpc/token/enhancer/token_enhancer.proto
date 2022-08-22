@@ -1,0 +1,99 @@
+syntax = "proto3";
+package enhancer;
+option go_package = "./pb";
+
+message ClientDetails{
+    string client_id=1;
+    int64 access_token_validity_seconds=2;
+    int64 refresh_token_validity_seconds=3;
+    string registered_redirect_uri=4;
+    repeated string authorized_grant_types=5;
+}
+message UserDetails{
+    string user_id=1;
+    string user_name=2;
+    string last_ip=3;
+    string status=4;
+    string update_time=5;
+    string create_time=6;
+    repeated string authorities=7;
+}
+message OAuth2Details{
+    ClientDetails client=1;
+    UserDetails user=2;
+    string issuer=3;
+}
+
+message OAuth2Token{
+    OAuth2Token refresh_token=1;
+    string token_type=2;
+    string token_value=3;
+    int64 expires_at=4;
+}
+
+
+// 根据用户认证生成访问令牌
+message CreateAccessTokenReq{
+    OAuth2Details oauth2_details=1;
+}
+
+message CreateAccessTokenRes{
+    bool ok=1;
+    string msg=2;
+    Data data=3;
+    message Data{
+        OAuth2Token access_token=1;
+    }
+}
+
+// 根据刷新令牌生成访问令牌
+message RefreshAccessTokenReq{
+    string refresh_token=1;
+}
+
+message RefreshAccessTokenRes{
+    bool ok=1;
+    string msg=2;
+    Data data=3;
+    message Data{
+        OAuth2Token access_token=1;
+    }
+}
+
+// 访问令牌结构体
+message ReadTokenReq{
+    string oauth_token=1;
+}
+
+message ReadTokenRes{
+    bool ok=1;
+    string msg=2;
+    Data data=3;
+    message Data{
+        OAuth2Token access_token=1;
+    }
+}
+
+
+// 获取令牌对应的用户信息
+message GetUserDetailsReq{
+    string access_token=1;
+}
+
+message GetUserDetailsRes{
+    bool ok=1;
+    string msg=2;
+    Data data=3;
+    message Data{
+        UserDetails user_details=1;
+    }
+}
+
+// 获取令牌对应的客户端信息
+
+service TokenEnhancer{
+    rpc CreateAccessToken(CreateAccessTokenReq) returns(CreateAccessTokenRes);
+    rpc RefreshAccessToken(RefreshAccessTokenReq) returns(RefreshAccessTokenRes);
+    rpc ReadOauthToken(ReadTokenReq) returns(ReadTokenRes);
+    rpc GetUserDetails(GetUserDetailsReq) returns(GetUserDetailsRes);
+}

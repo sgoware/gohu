@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
-
 	"gohu/app/service/oauth/api/internal/svc"
+	"gohu/app/service/oauth/api/internal/token"
 	"gohu/app/service/oauth/api/internal/types"
+	"net/http"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,8 +25,35 @@ func NewCheckTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckT
 	}
 }
 
-func (l *CheckTokenLogic) CheckToken(req *types.CheckTokenReq) (resp *types.CheckTokenRes, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+func (l *CheckTokenLogic) CheckToken(req *types.CheckTokenReq) (*types.CheckTokenRes, error) {
+	tokenService := token.GetTokenService()
+	oauthToken, err := tokenService.ReadAccessToken(l.ctx, req.OAtuh2Token)
+	if err != nil {
+		logx.Errorf("parse token failed, err: %v", err)
+		return &types.CheckTokenRes{
+			Code: http.StatusBadRequest,
+			Msg:  "invalid token",
+			Ok:   false,
+		}, nil
+	}
+	if oauthToken.TokenType != req.TokenType {
+		return &types.CheckTokenRes{
+			Code: http.StatusOK,
+			Msg:  "incorrect token type",
+			Ok:   false,
+		}, nil
+	}
+	// TODO: 待校验
+	if oauthToken.ExpiresAt < time.Now().Unix() {
+		return &types.CheckTokenRes{
+			Code: http.StatusBadRequest,
+			Msg:  "token is expired",
+			Ok:   false,
+		}, nil
+	}
+	return &types.CheckTokenRes{
+		Code: http.StatusOK,
+		Msg:  "token is valid",
+		Ok:   true,
+	}, nil
 }
