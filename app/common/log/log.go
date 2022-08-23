@@ -5,7 +5,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"gohu/app/utils"
+	"main/app/utils"
 	"os"
 	"time"
 )
