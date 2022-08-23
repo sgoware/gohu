@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"gohu/app/service/oauth/api/internal/config"
+	"main/app/service/oauth/api/internal/config"
 )
 
 type ServiceContext struct {

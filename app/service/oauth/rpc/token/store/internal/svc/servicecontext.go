@@ -2,9 +2,9 @@ package svc
 
 import (
 	"context"
-	apollo "gohu/app/common/config"
-	"gohu/app/common/log"
-	"gohu/app/service/oauth/rpc/token/store/internal/config"
+	apollo "main/app/common/config"
+	"main/app/common/log"
+	"main/app/service/oauth/rpc/token/store/internal/config"
 
 	"github.com/go-redis/redis/v8"
 )

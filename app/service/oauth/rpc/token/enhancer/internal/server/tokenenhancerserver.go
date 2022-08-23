@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"gohu/app/service/oauth/rpc/token/enhancer/internal/logic"
-	"gohu/app/service/oauth/rpc/token/enhancer/internal/svc"
-	"gohu/app/service/oauth/rpc/token/enhancer/pb"
+	"main/app/service/oauth/rpc/token/enhancer/internal/logic"
+	"main/app/service/oauth/rpc/token/enhancer/internal/svc"
+	"main/app/service/oauth/rpc/token/enhancer/pb"
 )
 
 type TokenEnhancerServer struct {

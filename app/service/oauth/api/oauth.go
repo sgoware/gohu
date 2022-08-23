@@ -1,12 +1,12 @@
 package main
 
 import (
-	apollo "gohu/app/common/config"
-	"gohu/app/common/log"
-	"gohu/app/service/oauth/api/internal/config"
-	"gohu/app/service/oauth/api/internal/handler"
-	"gohu/app/service/oauth/api/internal/svc"
-	"gohu/app/utils"
+	apollo "main/app/common/config"
+	"main/app/common/log"
+	"main/app/service/oauth/api/internal/config"
+	"main/app/service/oauth/api/internal/handler"
+	"main/app/service/oauth/api/internal/svc"
+	"main/app/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"

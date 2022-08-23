@@ -1,11 +1,11 @@
 package svc
 
 import (
-	apollo "gohu/app/common/config"
-	"gohu/app/common/log"
-	"gohu/app/service/oauth/rpc/token/enhancer/internal/config"
-	"gohu/app/service/oauth/rpc/token/enhancer/internal/jwt"
-	"gohu/app/service/oauth/rpc/token/store/tokenstore"
+	apollo "main/app/common/config"
+	"main/app/common/log"
+	"main/app/service/oauth/rpc/token/enhancer/internal/config"
+	"main/app/service/oauth/rpc/token/enhancer/internal/jwt"
+	"main/app/service/oauth/rpc/token/store/tokenstore"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )

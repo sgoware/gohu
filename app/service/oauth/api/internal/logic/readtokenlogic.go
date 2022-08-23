@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"gohu/app/service/oauth/api/internal/svc"
-	"gohu/app/service/oauth/api/internal/token"
-	"gohu/app/service/oauth/api/internal/types"
-	"gohu/app/utils/mapping"
+	"main/app/service/oauth/api/internal/svc"
+	"main/app/service/oauth/api/internal/token"
+	"main/app/service/oauth/api/internal/types"
+	"main/app/utils/mapping"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"

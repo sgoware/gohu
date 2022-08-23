@@ -4,7 +4,7 @@ package handler
 import (
 	"net/http"
 
-	"gohu/app/service/oauth/api/internal/svc"
+	"main/app/service/oauth/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )

@@ -2,12 +2,12 @@ package logic
 
 import (
 	"context"
-	"gohu/app/common/log"
-	"gohu/app/service/oauth/model"
-	"gohu/app/service/oauth/rpc/token/enhancer/internal/svc"
-	"gohu/app/service/oauth/rpc/token/enhancer/pb"
-	"gohu/app/service/oauth/rpc/token/store/tokenstore"
-	"gohu/app/utils/mapping"
+	"main/app/common/log"
+	"main/app/service/oauth/model"
+	"main/app/service/oauth/rpc/token/enhancer/internal/svc"
+	"main/app/service/oauth/rpc/token/enhancer/pb"
+	"main/app/service/oauth/rpc/token/store/tokenstore"
+	"main/app/utils/mapping"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"

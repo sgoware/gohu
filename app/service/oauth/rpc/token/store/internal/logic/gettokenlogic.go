@@ -3,10 +3,10 @@ package logic
 import (
 	"context"
 	"encoding/json"
-	"gohu/app/common/log"
-	"gohu/app/service/oauth/model"
-	"gohu/app/service/oauth/rpc/token/store/internal/svc"
-	"gohu/app/service/oauth/rpc/token/store/pb"
+	"main/app/common/log"
+	"main/app/service/oauth/model"
+	"main/app/service/oauth/rpc/token/store/internal/svc"
+	"main/app/service/oauth/rpc/token/store/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"

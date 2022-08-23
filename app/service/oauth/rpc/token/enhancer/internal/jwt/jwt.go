@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"errors"
-	"gohu/app/service/oauth/model"
+	"main/app/service/oauth/model"
 	"reflect"
 	"time"
 

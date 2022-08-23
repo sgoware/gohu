@@ -2,9 +2,9 @@ package logic
 
 import (
 	"context"
-	"gohu/app/service/oauth/api/internal/svc"
-	"gohu/app/service/oauth/api/internal/token"
-	"gohu/app/service/oauth/api/internal/types"
+	"main/app/service/oauth/api/internal/svc"
+	"main/app/service/oauth/api/internal/token"
+	"main/app/service/oauth/api/internal/types"
 	"net/http"
 	"time"
 

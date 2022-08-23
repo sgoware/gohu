@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"gohu/app/service/oauth/rpc/token/store/internal/logic"
-	"gohu/app/service/oauth/rpc/token/store/internal/svc"
-	"gohu/app/service/oauth/rpc/token/store/pb"
+	"main/app/service/oauth/rpc/token/store/internal/logic"
+	"main/app/service/oauth/rpc/token/store/internal/svc"
+	"main/app/service/oauth/rpc/token/store/pb"
 )
 
 type TokenStoreServer struct {

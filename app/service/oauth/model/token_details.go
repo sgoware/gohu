@@ -1,8 +1,8 @@
 package model
 
 import (
-	"gohu/app/common/config"
-	"gohu/app/common/log"
+	"main/app/common/config"
+	"main/app/common/log"
 	"time"
 
 	"github.com/spf13/cast"

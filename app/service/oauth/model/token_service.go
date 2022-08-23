@@ -2,9 +2,9 @@ package model
 
 import (
 	"context"
-	"gohu/app/service/oauth/rpc/token/enhancer/tokenenhancer"
-	"gohu/app/service/oauth/rpc/token/store/tokenstore"
-	"gohu/app/utils/mapping"
+	"main/app/service/oauth/rpc/token/enhancer/tokenenhancer"
+	"main/app/service/oauth/rpc/token/store/tokenstore"
+	"main/app/utils/mapping"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"

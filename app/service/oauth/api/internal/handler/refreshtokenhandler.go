@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"gohu/app/service/oauth/api/internal/logic"
-	"gohu/app/service/oauth/api/internal/svc"
-	"gohu/app/service/oauth/api/internal/types"
+	"main/app/service/oauth/api/internal/logic"
+	"main/app/service/oauth/api/internal/svc"
+	"main/app/service/oauth/api/internal/types"
 )
 
 func RefreshTokenHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {

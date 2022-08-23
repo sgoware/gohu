@@ -1,7 +1,7 @@
 package jwt
 
 import (
-	"gohu/app/service/oauth/model"
+	"main/app/service/oauth/model"
 
 	"github.com/golang-jwt/jwt/v4"
 )

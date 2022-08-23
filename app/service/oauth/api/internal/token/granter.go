@@ -2,8 +2,8 @@ package token
 
 import (
 	"github.com/zeromicro/go-zero/zrpc"
-	"gohu/app/common/config"
-	"gohu/app/service/oauth/model"
+	"main/app/common/config"
+	"main/app/service/oauth/model"
 )
 
 const (

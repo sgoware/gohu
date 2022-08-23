@@ -6,7 +6,7 @@ package tokenstore
 import (
 	"context"
 
-	"gohu/app/service/oauth/rpc/token/store/pb"
+	"main/app/service/oauth/rpc/token/store/pb"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

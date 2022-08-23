@@ -2,14 +2,14 @@ package main
 
 import (
 	"github.com/zeromicro/go-zero/core/logx"
-	apollo "gohu/app/common/config"
-	"gohu/app/common/log"
-	"gohu/app/utils"
+	apollo "main/app/common/config"
+	"main/app/common/log"
+	"main/app/utils"
 
-	"gohu/app/service/oauth/rpc/token/store/internal/config"
-	"gohu/app/service/oauth/rpc/token/store/internal/server"
-	"gohu/app/service/oauth/rpc/token/store/internal/svc"
-	"gohu/app/service/oauth/rpc/token/store/pb"
+	"main/app/service/oauth/rpc/token/store/internal/config"
+	"main/app/service/oauth/rpc/token/store/internal/server"
+	"main/app/service/oauth/rpc/token/store/internal/svc"
+	"main/app/service/oauth/rpc/token/store/pb"
 
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
