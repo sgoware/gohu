@@ -1,0 +1,35 @@
+syntax = "proto3";
+package crud;
+option go_package = "./pb";
+
+message RegisterReq{
+    string uid=1;
+    string nickname=2;
+    string password=3;
+}
+
+message RegisterRes{
+    int32 code=1;
+    string msg=2;
+}
+
+
+
+message LoginReq{
+    string uid=1;
+    string password=2;
+}
+
+message LoginRes{
+    int32 code=1;
+    string msg=2;
+    Data data=3;
+    message Data{
+        string auth_token=1;
+    }
+}
+
+service Crud{
+    rpc Login(LoginReq) returns(LoginRes);
+    rpc Register(RegisterReq) returns(RegisterRes);
+}
