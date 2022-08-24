@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"main/app/common/log"
 	"main/app/service/oauth/api/internal/svc"
 	"main/app/service/oauth/api/internal/token"
 	"main/app/service/oauth/api/internal/types"
@@ -26,17 +27,19 @@ func NewCheckTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckT
 }
 
 func (l *CheckTokenLogic) CheckToken(req *types.CheckTokenReq) (*types.CheckTokenRes, error) {
+	logger := log.GetSugaredLogger()
+
 	tokenService := token.GetTokenService()
 	oauthToken, err := tokenService.ReadAccessToken(l.ctx, req.OAtuh2Token)
 	if err != nil {
-		logx.Errorf("parse token failed, err: %v", err)
 		return &types.CheckTokenRes{
 			Code: http.StatusBadRequest,
-			Msg:  "invalid token",
+			Msg:  "invalid token(" + err.Error() + ")",
 			Ok:   false,
 		}, nil
 	}
 	if oauthToken.TokenType != req.TokenType {
+		logger.Errorf("incorrect token type")
 		return &types.CheckTokenRes{
 			Code: http.StatusOK,
 			Msg:  "incorrect token type",
