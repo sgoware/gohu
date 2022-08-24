@@ -64,7 +64,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - APOLLO_IP
         - APOLLO_SECRET
       script:
-        - cd /www/$PROJECT_NAME # 进入宿主机构建目录
+        - cd /www/site/$PROJECT_NAME # 进入宿主机构建目录
         - echo '----------unpacking----------'
         - mv ./$PROJECT_NAME.tar.gz ../
         - rm -rf *
