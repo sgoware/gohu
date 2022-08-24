@@ -1,0 +1,84 @@
+kind: pipeline # 定义对象类型，还有secret和signature两种类型
+type: docker # 定义流水线类型，还有kubernetes、exec、ssh等类型
+name: gohu # 定义流水线名称
+
+steps: # 定义流水线执行步骤，这些步骤将顺序执行
+  - name: package # 流水线名称
+    image: golang:1.19.0-alpine3.16 # 定义创建容器的Docker镜像
+    environment:
+      PROJECT_NAME:
+        from_secret: project_name
+    volumes: # 将容器内目录挂载到宿主机，仓库需要开启Trusted设置
+      - name: build
+        path: /app/build
+
+    commands: # 定义在Docker容器中执行的shell命令
+      - tar -czvf $PROJECT_NAME.tar.gz ./*
+      - cp ./$PROJECT_NAME.tar.gz /app/build/
+
+  - name: build-start
+    image: appleboy/drone-ssh # SSH工具镜像
+    environment:
+      PROJECT_NAME:
+        from_secret: project_name
+      DOMAIN:
+        from_secret: domain
+      APOLLO_APP_ID:
+        from_secret: apollo_app_id
+      APOLLO_CLUSTER:
+        from_secret: apollo_cluster
+      APOLLO_IP:
+        from_secret: apollo_ip
+      APOLLO_SECRET:
+        from_secret: apollo_secret
+
+    settings:
+      host:
+        from_secret: ssh_ip # 远程连接地址
+      port: 22 # 远程连接端口
+      username: root # 远程连接账号
+      key:
+        from_secret: ssh_password # 从Secret中读取SSH密码
+      command_timeout: 5m # 远程执行命令超时时间
+      envs:
+        - PROJECT_NAME
+        - DOMAIN
+        - APOLLO_APP_ID
+        - APOLLO_CLUSTER_NAME
+        - APOLLO_IP
+        - APOLLO_SECRET
+      script:
+        - cd /www/wwwroot/$DOMAIN # 进入宿主机构建目录
+        - echo '----------unpacking----------'
+        - mv ./$PROJECT_NAME.tar.gz ../
+        - rm -rf *
+        - mv ../$PROJECT_NAME.tar.gz ./
+        - tar -zxvf $PROJECT_NAME.tar.gz
+        - echo '----------complete----------'
+        - echo '----------exporting ENV----------'
+        - export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/www/server/go/bin:/www/server/go/pkg/tool/linux_amd64:/www/wwwroot/Golang/bin:/root/bin
+        - export GOBIN=/www/server/go/bin
+        - export GOROOT=/www/server/go
+        - export GOPATH=/www/wwwroot/Golang
+        - export GOPKG=/www/server/go/pkg/tool/linux_amd64
+        - who
+        - env
+        - echo '----------complete----------'
+        - echo '----------build go----------'
+        - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
+        - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
+        - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
+        - go build -o ./app/service/search/api/gohu-search-api -v ./app/service/search/api/search.go
+        - go build -o ./app/service/search/rpc/basic/gohu-search-basic-rpc -v ./app/service/search/rpc/basic/basic.go
+        - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
+        - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
+        - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
+        - go build -o ./app/service/file/api/gohu-file-api -v ./app/service/file/api/file.go
+        - echo '----------complete----------'
+        - echo '----------docker compose----------'
+        - docker-compose down --rmi all
+        - docker-compose up -d
+        - echo '----------complete----------'
+
+#        - chmod a+x run.sh #  更改为 可执行脚本
+#        - ./run.sh # 运行脚本打包应用镜像并运行
