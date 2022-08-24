@@ -27,6 +27,7 @@ func NewGetUserDetailsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 
 func (l *GetUserDetailsLogic) GetUserDetails(in *pb.GetUserDetailsReq) (*pb.GetUserDetailsRes, error) {
 	logger := log.GetSugaredLogger()
+	logger.Debugf("recv message: %v", in.String())
 
 	userDetails, err := l.svcCtx.Enhancer.GetUserDetails(in.AccessToken)
 	if err != nil {
@@ -36,14 +37,18 @@ func (l *GetUserDetailsLogic) GetUserDetails(in *pb.GetUserDetailsReq) (*pb.GetU
 			Msg: "read oauth_token failed",
 		}, err
 	}
-	userDetailsRes := &pb.GetUserDetailsRes{
+	logger.Debugf("userDetails: %v", userDetails)
+	res := &pb.GetUserDetailsRes{
 		Ok:   true,
 		Msg:  "get user details successfully",
 		Data: &pb.GetUserDetailsRes_Data{UserDetails: &pb.UserDetails{}},
 	}
-	err = mapping.Struct2Struct(userDetails, userDetailsRes.Data.UserDetails)
+	err = mapping.Struct2Struct(userDetails, res.Data.UserDetails)
 	if err != nil {
+		logger.Errorf("mapping struct failed, err: %v", err)
 		return nil, err
 	}
-	return userDetailsRes, nil
+
+	logger.Debugf("send message: %v", res.String())
+	return res, nil
 }

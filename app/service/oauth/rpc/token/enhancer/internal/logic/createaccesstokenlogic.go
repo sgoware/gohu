@@ -29,6 +29,7 @@ func NewCreateAccessTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) (res *pb.CreateAccessTokenRes, err error) {
 	logger := log.GetSugaredLogger()
+	logger.Debugf("recv message: %v", in.String())
 
 	oauth2Details := &model.OAuth2Details{}
 	err = mapping.Struct2Struct(in.Oauth2Details, oauth2Details)
@@ -38,6 +39,7 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 	existTokenRes, _ := l.svcCtx.TokenStoreRpcClient.GetToken(l.ctx, &tokenstore.GetTokenReq{
 		UserId: in.Oauth2Details.User.UserId,
 	})
+	logger.Debugf("existTokenRes: %v", existTokenRes)
 	if existTokenRes.Ok {
 		if !time.Unix(existTokenRes.Data.OauthToken.ExpiresAt, 0).Before(time.Now()) {
 			res = &pb.CreateAccessTokenRes{
@@ -47,8 +49,10 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 			}
 			err = mapping.Struct2Struct(existTokenRes.Data.OauthToken, res.Data.AccessToken)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				return nil, err
 			}
+			logger.Debugf("send message: %v", res.String())
 			return res, nil
 		}
 		// 访问令牌失效的情况,可以移除,也可以在后面创建新令牌的时候直接覆盖令牌
@@ -62,6 +66,7 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 			Msg: "generate access_token failed",
 		}, nil
 	}
+	logger.Debugf("generated token: %v", accessToken)
 	res = &pb.CreateAccessTokenRes{
 		Ok:   true,
 		Msg:  "create access_token successfully",
@@ -69,6 +74,7 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 	}
 	err = mapping.Struct2Struct(accessToken, res.Data.AccessToken)
 	if err != nil {
+		logger.Errorf("mapping struct failed, err: %v", err)
 		return nil, err
 	}
 	storeToken := &tokenstore.StoreTokenReq{
@@ -77,11 +83,15 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 	}
 	err = mapping.Struct2Struct(accessToken, storeToken.AccessToken)
 	if err != nil {
+		logger.Errorf("mapping struct failed, err: %v", err)
 		return nil, err
 	}
 	_, err = l.svcCtx.TokenStoreRpcClient.StoreToken(l.ctx, storeToken)
 	if err != nil {
+		logger.Errorf("store token failed, err: %v", err)
 		return nil, err
 	}
+
+	logger.Debugf("send message: %v", res.String())
 	return res, nil
 }
