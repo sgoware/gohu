@@ -66,15 +66,12 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - env
         - echo '----------complete----------'
         - echo '----------build go----------'
-        - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
-        - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
-        - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
-        - go build -o ./app/service/search/api/gohu-search-api -v ./app/service/search/api/search.go
-        - go build -o ./app/service/search/rpc/basic/gohu-search-basic-rpc -v ./app/service/search/rpc/basic/basic.go
         - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
         - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
         - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
-        - go build -o ./app/service/file/api/gohu-file-api -v ./app/service/file/api/file.go
+        - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
+        - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
+        - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
         - echo '----------complete----------'
         - echo '----------docker compose----------'
         - docker-compose down --rmi all
