@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/spf13/cast"
 	"main/app/common/log"
 	"main/app/service/user/dao/model"
 	"main/app/service/user/rpc/crud/crud"
@@ -11,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 )
@@ -43,7 +43,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 		return res, nil
 	}
 	userModel := l.svcCtx.UserModel.User
-	_, err = userModel.WithContext(l.ctx).Where(userModel.UID.Eq(gconv.Int64(in.Uid))).First()
+	_, err = userModel.WithContext(l.ctx).Where(userModel.UID.Eq(cast.ToInt64(in.Uid))).First()
 	switch err {
 	case nil:
 		{
@@ -57,7 +57,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 	case gorm.ErrRecordNotFound:
 		{
 			err := l.svcCtx.UserModel.User.WithContext(l.ctx).Create(&model.User{
-				UID:      gconv.Int64(in.Uid),
+				UID:      cast.ToInt64(in.Uid),
 				Nickname: in.Nickname,
 				Password: gmd5.MustEncryptString(in.Password),
 			})

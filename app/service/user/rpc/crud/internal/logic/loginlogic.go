@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
@@ -46,7 +45,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 
 	// 查找用户
 	userModel := l.svcCtx.UserModel.User
-	userInfo, err := userModel.WithContext(l.ctx).Where(userModel.UID.Eq(gconv.Int64(in.Uid))).First()
+	userInfo, err := userModel.WithContext(l.ctx).Where(userModel.UID.Eq(cast.ToInt64(in.Uid))).First()
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:

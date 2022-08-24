@@ -15,7 +15,6 @@ import (
 
 type ServiceContext struct {
 	Config    config.Config
-	Jwt       *apollo.JWTConfig
 	UserModel *query.Query
 	Rdb       *redis.Client
 
@@ -47,13 +46,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	clientId := "default"
 	clientSecret := v.GetString("Client.default.Secret")
 	return &ServiceContext{
-		Config: c,
-		Jwt: &apollo.JWTConfig{
-			SecretKey:   v.GetString("JWTAuth.Secret"),
-			ExpiresTime: v.GetInt64("JWTAuth.ExpiresTime"),
-			BufferTime:  v.GetInt64("JWTAuth.BufferTime"),
-			Issuer:      v.GetString("JWTAuth.Issuer"),
-		},
+		Config:       c,
 		UserModel:    query.Use(db),
 		Rdb:          rdb,
 		ClientId:     clientId,
