@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"main/app/common/log"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -16,9 +17,10 @@ func VipUpgradeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.Error(w, err)
-			logger.Errorf("Parse http args failed, err: %v", err)
+			logger.Errorf("Parse http args failed, \nrequest: \n%v, \nerr: \n%v", r, err)
 			return
 		}
+		logger.Debugf("recv args: %v", req)
 
 		l := logic.NewVipUpgradeLogic(r.Context(), svcCtx)
 
@@ -26,6 +28,8 @@ func VipUpgradeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		if err != nil {
 			logger.Errorf("Process logic failed, err: %v", err)
 		}
+
+		logger.Info("response: %v", res)
 		httpx.WriteJson(w, res.Code, res)
 	}
 }

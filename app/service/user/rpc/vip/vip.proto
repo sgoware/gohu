@@ -1,0 +1,32 @@
+syntax = "proto3";
+package vip;
+option go_package = "./pb";
+
+message UpgradeReq{
+    string uid=1;
+}
+
+message UpgradeRes{
+    int32 code=1;
+    string msg=2;
+    Data data=3;
+    message Data{
+        int32 vip_level=1;
+    }
+}
+
+
+message ResetReq{
+    string uid=1;
+}
+
+message ResetRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+service Vip{
+    rpc Upgrade(UpgradeReq) returns (UpgradeRes);
+    rpc Reset(ResetReq) returns (ResetRes);
+}

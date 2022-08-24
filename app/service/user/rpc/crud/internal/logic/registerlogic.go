@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"main/app/common/log"
 	"main/app/service/user/dao/model"
 	"main/app/service/user/rpc/crud/crud"
 	"main/app/service/user/rpc/crud/internal/svc"
@@ -29,22 +30,29 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
+func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err error) {
+	logger := log.GetSugaredLogger()
+	logger.Debugf("recv message: %v", in.String())
+
 	if len(strings.TrimSpace(in.Uid)) == 0 || len(strings.TrimSpace(in.Password)) == 0 {
-		return &crud.RegisterRes{
+		res = &crud.RegisterRes{
 			Code: http.StatusOK,
 			Msg:  "create user failed, err: param err",
-		}, nil
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 	userModel := l.svcCtx.UserModel.User
-	_, err := userModel.WithContext(l.ctx).Where(userModel.UID.Eq(gconv.Int64(in.Uid))).First()
+	_, err = userModel.WithContext(l.ctx).Where(userModel.UID.Eq(gconv.Int64(in.Uid))).First()
 	switch err {
 	case nil:
 		{
-			return &crud.RegisterRes{
+			res = &crud.RegisterRes{
 				Code: http.StatusForbidden,
 				Msg:  "create user failed, err: user already exist",
-			}, nil
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
 		}
 	case gorm.ErrRecordNotFound:
 		{
@@ -54,21 +62,27 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 				Password: gmd5.MustEncryptString(in.Password),
 			})
 			if err != nil {
-				return &crud.RegisterRes{
+				res = &crud.RegisterRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "create user failed, err: internal err",
-				}, err
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, err
 			} else {
-				return &crud.RegisterRes{
+				res = &crud.RegisterRes{
 					Code: http.StatusOK,
 					Msg:  "create user successfully",
-				}, nil
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, nil
 			}
 		}
 	default:
-		return &crud.RegisterRes{
+		res = &crud.RegisterRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "create user failed, err: internal err",
-		}, err
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, err
 	}
 }

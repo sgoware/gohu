@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"github.com/spf13/cast"
+	"main/app/service/user/rpc/vip/vip"
 
 	"main/app/service/user/api/internal/svc"
 	"main/app/service/user/api/internal/types"
@@ -23,8 +25,13 @@ func NewVipUpgradeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipUpg
 	}
 }
 
-func (l *VipUpgradeLogic) VipUpgrade(req *types.VipUpgradeReq) (resp *types.VipUpgradeRes, err error) {
-	// todo: add your logic here and delete this line
+func (l *VipUpgradeLogic) VipUpgrade(req *types.VipUpgradeReq) (*types.VipUpgradeRes, error) {
+	userId := l.ctx.Value("user_id")
+	res, _ := l.svcCtx.VipRpcClient.Upgrade(l.ctx, &vip.UpgradeReq{Uid: cast.ToString(userId)})
 
-	return
+	return &types.VipUpgradeRes{
+		Code: int(res.Code),
+		Msg:  res.Msg,
+		Data: types.VipUpgradeResData{VipLevel: int(res.Data.VipLevel)},
+	}, nil
 }

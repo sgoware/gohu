@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"encoding/base64"
+	"main/app/common/log"
 	"main/app/service/user/rpc/crud/crud"
 	"main/app/service/user/rpc/crud/internal/svc"
 	"main/app/service/user/rpc/crud/pb"
@@ -30,13 +31,17 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 	}
 }
 
-func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginRes, error) {
+func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
+	logger := log.GetSugaredLogger()
+	logger.Debugf("recv message: %v", in.String())
 	// 判断传入参数是否为空
 	if len(strings.TrimSpace(in.Uid)) == 0 || len(strings.TrimSpace(in.Password)) == 0 {
-		return &crud.LoginRes{
+		res = &crud.LoginRes{
 			Code: http.StatusOK,
 			Msg:  "login failed, err: param not fit",
-		}, nil
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
 	// 查找用户
@@ -45,13 +50,15 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginRes, error) {
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &crud.LoginRes{
+		res = &crud.LoginRes{
 			Code: http.StatusNotFound,
 			Msg:  "login failed, err: uid not exist",
-		}, nil
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	default:
 		{
-			logx.Errorf("database err, err: %v", err)
+			logger.Errorf("database err, err: %v", err)
 			return &crud.LoginRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "login failed, err: internal err",
@@ -59,18 +66,26 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginRes, error) {
 			}, err
 		}
 	}
+	logger.Debugf("userInfo: \n%v", userInfo)
 	if userInfo.Password != gmd5.MustEncryptString(in.Password) {
-		return &crud.LoginRes{
+		res = &crud.LoginRes{
 			Code: http.StatusUnauthorized,
 			Msg:  "login failed, err: wrong password",
 			Data: nil,
-		}, nil
+		}
+		logger.Debugf("send message: %v", res.String())
+
+		return res, nil
 	}
 	encodeAuthString := base64.StdEncoding.EncodeToString([]byte(l.svcCtx.ClientId + ":" + l.svcCtx.ClientSecret + ":" + cast.ToString(userInfo.UID)))
-	BasicAuthString := "Basic " + encodeAuthString
-	return &crud.LoginRes{
+	logger.Debugf("encodeAuthString: %v", encodeAuthString)
+	basicAuthString := "Basic " + encodeAuthString
+	logger.Debugf("basicAuthString: %v", basicAuthString)
+	res = &crud.LoginRes{
 		Code: http.StatusOK,
 		Msg:  "get auth_token successfully",
-		Data: &crud.LoginRes_Data{AuthToken: BasicAuthString},
-	}, nil
+		Data: &crud.LoginRes_Data{AuthToken: basicAuthString},
+	}
+	logger.Debugf("send message: %v", res.String())
+	return res, nil
 }

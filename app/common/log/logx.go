@@ -17,7 +17,7 @@ func GetLogXConfig(serviceName, level string) logx.LogConf {
 		Mode:        "console",
 		Encoding:    "plain",
 		TimeFormat:  "2006-01-02 15:04:05.000",
-		Level:       "info",
+		Level:       level,
 	}
 }
 
