@@ -10,7 +10,10 @@ import (
 	"time"
 )
 
-var logger *zap.Logger
+var (
+	logger        *zap.Logger
+	sugaredLogger *zap.SugaredLogger
+)
 
 func NewLogger() *zap.Logger {
 	options := Options{
@@ -62,6 +65,7 @@ func NewLoggerWithOptions(options Options) *zap.Logger {
 	dynamicLevel.SetLevel(zap.DebugLevel)
 	//设置全局logger
 	logger = zapLogger
+	sugaredLogger = zapLogger.Sugar()
 	logger.Info("Initialize logger successfully!")
 	//sugar.Debug("test")
 	//sugar.Warn("test")
@@ -73,11 +77,17 @@ func NewLoggerWithOptions(options Options) *zap.Logger {
 }
 
 func GetLogger() *zap.Logger {
+	if logger == nil {
+		NewLogger()
+	}
 	return logger
 }
 
 func GetSugaredLogger() *zap.SugaredLogger {
-	return logger.Sugar()
+	if sugaredLogger == nil {
+		NewLogger()
+	}
+	return sugaredLogger
 }
 
 // 获取编码器
