@@ -23,6 +23,14 @@ func GetNamespace(serviceName string) string {
 	return output[0] + ".yaml"
 }
 
+func GetNamespaceType(namespace string) string {
+	output := strings.Split(namespace, ".")
+	if len(output) == 1 {
+		return "properties"
+	}
+	return output[1]
+}
+
 func GetServiceType(serviceName string) string {
 	output := strings.Split(serviceName, ".")
 	return output[1]
