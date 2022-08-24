@@ -26,6 +26,7 @@ func NewReadOauthTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Re
 
 func (l *ReadOauthTokenLogic) ReadOauthToken(in *pb.ReadTokenReq) (*pb.ReadTokenRes, error) {
 	logger := log.GetSugaredLogger()
+	logger.Debugf("recv message: %v", in.String())
 
 	oauthToken, _, err := l.svcCtx.Enhancer.ParseToken(in.OauthToken)
 	if err != nil {
@@ -35,14 +36,18 @@ func (l *ReadOauthTokenLogic) ReadOauthToken(in *pb.ReadTokenReq) (*pb.ReadToken
 			Msg: "read oauth_token failed",
 		}, err
 	}
-	oauthTokenRes := &pb.ReadTokenRes{
+	logger.Debugf("oauthToken: %v", oauthToken)
+	res := &pb.ReadTokenRes{
 		Ok:   true,
 		Msg:  "read oauth_token successfully",
 		Data: &pb.ReadTokenRes_Data{AccessToken: &pb.OAuth2Token{}},
 	}
-	err = mapping.Struct2Struct(oauthToken, oauthTokenRes.Data.AccessToken)
+	err = mapping.Struct2Struct(oauthToken, res.Data.AccessToken)
 	if err != nil {
+		logger.Errorf("mapping struct failed, err: %v", err)
 		return nil, err
 	}
-	return oauthTokenRes, nil
+
+	logger.Debugf("send message: %v", res.String())
+	return res, nil
 }
