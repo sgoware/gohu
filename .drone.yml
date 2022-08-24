@@ -18,14 +18,14 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         path: /build
 
     commands: # 定义在Docker容器中执行的shell命令
-      - echo '----------build go----------'
-      - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
-      - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
-      - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
-      - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
-      - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
-      - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
-      - echo '----------complete----------'
+#      - echo '----------build go----------'
+#      - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
+#      - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
+#      - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
+#      - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
+#      - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
+#      - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
+#      - echo '----------complete----------'
       - echo '----------packing----------'
       - tar -czvf $PROJECT_NAME.tar.gz ./*
       - cp ./$PROJECT_NAME.tar.gz /build/
@@ -64,6 +64,15 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - APOLLO_IP
         - APOLLO_SECRET
       script:
+        - env
+        - echo '----------build go----------'
+        - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
+        - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
+        - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
+        - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
+        - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
+        - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
+        - echo '----------complete----------'
         - cd /www/site/$PROJECT_NAME # 进入宿主机构建目录
         - echo '----------unpacking----------'
         - mv ./$PROJECT_NAME.tar.gz ../
