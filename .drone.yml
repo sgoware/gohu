@@ -10,11 +10,19 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         from_secret: project_name
     volumes: # 将容器内目录挂载到宿主机，仓库需要开启Trusted设置
       - name: build
-        path: /app/build
+        path: /build
 
     commands: # 定义在Docker容器中执行的shell命令
+      - echo '----------build go----------'
+      - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
+      - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
+      - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
+      - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
+      - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
+      - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
+      - echo '----------complete----------'
       - tar -czvf $PROJECT_NAME.tar.gz ./*
-      - cp ./$PROJECT_NAME.tar.gz /app/build/
+      - cp ./$PROJECT_NAME.tar.gz /build/
 
   - name: build-start
     image: appleboy/drone-ssh # SSH工具镜像
@@ -49,29 +57,12 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - APOLLO_IP
         - APOLLO_SECRET
       script:
-        - cd /www/wwwroot/$DOMAIN # 进入宿主机构建目录
+        - cd /www/$PROJECT_NAME # 进入宿主机构建目录
         - echo '----------unpacking----------'
         - mv ./$PROJECT_NAME.tar.gz ../
         - rm -rf *
         - mv ../$PROJECT_NAME.tar.gz ./
         - tar -zxvf $PROJECT_NAME.tar.gz
-        - echo '----------complete----------'
-        - echo '----------exporting ENV----------'
-        - export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/www/server/go/bin:/www/server/go/pkg/tool/linux_amd64:/www/wwwroot/Golang/bin:/root/bin
-        - export GOBIN=/www/server/go/bin
-        - export GOROOT=/www/server/go
-        - export GOPATH=/www/wwwroot/Golang
-        - export GOPKG=/www/server/go/pkg/tool/linux_amd64
-        - who
-        - env
-        - echo '----------complete----------'
-        - echo '----------build go----------'
-        - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
-        - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
-        - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
-        - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
-        - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
-        - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
         - echo '----------complete----------'
         - echo '----------docker compose----------'
         - docker-compose down --rmi all
@@ -80,3 +71,8 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
 
 #        - chmod a+x run.sh #  更改为 可执行脚本
 #        - ./run.sh # 运行脚本打包应用镜像并运行
+
+volumes: # 定义流水线挂载目录，用于共享数据
+  - name: build
+    host:
+      path: /www/site/gohu # 从宿主机中挂载的目录
