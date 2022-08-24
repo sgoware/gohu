@@ -1,0 +1,86 @@
+version: '3.7'
+
+services:
+  #  gohu-web:
+  #    build: .
+  #    container_name: gohu-web
+  #    restart: always
+  #    ports:
+  #      - "8083:8083"
+  #    networks:
+  #      - gohu_net
+  oauth-api:
+    build: app/service/oauth/api
+    container_name: gohu-oauth-api
+    restart: always
+    ports:
+      - "11110:11110"
+    environment:
+      - TZ=Asia/Shanghai
+      - CONSUL_HTTP_TOKEN=${CONSUL_HTTP_TOKEN}
+    networks:
+      - gohu_net
+  oauth-token-enhancer-rpc:
+    build: app/service/oauth/rpc/token/enhancer
+    container_name: gohu-oauth-token-enhancer-rpc
+    restart: always
+    ports:
+      - "11111:11111"
+    environment:
+      - TZ=Asia/Shanghai
+      - CONSUL_HTTP_TOKEN=${CONSUL_HTTP_TOKEN}
+    networks:
+      - gohu_net
+  oauth-token-store-rpc:
+    build: app/service/oauth/rpc/token/store
+    container_name: gohu-oauth-token-store-rpc
+    restart: always
+    ports:
+      - "11112:11112"
+    environment:
+      - TZ=Asia/Shanghai
+      - CONSUL_HTTP_TOKEN=${CONSUL_HTTP_TOKEN}
+    networks:
+      - gohu_net
+
+  user-api:
+    build: app/service/user/api
+    container_name: gohu-user-api
+    restart: always
+    ports:
+      - "11120:11120"
+    environment:
+      - TZ=Asia/Shanghai
+      - CONSUL_HTTP_TOKEN=${CONSUL_HTTP_TOKEN}
+    networks:
+      - gohu_net
+  user-crud-rpc:
+    build: app/service/user/rpc/crud
+    container_name: gohu-user-curd-rpc
+    restart: always
+    ports:
+      - "11121:11121"
+    environment:
+      - TZ=Asia/Shanghai
+      - CONSUL_HTTP_TOKEN=${CONSUL_HTTP_TOKEN}
+    networks:
+      - gohu_net
+  user-vip-rpc:
+    build: app/service/user/rpc/vip
+    container_name: gohu-user-vip-rpc
+    restart: always
+    ports:
+      - "11122:11122"
+    environment:
+      - TZ=Asia/Shanghai
+      - CONSUL_HTTP_TOKEN=${CONSUL_HTTP_TOKEN}
+    networks:
+      - gohu_net
+
+
+networks:
+  gohu_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
