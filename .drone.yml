@@ -8,6 +8,11 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
     environment:
       PROJECT_NAME:
         from_secret: project_name
+      GO111MODULE: on
+      CGO_ENABLED: 0
+      GOOS: linux
+      GOARCH: amd64
+      GOPROXY: 'https://goproxy.cn,direct'
     volumes: # 将容器内目录挂载到宿主机，仓库需要开启Trusted设置
       - name: build
         path: /build
@@ -21,8 +26,10 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
       - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
       - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
       - echo '----------complete----------'
+      - echo '----------packing----------'
       - tar -czvf $PROJECT_NAME.tar.gz ./*
       - cp ./$PROJECT_NAME.tar.gz /build/
+      - echo '----------complete----------'
 
   - name: build-start
     image: appleboy/drone-ssh # SSH工具镜像
