@@ -12,14 +12,10 @@ import (
 	"github.com/spf13/viper"
 	"main/app/common/log"
 	"main/app/utils"
+	"os"
 )
 
 const (
-	appID   = "10001" // apollo appid
-	cluster = "dev"   // apollo 集群类型
-	ip      = ""      // apollo agolloClient service ip
-	secret  = ""      // apollo app secret
-
 	// app下的所有命名空间
 	namespaces = "gohu.yaml,database-dsn,oauth.yaml,user.yaml,NSQ"
 
@@ -41,21 +37,34 @@ type Agollo struct {
 	vipers map[string]*viper.Viper
 }
 
+type agolloConnConfig struct {
+	AppID       string // apollo appid
+	ClusterName string // apollo 集群类型
+	IP          string // apollo agolloClient service ip
+	Secret      string // apollo app secret
+}
+
 var agolloClient *Agollo
 
 // NewConfigClient 获取Agollo客户端
 func NewConfigClient() (c *Agollo, err error) {
+	connConfig := agolloConnConfig{
+		AppID:       os.Getenv("APOLLO_APP_ID"),
+		ClusterName: os.Getenv("APOLLO_CLUSTER_NAME"),
+		IP:          os.Getenv("APOLLO_IP"),
+		Secret:      os.Getenv("APOLLO_SECRET"),
+	}
 	c = new(Agollo)
 	vipers := make(map[string]*viper.Viper)
 	c.vipers = vipers
 	appConfig := &agolloConfig.AppConfig{
-		AppID:            appID,
-		Cluster:          cluster,
-		IP:               ip,
+		AppID:            connConfig.AppID,
+		Cluster:          connConfig.ClusterName,
+		IP:               connConfig.IP,
 		NamespaceName:    namespaces,
 		IsBackupConfig:   true,       // 是否在本地备份
 		BackupConfigPath: "./config", // 备份文件路径
-		Secret:           secret,
+		Secret:           connConfig.Secret,
 		MustStart:        true,
 	}
 	// 客户端不解析 content, viper 来解析
