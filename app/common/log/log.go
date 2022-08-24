@@ -5,7 +5,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"main/app/utils"
+	"main/app/utils/file"
 	"os"
 	"time"
 )
@@ -27,7 +27,7 @@ func NewLogger() *zap.Logger {
 
 func NewLoggerWithOptions(options Options) *zap.Logger {
 	// 创建日志保存的文件夹
-	if err := utils.IsNotExistMkDir(options.SavePath); err != nil {
+	if err := file.IsNotExistMkDir(options.SavePath); err != nil {
 		fmt.Printf("Create %v directory\n", options.SavePath)
 		_ = os.Mkdir(options.SavePath, os.ModePerm)
 	}
