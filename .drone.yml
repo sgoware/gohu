@@ -18,6 +18,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
 
   - name: build-start
     image: appleboy/drone-ssh # SSH工具镜像
+    # 从drone中提取secret到环境变量中
     environment:
       PROJECT_NAME:
         from_secret: project_name
