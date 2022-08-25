@@ -13,6 +13,8 @@ WORKDIR /server
 # 将代码复制到容器中
 COPY ./gohu-oauth-token-enhancer-rpc /server/gohu-oauth-token-enhancer-rpc
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 RUN apk update \
     && apk add tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \

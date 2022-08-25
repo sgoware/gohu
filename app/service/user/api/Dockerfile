@@ -14,6 +14,8 @@ WORKDIR /server
 #COPY etc /server/etc
 COPY ./gohu-user-api /server/gohu-user-api
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 RUN apk update \
     && apk add tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \

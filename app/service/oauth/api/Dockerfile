@@ -13,6 +13,8 @@ WORKDIR /server
 # 将代码复制到容器中
 COPY ./gohu-oauth-api /server/gohu-oauth-api
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 RUN apk update \
     && apk add tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \

@@ -14,6 +14,8 @@ WORKDIR /server
 #COPY etc /server/etc
 COPY ./gohu-user-vip-rpc /server/gohu-user-vip-rpc
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 RUN apk update \
     && apk add tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
