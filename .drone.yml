@@ -82,7 +82,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
       APOLLO_APP_ID:
         from_secret: apollo_app_id
       APOLLO_CLUSTER:
-        from_secret: apollo_cluster
+        from_secret: apollo_cluster_name
       APOLLO_IP:
         from_secret: apollo_ip
       APOLLO_SECRET:
