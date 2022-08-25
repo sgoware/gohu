@@ -85,6 +85,8 @@ func NewConfigClient() (c *Agollo, err error) {
 	c.client = client
 	agolloClient = c
 
+	logger.Info("Initialize config successfully!")
+
 	return
 }
 
