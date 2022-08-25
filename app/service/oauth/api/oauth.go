@@ -10,6 +10,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
+	_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 )
 
 const serviceName = "oauth.api"

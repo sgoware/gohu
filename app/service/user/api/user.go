@@ -10,6 +10,7 @@ import (
 	"main/app/utils"
 
 	"github.com/zeromicro/go-zero/rest"
+	_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 )
 
 const serviceName = "user.api"
