@@ -20,8 +20,8 @@ type User struct {
 	LastIP     string    `gorm:"column:last_ip" json:"last_ip"`
 	Vip        int32     `gorm:"column:vip;not null" json:"vip"`
 	Status     int32     `gorm:"column:status" json:"status"`
-	UpdateTime time.Time `gorm:"column:update_time;not null" json:"update_time"`
-	CreateTime time.Time `gorm:"column:create_time;not null" json:"create_time"`
+	UpdateTime time.Time `gorm:"autoUpdateTime;column:update_time;not null" json:"update_time"`
+	CreateTime time.Time `gorm:"autoUpdateTime;column:create_time;not null" json:"create_time"`
 }
 
 // TableName User's table name
