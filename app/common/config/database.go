@@ -6,37 +6,44 @@ import (
 )
 
 // GetMysqlDsn 返回 mysql DSN
-func (c *Agollo) GetMysqlDsn(namespace string) string {
-	config := c.client.GetConfig(namespace)
-	serverNum := config.GetIntValue("database.mysql.serverNum", 0) // 使用 mysql 几号服务器(考虑以后将数据库分布式化,使用 TiDB )
+func (c *Agollo) GetMysqlDsn(namespace string) (dsn string, err error) {
+	v, err := c.GetViper(namespace)
+	if err != nil {
+		return "", err
+	}
+	// 使用 mysql 几号服务器(考虑以后将数据库分布式化,使用 TiDB )
+	serverNum := v.GetInt("Database.Mysql.ServerNum")
 
-	databaseConfig := c.client.GetConfig(databaseNamespace)
+	databaseViper, err := c.GetViper(databaseNamespace)
+	if err != nil {
+		return "", err
+	}
 
 	// 拼接dsn字符串
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true&loc=Asia%%2FShanghai",
-		databaseConfig.GetValue(fmt.Sprintf("mysql.server%d.username", serverNum)), // 数据库用户名
-		databaseConfig.GetValue(fmt.Sprintf("mysql.server%d.password", serverNum)), // 数据库密码
-		databaseConfig.GetValue(fmt.Sprintf("mysql.server%d.address", serverNum)),  // 数据库地址
-		databaseConfig.GetValue(fmt.Sprintf("mysql.server%d.port", serverNum)),     // 数据库端口
-		config.GetValue("database.mysql.databaseName"),                             // mysql 的数据库名字
-		config.GetValue("database.mysql.databaseCharset"),                          // mysql 的数据库使用的字符集
+	dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true&loc=Asia%%2FShanghai",
+		databaseViper.GetString(fmt.Sprintf("Mysql.Server%d.Username", serverNum)), // 数据库用户名
+		databaseViper.GetString(fmt.Sprintf("Mysql.Server%d.Password", serverNum)), // 数据库密码
+		databaseViper.GetString(fmt.Sprintf("Mysql.Server%d.Address", serverNum)),  // 数据库地址
+		databaseViper.GetString(fmt.Sprintf("Mysql.Server%d.Port", serverNum)),     // 数据库端口
+		v.GetString("Database.Mysql.DatabaseName"),                                 // mysql 的数据库名字
+		v.GetString("Database.Mysql.DatabaseCharset"),                              // mysql 的数据库使用的字符集
 	)
-	return dsn
+	return dsn, nil
 }
 
 // NewRedisOptions 返回 *redisOptions
 func (c *Agollo) NewRedisOptions(namespace string) *redis.Options {
 	config := c.client.GetConfig(namespace)
-	serverNum := config.GetIntValue("database.redis.serverNum", 0) // 使用 redis 几号服务器
+	serverNum := config.GetIntValue("Database.Redis.ServerNum", 0) // 使用 redis 几号服务器
 
 	databaseConfig := c.client.GetConfig(databaseNamespace)
 
 	return &redis.Options{
 		Addr: fmt.Sprintf("%s:%s",
-			databaseConfig.GetValue(fmt.Sprintf("redis.server%d.address", serverNum)),
-			databaseConfig.GetValue(fmt.Sprintf("redis.server%d.port", serverNum)),
+			databaseConfig.GetValue(fmt.Sprintf("Redis.Server%d.Address", serverNum)),
+			databaseConfig.GetValue(fmt.Sprintf("Redis.Server%d.Port", serverNum)),
 		),
-		Password: databaseConfig.GetValue(fmt.Sprintf("redis.server%d.password", serverNum)),
-		DB:       config.GetIntValue("database.redis.databaseNum", 0), // 使用 redis 几号数据库
+		Password: databaseConfig.GetValue(fmt.Sprintf("Redis.Server%d.Password", serverNum)),
+		DB:       config.GetIntValue("Database.Redis.DatabaseNum", 0), // 使用 redis 几号数据库
 	}
 }

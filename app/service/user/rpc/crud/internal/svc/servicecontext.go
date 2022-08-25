@@ -28,20 +28,29 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	// 读取远程配置文件
 	configClient, err := apollo.GetConfigClient()
 	if err != nil {
-		logger.Errorf("get configClient failed, err: %v", err)
+		logger.Fatalf("get configClient failed, err: %v", err)
+	}
+
+	dsn, err := configClient.GetMysqlDsn("user.yaml")
+	if err != nil {
+		logger.Fatalf("get mysql dsn failed, err: %v", err)
 	}
 
 	// 连接mysql和redis
-	db, _ := gorm.Open(mysql.Open(configClient.GetMysqlDsn("user.yaml")))
+	db, err := gorm.Open(mysql.Open(dsn))
+	if err != nil {
+		logger.Fatalf("initiate mysql failed, err: %v", err)
+	}
+
 	rdb := redis.NewClient(configClient.NewRedisOptions("user.yaml"))
 	_, err = rdb.Ping(context.Background()).Result()
 	if err != nil {
-		logger.Errorf("initiate redis failed, err: %v", err)
+		logger.Fatalf("initiate redis failed, err: %v", err)
 	}
 
 	v, err := configClient.GetViper("oauth.yaml")
 	if err != nil {
-		logger.Errorf("get viper failed, err: %v", err)
+		logger.Fatalf("get viper failed, err: %v", err)
 	}
 	clientId := "default"
 	clientSecret := v.GetString("Client.default.Secret")

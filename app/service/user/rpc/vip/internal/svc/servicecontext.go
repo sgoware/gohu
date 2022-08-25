@@ -19,10 +19,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	logger := log.GetSugaredLogger()
 	configClient, err := apollo.GetConfigClient()
 	if err != nil {
-		logger.Errorf("get configClient failed, err: %v", err)
+		logger.Fatalf("get configClient failed, err: %v", err)
 	}
 
-	db, _ := gorm.Open(mysql.Open(configClient.GetMysqlDsn("user.yaml")))
+	dsn, err := configClient.GetMysqlDsn("user.yaml")
+	if err != nil {
+		logger.Fatalf("get mysql dsn failed, err: %v", err)
+	}
+	db, _ := gorm.Open(mysql.Open(dsn))
 	return &ServiceContext{
 		Config:    c,
 		UserModel: query.Use(db),
