@@ -6,6 +6,8 @@ import (
 	"main/app/service/oauth/api/internal/config"
 	"main/app/service/oauth/api/internal/handler"
 	"main/app/service/oauth/api/internal/svc"
+	"main/app/service/oauth/api/internal/token"
+	"main/app/service/oauth/model"
 	"main/app/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -31,6 +33,11 @@ func main() {
 	if err != nil {
 		logger.Panicf("Initialize Apollo Client failed, err: %v", err)
 	}
+
+	model.InitClientDetails()
+
+	token.InitTokenService()
+	token.InitTokenGranter()
 
 	// 初始化微服务设置
 	namespace, serviceType, serviceSingleName := utils.GetServiceDetails(serviceName)
