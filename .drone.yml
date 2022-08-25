@@ -2,38 +2,78 @@ kind: pipeline # 定义对象类型，还有secret和signature两种类型
 type: docker # 定义流水线类型，还有kubernetes、exec、ssh等类型
 name: gohu # 定义流水线名称
 
+# 定义流水线宿主机挂载目录，用于共享数据
+volumes:
+  - name: build
+    host:
+      path: /tmp/build # 从宿主机中挂载的目录
+
 steps: # 定义流水线执行步骤，这些步骤将顺序执行
-  - name: package # 流水线名称
-    image: golang:1.19.0-alpine3.16 # 定义创建容器的Docker镜像
-    environment:
-      PROJECT_NAME:
-        from_secret: project_name
-      GO111MODULE: on
-      CGO_ENABLED: 0
-      GOOS: linux
-      GOARCH: amd64
-      GOPROXY: 'https://goproxy.cn,direct'
-    volumes: # 将容器内目录挂载到宿主机，仓库需要开启Trusted设置
-      - name: build
-        path: /build
+  # 方式一:
+  #   将仓库打包发送给目标主机,目标主机然后构建镜像
+  - name: scp
+    image: appleboy/drone-scp # SSH工具镜像
 
-    commands: # 定义在Docker容器中执行的shell命令
-#      - echo '----------build go----------'
-#      - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
-#      - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
-#      - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
-#      - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
-#      - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
-#      - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
-#      - echo '----------complete----------'
-      - echo '----------packing----------'
-      - tar -czvf $PROJECT_NAME.tar.gz ./*
-      - cp ./$PROJECT_NAME.tar.gz /build/
-      - echo '----------complete----------'
+    # 参数说明: https://plugins.drone.io/plugins/scp
+    settings:
+      host:
+        from_secret: ssh_ip # 远程连接地址
+      port: 22 # 远程连接端口
+      username: root # 远程连接账号
+      key:
+        from_secret: ssh_password # 从Secret中读取SSH密码
+      #      command_timeout: 5m # 远程执行命令超时时间
+      #      envs:
+      #        - PROJECT_NAME
+      #        - DOMAIN
+      #        - APOLLO_APP_ID
+      #        - APOLLO_CLUSTER_NAME
+      #        - APOLLO_IP
+      #        - APOLLO_SECRET
+      tar_tmp_path: /tmp/tar
+      overwrite: true
+      rm: true
 
-  - name: build-start
+      source:
+        - ./
+      target: /www/site/gohu
+
+  # 方式二:
+  #   将仓库代码构建成镜像后发送给镜像仓库
+  #   然后目标主机拉取镜像
+  #  - name: build # 流水线名称
+  #    image: golang:1.19.0-alpine3.16 # 定义创建容器的Docker镜像
+  #    # 定义容器挂载目录
+  #    volumes: # 将容器内目录挂载到宿主机，仓库需要开启Trusted设置
+  #      - name: build
+  #        path: /build
+  #    environment:
+  #      PROJECT_NAME:
+  #        from_secret: project_name
+  #      GO111MODULE: on
+  #      CGO_ENABLED: 0
+  #      GOOS: linux
+  #      GOARCH: amd64
+  #      GOPROXY: 'https://goproxy.cn,direct'
+  #    commands: # 定义在Docker容器中执行的shell命令
+  #      - echo '----------build go----------'
+  #      - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
+  #      - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
+  #      - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
+  #      - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
+  #      - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
+  #      - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
+  #      - echo '----------complete----------'
+  #      - echo '----------packing----------'
+  #      - tar -czvf $PROJECT_NAME.tar.gz ./*
+  #      - chmod 777 ./$PROJECT_NAME.tar.gz
+  #      - cp ./$PROJECT_NAME.tar.gz /build
+  #      - echo '----------complete----------'
+
+  # 运行镜像
+  - name: run
     image: appleboy/drone-ssh # SSH工具镜像
-    # 从drone中提取secret到环境变量中
+    #     从drone中提取secret到环境变量中
     environment:
       PROJECT_NAME:
         from_secret: project_name
@@ -48,6 +88,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
       APOLLO_SECRET:
         from_secret: apollo_secret
 
+    # 参数说明: https://plugins.drone.io/plugins/ssh
     settings:
       host:
         from_secret: ssh_ip # 远程连接地址
@@ -55,7 +96,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
       username: root # 远程连接账号
       key:
         from_secret: ssh_password # 从Secret中读取SSH密码
-      command_timeout: 5m # 远程执行命令超时时间
+      command_timeout: 3m # 远程执行命令超时时间
       envs:
         - PROJECT_NAME
         - DOMAIN
@@ -63,7 +104,12 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - APOLLO_CLUSTER_NAME
         - APOLLO_IP
         - APOLLO_SECRET
+
       script:
+        - bash
+        - source ~/.bashrc
+        - cd /www/site/$PROJECT_NAME
+        - ls
         - env
         - echo '----------build go----------'
         - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
@@ -73,13 +119,6 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
         - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
         - echo '----------complete----------'
-        - cd /www/site/$PROJECT_NAME # 进入宿主机构建目录
-        - echo '----------unpacking----------'
-        - mv ./$PROJECT_NAME.tar.gz ../
-        - rm -rf *
-        - mv ../$PROJECT_NAME.tar.gz ./
-        - tar -zxvf $PROJECT_NAME.tar.gz
-        - echo '----------complete----------'
         - echo '----------docker compose----------'
         - docker-compose down --rmi all
         - docker-compose up -d
@@ -87,8 +126,3 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
 
 #        - chmod a+x run.sh #  更改为 可执行脚本
 #        - ./run.sh # 运行脚本打包应用镜像并运行
-
-volumes: # 定义流水线挂载目录，用于共享数据
-  - name: build
-    host:
-      path: /www/site/gohu # 从宿主机中挂载的目录
