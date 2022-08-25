@@ -13,5 +13,10 @@ WORKDIR /server
 # 将代码复制到容器中
 COPY ./gohu-oauth-api /server/gohu-oauth-api
 
+RUN apk update \
+    && apk add tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone
+
 # 启动容器时运行的命令
 CMD ["./gohu-oauth-api"]

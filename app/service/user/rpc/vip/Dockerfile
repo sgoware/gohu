@@ -14,5 +14,10 @@ WORKDIR /server
 #COPY etc /server/etc
 COPY ./gohu-user-vip-rpc /server/gohu-user-vip-rpc
 
+RUN apk update \
+    && apk add tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone
+
 # 启动容器时运行的命令
 CMD ["./gohu-user-vip-rpc"]
