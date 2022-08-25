@@ -2,6 +2,7 @@ package handler
 
 import (
 	"main/app/common/log"
+	"main/app/utils/cookie"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -28,6 +29,18 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		if err != nil {
 			logger.Errorf("Process logic failed, err: %v", err)
 		}
+
+		cookieWriter := cookie.NewCookieWriter(svcCtx.Cookie.Secret,
+			cookie.Option{
+				Writer:  w,
+				Request: r,
+				Config:  svcCtx.Cookie.Cookie,
+			})
+
+		cookieWriter.Set("x-token", res.Data.AccessToken)
+		cookieWriter.Set("refresh-token", res.Data.RefreshToken)
+		cookieWriter.Set("x-token", res.Data.AccessToken)
+		cookieWriter.Set("refresh-token", res.Data.RefreshToken)
 
 		logger.Info("response: %v", res)
 		httpx.WriteJson(w, res.Code, res)
