@@ -123,6 +123,3 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - docker-compose down --rmi all
         - docker-compose up -d
         - echo '----------complete----------'
-
-#        - chmod a+x run.sh #  更改为 可执行脚本
-#        - ./run.sh # 运行脚本打包应用镜像并运行
