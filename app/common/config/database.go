@@ -32,18 +32,24 @@ func (c *Agollo) GetMysqlDsn(namespace string) (dsn string, err error) {
 }
 
 // NewRedisOptions 返回 *redisOptions
-func (c *Agollo) NewRedisOptions(namespace string) *redis.Options {
-	config := c.client.GetConfig(namespace)
-	serverNum := config.GetIntValue("Database.Redis.ServerNum", 0) // 使用 redis 几号服务器
+func (c *Agollo) NewRedisOptions(namespace string) (*redis.Options, error) {
+	v, err := c.GetViper(namespace)
+	if err != nil {
+		return nil, err
+	}
+	serverNum := v.GetInt("Database.Redis.ServerNum") // 使用 redis 几号服务器
 
-	databaseConfig := c.client.GetConfig(databaseNamespace)
+	databaseViper, err := c.GetViper(databaseNamespace)
+	if err != nil {
+		return nil, err
+	}
 
 	return &redis.Options{
 		Addr: fmt.Sprintf("%s:%s",
-			databaseConfig.GetValue(fmt.Sprintf("Redis.Server%d.Address", serverNum)),
-			databaseConfig.GetValue(fmt.Sprintf("Redis.Server%d.Port", serverNum)),
+			databaseViper.GetString(fmt.Sprintf("Redis.Server%d.Address", serverNum)),
+			databaseViper.GetString(fmt.Sprintf("Redis.Server%d.Port", serverNum)),
 		),
-		Password: databaseConfig.GetValue(fmt.Sprintf("Redis.Server%d.Password", serverNum)),
-		DB:       config.GetIntValue("Database.Redis.DatabaseNum", 0), // 使用 redis 几号数据库
-	}
+		Password: databaseViper.GetString(fmt.Sprintf("Redis.Server%d.Password", serverNum)),
+		DB:       v.GetInt("Database.Redis.DatabaseNum"), // 使用 redis 几号数据库
+	}, nil
 }

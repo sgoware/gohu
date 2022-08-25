@@ -22,7 +22,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		logger.Errorf("Get configClient failed, err: %v", err)
 	}
 
-	rdb := redis.NewClient(configClient.NewRedisOptions("oauth.yaml"))
+	redisOptions, err := configClient.NewRedisOptions("oauth.yaml")
+	logger.Debugf("redisOptions: \n%v", redisOptions)
+	if err != nil {
+		logger.Fatalf("get redisOptions failed, err: %v", err)
+	}
+	rdb := redis.NewClient(redisOptions)
+
 	_, err = rdb.Ping(context.Background()).Result()
 	if err != nil {
 		logger.Errorf("Initiate redis failed, err: %v", err)

@@ -30,7 +30,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if err != nil {
 		logger.Errorf("get configClient failed, err: %v", err)
 	}
-	rdb := redis.NewClient(configClient.NewRedisOptions("user.yaml"))
+
+	redisOptions, err := configClient.NewRedisOptions("user.yaml")
+	logger.Debugf("redisOptions: \n%v", redisOptions)
+	if err != nil {
+		logger.Fatalf("get redisOptions failed, err: %v", err)
+	}
+	rdb := redis.NewClient(redisOptions)
 
 	cookieConfig, err := configClient.NewCookieConfig()
 	if err != nil {
