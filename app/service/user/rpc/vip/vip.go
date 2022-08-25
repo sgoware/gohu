@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const serviceName = ".rpc.vip"
+const serviceName = "user.rpc.vip"
 
 var c config.Config
 
