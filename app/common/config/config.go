@@ -48,12 +48,14 @@ var agolloClient *Agollo
 
 // NewConfigClient 获取Agollo客户端
 func NewConfigClient() (c *Agollo, err error) {
+	logger := log.GetSugaredLogger()
 	connConfig := agolloConnConfig{
 		AppID:       os.Getenv("APOLLO_APP_ID"),
 		ClusterName: os.Getenv("APOLLO_CLUSTER_NAME"),
 		IP:          os.Getenv("APOLLO_IP"),
 		Secret:      os.Getenv("APOLLO_SECRET"),
 	}
+	logger.Debugf("connConfig: \n%v", connConfig)
 	c = new(Agollo)
 	vipers := make(map[string]*viper.Viper)
 	c.vipers = vipers
@@ -72,7 +74,6 @@ func NewConfigClient() (c *Agollo, err error) {
 	extension.AddFormatParser(constant.YAML, &emptyParser{})
 
 	// 设置 apollo 的日志器
-	logger := log.GetSugaredLogger()
 	agollo.SetLogger(logger)
 
 	client, err := agollo.StartWithConfig(func() (*agolloConfig.AppConfig, error) {
@@ -81,6 +82,7 @@ func NewConfigClient() (c *Agollo, err error) {
 
 	// 设置 配置监听功能(此项目暂时用不到,先不写)
 	//client.AddChangeListener(&CustomChangeListener{})
+	fmt.Println(client.GetConfig("user.yaml").GetContent())
 
 	c.client = client
 	agolloClient = c
