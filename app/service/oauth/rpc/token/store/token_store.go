@@ -1,16 +1,15 @@
 package main
 
 import (
-	"github.com/zeromicro/go-zero/core/logx"
 	apollo "main/app/common/config"
 	"main/app/common/log"
-	"main/app/utils"
-
 	"main/app/service/oauth/rpc/token/store/internal/config"
 	"main/app/service/oauth/rpc/token/store/internal/server"
 	"main/app/service/oauth/rpc/token/store/internal/svc"
 	"main/app/service/oauth/rpc/token/store/pb"
+	"main/app/utils"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"github.com/zeromicro/zero-contrib/zrpc/registry/consul"

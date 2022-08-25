@@ -1,18 +1,18 @@
 package main
 
 import (
-	"github.com/zeromicro/go-zero/core/logx"
 	apollo "main/app/common/config"
 	"main/app/common/log"
-	"main/app/utils"
-
 	"main/app/service/oauth/rpc/token/enhancer/internal/config"
 	"main/app/service/oauth/rpc/token/enhancer/internal/server"
 	"main/app/service/oauth/rpc/token/enhancer/internal/svc"
 	"main/app/service/oauth/rpc/token/enhancer/pb"
+	"main/app/utils"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
+	"github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -54,6 +54,9 @@ func main() {
 		}
 	})
 	defer s.Stop()
+
+	// 注册服务到consul
+	_ = consul.RegisterService(c.ListenOn, c.Consul)
 
 	logger.Infof("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
