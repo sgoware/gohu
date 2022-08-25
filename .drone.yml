@@ -119,6 +119,12 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
         - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
         - echo '----------complete----------'
+        - echo '----------export envs----------'
+        - export APOLLO_APP_ID=$APOLLO_APP_ID
+        - export APOLLO_CLUSTER_NAME=$APOLLO_CLUSTER_NAME
+        - export APOLLO_IP=$APOLLO_IP
+        - export APOLLO_SECRET=$APOLLO_SECRET
+        - echo '----------complete----------'
         - echo '----------docker compose----------'
         - docker-compose down --rmi all
         - docker-compose up -d
