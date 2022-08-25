@@ -82,7 +82,6 @@ func NewConfigClient() (c *Agollo, err error) {
 
 	// 设置 配置监听功能(此项目暂时用不到,先不写)
 	//client.AddChangeListener(&CustomChangeListener{})
-	fmt.Println(client.GetConfig("user.yaml").GetContent())
 
 	c.client = client
 	agolloClient = c
