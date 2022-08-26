@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/spf13/cast"
 	"main/app/common/log"
 	"net/http"
 
@@ -31,8 +30,8 @@ func (l *ResetLogic) Reset(in *pb.ResetReq) (res *pb.ResetRes, err error) {
 	logger.Debugf("recv message: %v", in.String())
 
 	userModel := l.svcCtx.UserModel
-	_, err = userModel.WithContext(l.ctx).User.Select(userModel.User.UID, userModel.User.Vip).
-		Where(userModel.User.UID.Eq(cast.ToInt64(in.Uid))).Update(userModel.User.Vip, 0)
+	_, err = userModel.WithContext(l.ctx).User.Select(userModel.User.ID, userModel.User.Vip).
+		Where(userModel.User.ID.Eq(in.Id)).Update(userModel.User.Vip, 0)
 	if err != nil {
 		logger.Errorf("%v", err)
 		return &pb.ResetRes{

@@ -27,7 +27,7 @@ func NewVipUpgradeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipUpg
 
 func (l *VipUpgradeLogic) VipUpgrade(req *types.VipUpgradeReq) (*types.VipUpgradeRes, error) {
 	userId := l.ctx.Value("user_id")
-	res, _ := l.svcCtx.VipRpcClient.Upgrade(l.ctx, &vip.UpgradeReq{Uid: cast.ToString(userId)})
+	res, _ := l.svcCtx.VipRpcClient.Upgrade(l.ctx, &vip.UpgradeReq{Id: cast.ToInt64(userId)})
 
 	return &types.VipUpgradeRes{
 		Code: int(res.Code),

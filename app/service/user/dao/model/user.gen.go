@@ -12,13 +12,13 @@ const TableNameUser = "user"
 
 // User mapped from table <user>
 type User struct {
-	ID         int32     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 用户 id
+	ID         int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 用户 id
 	Username   string    `gorm:"column:username;not null" json:"username"`                      // 用户名 (登录用)
 	Password   string    `gorm:"column:password;not null" json:"password"`                      // 密码
 	Nickname   string    `gorm:"column:nickname" json:"nickname"`                               // 昵称
 	Email      string    `gorm:"column:email" json:"email"`                                     // 邮箱
 	Phone      string    `gorm:"column:phone" json:"phone"`                                     // 手机
-	LastIP     string    `gorm:"column:last_ip" json:"last_ip"`                                 // 上次登录 ip 地址
+	LastIP     string    `gorm:"column:last_ip" json:"last_ip"`                                 // 最近登录 ip 地址
 	Vip        int32     `gorm:"column:vip;not null" json:"vip"`                                // vip 等级
 	Status     int32     `gorm:"column:status" json:"status"`                                   // 状态 (1-正常 2-冻结 3-封禁)
 	CreateTime time.Time `gorm:"autoUpdateTime;column:create_time;not null" json:"create_time"` // 创建时间

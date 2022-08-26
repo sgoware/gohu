@@ -3,7 +3,7 @@ package vip;
 option go_package = "./pb";
 
 message UpgradeReq{
-    string uid=1;
+    int64 id=1;
 }
 
 message UpgradeRes{
@@ -17,7 +17,7 @@ message UpgradeRes{
 
 
 message ResetReq{
-    string uid=1;
+    int64 id=1;
 }
 
 message ResetRes{
