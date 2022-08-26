@@ -27,7 +27,7 @@ func NewVipResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipReset
 
 func (l *VipResetLogic) VipReset(req *types.VipResetReq) (*types.VipResetRes, error) {
 	userId := l.ctx.Value("user_id")
-	res, _ := l.svcCtx.VipRpcClient.Reset(l.ctx, &vip.ResetReq{Uid: cast.ToString(userId)})
+	res, _ := l.svcCtx.VipRpcClient.Reset(l.ctx, &vip.ResetReq{Id: cast.ToInt64(userId)})
 
 	return &types.VipResetRes{
 		Code: int(res.Code),
