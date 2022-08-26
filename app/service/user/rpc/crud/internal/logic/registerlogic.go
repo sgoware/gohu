@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"encoding/hex"
+	"github.com/speps/go-hashids/v2"
+	"github.com/spf13/cast"
 	"golang.org/x/crypto/sha3"
 	"main/app/common/log"
 	"main/app/service/user/dao/model"
@@ -61,9 +63,16 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 			// 密码使用sha3哈希然后存储
 			d := sha3.Sum224([]byte(in.Password))
 			encryptedPassword := hex.EncodeToString(d[:])
+
+			hd := hashids.NewData()
+			hd.Salt = "username"
+			hd.MinLength = 10
+			h, _ := hashids.NewWithData(hd)
+			defaultNickname, _ := h.Encode(cast.ToIntSlice(in.Username))
 			err := l.svcCtx.UserModel.User.WithContext(l.ctx).Create(&model.User{
 				Username: in.Username,
 				Password: encryptedPassword,
+				Nickname: "gohu_" + defaultNickname,
 			})
 			if err != nil {
 				res = &crud.RegisterRes{

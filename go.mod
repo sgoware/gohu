@@ -95,6 +95,7 @@ require (
 	github.com/reiver/go-oi v1.0.0 // indirect
 	github.com/sagikazarmark/crypt v0.6.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/speps/go-hashids/v2 v2.0.1 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
