@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 	"github.com/go-redis/redis/v8"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/imroc/req/v3"
 	"github.com/spf13/cast"
 	"github.com/thedevsaddam/gojsonq/v2"
@@ -39,12 +38,12 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		})
 		ok := cookieWriter.Get("x-token", &accessToken)
 		if accessToken == "" || !ok {
-			response.ResultWithData(w, http.StatusForbidden, "not logged in or illegal access", g.Map{"reload": true})
+			response.ResultWithData(w, http.StatusForbidden, "not logged in or illegal access", map[string]interface{}{"reload": true})
 			return
 		}
 
 		if jwt.IsBlacklist(m.Rdb, accessToken) {
-			response.ResultWithData(w, http.StatusForbidden, "login from a different location or accessToken exceeded", g.Map{"reload": true})
+			response.ResultWithData(w, http.StatusForbidden, "login from a different location or accessToken exceeded", map[string]interface{}{"reload": true})
 			return
 		}
 		// TODO: 使用oauth2服务器认证,使用认证令牌认证,如果过期则使用刷新令牌
@@ -67,7 +66,7 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			if msg == "accessToken is expired" {
 				ok = cookieWriter.Get("refresh-token", &refreshToken)
 				if accessToken == "" || !ok {
-					response.ResultWithData(w, http.StatusForbidden, "illegal access", g.Map{"reload": true})
+					response.ResultWithData(w, http.StatusForbidden, "illegal access", map[string]interface{}{"reload": true})
 					return
 				}
 				res, err = req.NewRequest().SetPathParam("refresh-token", refreshToken).
