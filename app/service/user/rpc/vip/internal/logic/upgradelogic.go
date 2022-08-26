@@ -32,11 +32,11 @@ func (l *UpgradeLogic) Upgrade(in *pb.UpgradeReq) (res *pb.UpgradeRes, err error
 	logger.Debugf("recv message: %v", in.String())
 
 	userModel := l.svcCtx.UserModel
-	userInfo, _ := userModel.WithContext(l.ctx).User.Select(userModel.User.UID, userModel.User.Vip).
-		Where(userModel.User.UID.Eq(cast.ToInt64(in.Uid))).First()
+	userInfo, _ := userModel.WithContext(l.ctx).User.Select(userModel.User.ID, userModel.User.Vip).
+		Where(userModel.User.ID.Eq(cast.ToInt64(in.Id))).First()
 	if userInfo.Vip < 9 {
-		userModel.WithContext(l.ctx).User.Select(userModel.User.UID, userModel.User.Vip).
-			Where(userModel.User.UID.Eq(userInfo.UID)).
+		userModel.WithContext(l.ctx).User.Select(userModel.User.ID, userModel.User.Vip).
+			Where(userModel.User.ID.Eq(userInfo.ID)).
 			Update(userModel.User.Vip, userInfo.Vip+1)
 		res = &pb.UpgradeRes{
 			Code: http.StatusOK,
