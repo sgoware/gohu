@@ -5,6 +5,7 @@ import (
 	"main/app/common/log"
 	"main/app/utils/cookie"
 	"net/http"
+	"strings"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"main/app/service/user/api/internal/logic"
@@ -24,7 +25,11 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 		logger.Debugf("recv args: %v", req)
 
-		ctx := context.WithValue(r.Context(), "lastIp", r.RemoteAddr)
+		ctx := context.Background()
+		if r.RemoteAddr != "" {
+			output := strings.Split(r.RemoteAddr, ":")
+			ctx = context.WithValue(r.Context(), "lastIp", output[0])
+		}
 		l := logic.NewLoginLogic(ctx, svcCtx)
 
 		res, err := l.Login(&req)
