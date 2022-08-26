@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"encoding/hex"
-	"github.com/speps/go-hashids/v2"
-	"github.com/spf13/cast"
 	"golang.org/x/crypto/sha3"
 	"main/app/common/log"
 	"main/app/service/user/dao/model"
 	"main/app/service/user/rpc/crud/crud"
 	"main/app/service/user/rpc/crud/internal/svc"
 	"main/app/service/user/rpc/crud/pb"
+	"main/app/utils/uuid"
 	"net/http"
 	"strings"
 
@@ -65,11 +64,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 			encryptedPassword := hex.EncodeToString(d[:])
 
 			// 生成默认昵称
-			hd := hashids.NewData()
-			hd.Salt = "username"
-			hd.MinLength = 10
-			h, _ := hashids.NewWithData(hd)
-			defaultNickname, _ := h.Encode(cast.ToIntSlice([]uint8(in.Username)))
+			defaultNickname := uuid.NewRandomString(in.Username, "username", 10)
+
 			err := l.svcCtx.UserModel.User.WithContext(l.ctx).Create(&model.User{
 				Username: in.Username,
 				Password: encryptedPassword,
