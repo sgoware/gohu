@@ -25,7 +25,7 @@ func NewGetTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetToken
 	}
 }
 
-func (l *GetTokenLogic) GetToken(req *types.GetTokenByAuthReq) (resp *types.GetTokenByAuthRes, err error) {
+func (l *GetTokenLogic) GetToken(req *types.GetTokenByAuthReq) (res *types.GetTokenByAuthRes, err error) {
 	tokenGranter := token.GetTokenGranter()
 	accessToken, err := tokenGranter.Grant(l.ctx, token.GrantByAuth, req.Authorization)
 	if err != nil {
@@ -36,14 +36,14 @@ func (l *GetTokenLogic) GetToken(req *types.GetTokenByAuthReq) (resp *types.GetT
 		}, nil
 	}
 
-	resp = &types.GetTokenByAuthRes{
+	res = &types.GetTokenByAuthRes{
 		Code: http.StatusOK,
 		Msg:  "get token successfully",
 		Data: types.GetTokenByAuthResData{AccessToken: &types.OAuth2Token{}},
 	}
-	err = mapping.Struct2Struct(accessToken, resp.Data.AccessToken)
+	err = mapping.Struct2Struct(accessToken, res.Data.AccessToken)
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return res, nil
 }

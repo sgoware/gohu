@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/spf13/cast"
 	apollo "main/app/common/config"
+	"main/app/common/log"
 	"main/app/service/user/dao/query"
 	"strings"
 )
@@ -86,6 +87,8 @@ func NewAuthorizationTokenGranter(grantType string, clientDetails map[string]Cli
 
 func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 	grantType string, auth string) (*OAuth2Token, error) {
+	logger := log.GetSugaredLogger()
+
 	if grantType != tokenGranter.SupportGrantType {
 		return nil, ErrNotSupportGrantType
 	}
@@ -94,6 +97,8 @@ func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 	if !ok || clientSecret != tokenGranter.ClientDetails[clientId].ClientSecret {
 		return nil, ErrInvalidAuthorizationRequest
 	}
+	logger.Debugf("parse basic auth successfully, clientId: %v, clientSecret: %v, userId: %v",
+		clientId, clientSecret, userId)
 
 	userModel := tokenGranter.UserModel.User
 	userDetail, err := userModel.WithContext(context.Background()).
@@ -101,6 +106,7 @@ func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 	if err != nil {
 		return nil, ErrUserDetailNotFound
 	}
+	logger.Debugf("get user details from mysql, user_details: %v", userDetail)
 
 	// 根据用户信息和客户端信息生成访问令牌
 	return tokenGranter.TokenService.CreateAccessToken(ctx, &OAuth2Details{
@@ -121,7 +127,7 @@ func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 			Status:      userDetail.Status,
 			UpdateTime:  userDetail.UpdateTime,
 			CreateTime:  userDetail.CreateTime,
-			Authorities: nil, // TODO: 带加入权限字段
+			Authorities: nil, // TODO: 待加入权限字段
 		},
 	})
 
