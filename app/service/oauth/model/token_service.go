@@ -52,7 +52,15 @@ func (tokenService *RpcTokenService) CreateAccessToken(ctx context.Context, oaut
 				AuthorizedGrantTypes:        oauth2Details.Client.AuthorizedGrantTypes,
 			},
 			User: &tokenenhancer.UserDetails{
-				UserId: oauth2Details.User.UserId,
+				UserId:      oauth2Details.User.UserId,
+				UserName:    oauth2Details.User.Username,
+				Nickname:    oauth2Details.User.NickName,
+				LastIp:      oauth2Details.User.LastIp,
+				Vip:         oauth2Details.User.Vip,
+				Status:      oauth2Details.User.Status,
+				UpdateTime:  oauth2Details.User.UpdateTime.String(),
+				CreateTime:  oauth2Details.User.CreateTime.String(),
+				Authorities: nil,
 			},
 		},
 	})
