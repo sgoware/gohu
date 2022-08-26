@@ -2,7 +2,6 @@ package config
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/apolloconfig/agollo/v4"
 	"github.com/apolloconfig/agollo/v4/constant"
 	agolloConfig "github.com/apolloconfig/agollo/v4/env/config"
@@ -110,7 +109,7 @@ func (c *Agollo) GetViper(namespace string) (*viper.Viper, error) {
 		}
 		err := v.ReadConfig(buffer)
 		if err != nil {
-			return nil, fmt.Errorf("get viper failed, err: %v", err)
+			return nil, err
 		}
 		return v, nil
 	}
@@ -134,7 +133,20 @@ func (c *Agollo) UnmarshalKey(namespace, key string, dst interface{}) (err error
 	return
 }
 
-func (c *Agollo) GetClientDetails() (clientAuths map[string]interface{}) {
-	v, _ := c.GetViper("oauth.yaml")
-	return v.GetStringMap("Client")
+func GetClientDetails() (clientAuths map[string]interface{}, err error) {
+	if agolloClient == nil {
+		return nil, errEmptyConfigClient
+	}
+
+	v, err := agolloClient.GetViper("oauth.yaml")
+	if err != nil {
+		return nil, errGetViper
+	}
+
+	clientAuths = v.GetStringMap("Client")
+	if clientAuths == nil {
+		return nil, errViperEmptyKey
+	}
+
+	return v.GetStringMap("Client"), nil
 }
