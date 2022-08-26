@@ -3,6 +3,9 @@ package model
 import (
 	"context"
 	"encoding/base64"
+	"errors"
+	apollo "main/app/common/config"
+	"main/app/service/user/dao/query"
 	"strings"
 )
 
@@ -61,14 +64,23 @@ type AuthorizationTokenGranter struct {
 	SupportGrantType string
 	ClientDetails    map[string]ClientDetailWithSecret
 	TokenService     TokenService
+	UserModel        *query.Query
 }
 
-func NewAuthorizationTokenGranter(grantType string, clientDetails map[string]ClientDetailWithSecret, tokenService TokenService) TokenGranter {
+func NewAuthorizationTokenGranter(grantType string, clientDetails map[string]ClientDetailWithSecret, tokenService TokenService) (TokenGranter, error) {
+	if grantType == "" || clientDetails == nil || tokenService == nil {
+		return nil, errors.New("param cannot be null")
+	}
+	db, err := apollo.GetMysqlDB("user.yaml")
+	if err != nil {
+		return nil, errors.New("initialize mysql failed")
+	}
 	return &AuthorizationTokenGranter{
 		SupportGrantType: grantType,
 		ClientDetails:    clientDetails,
 		TokenService:     tokenService,
-	}
+		UserModel:        query.Use(db),
+	}, nil
 }
 
 func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
@@ -101,11 +113,14 @@ type RefreshTokenGranter struct {
 	TokenService     TokenService
 }
 
-func NewRefreshGranter(grantType string, tokenService TokenService) TokenGranter {
+func NewRefreshGranter(grantType string, tokenService TokenService) (TokenGranter, error) {
+	if grantType == "" || tokenService == nil {
+		return nil, errors.New("param cannot be null")
+	}
 	return &RefreshTokenGranter{
 		SupportGrantType: grantType,
 		TokenService:     tokenService,
-	}
+	}, nil
 }
 
 func (tokenGranter *RefreshTokenGranter) Grant(ctx context.Context, grantType, token string) (*OAuth2Token, error) {

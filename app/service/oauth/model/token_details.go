@@ -1,8 +1,8 @@
 package model
 
 import (
-	"main/app/common/config"
-	"main/app/common/log"
+	"fmt"
+	apollo "main/app/common/config"
 	"time"
 
 	"github.com/spf13/cast"
@@ -62,15 +62,14 @@ func (oauth2Token *OAuth2Token) IsExpired() bool {
 	return oauth2Token.ExpiresAt != 0 && time.Unix(oauth2Token.ExpiresAt, 0).Before(time.Now())
 }
 
-func InitClientDetails() {
-	logger := log.GetSugaredLogger()
+func InitClientDetails() error {
 	clientDetailsWithSecret = make(map[string]ClientDetailWithSecret)
 	clientAuths = make(map[string]string)
-	configClient, err := config.GetConfigClient()
+	mapIface, err := apollo.GetClientDetails()
 	if err != nil {
-		logger.Errorf("get configClient failed, err: %v", err)
+		return fmt.Errorf("get client details failed, %v", err)
 	}
-	mapIface := configClient.GetClientDetails()
+
 	for k, val := range mapIface {
 		details := cast.ToStringMap(val)
 		var clientDetailWithSecret ClientDetailWithSecret
@@ -92,7 +91,7 @@ func InitClientDetails() {
 		}
 		clientDetailsWithSecret[k] = clientDetailWithSecret
 	}
-	return
+	return nil
 }
 
 func GetClientDetails() map[string]ClientDetailWithSecret {

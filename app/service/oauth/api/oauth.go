@@ -31,13 +31,22 @@ func main() {
 	// 初始化配置管理器
 	configClient, err := apollo.NewConfigClient()
 	if err != nil {
-		logger.Panicf("Initialize Apollo Client failed, err: %v", err)
+		logger.Fatalf("Initialize Apollo Client failed, err: %v", err)
 	}
 
-	model.InitClientDetails()
+	err = model.InitClientDetails()
+	if err != nil {
+		logger.Fatalf("initialize client details failed, err: %v", err)
+	}
 
-	token.InitTokenService()
-	token.InitTokenGranter()
+	err = token.InitTokenService()
+	if err != nil {
+		logger.Fatalf("initialize token service failed, err: %v", err)
+	}
+	err = token.InitTokenGranter()
+	if err != nil {
+		logger.Fatalf("initialize token granter failed, err: %v", err)
+	}
 
 	// 初始化微服务设置
 	namespace, serviceType, serviceSingleName := utils.GetServiceDetails(serviceName)
