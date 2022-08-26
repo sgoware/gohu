@@ -1,9 +1,14 @@
 package config
 
-func (c *Agollo) GetDomain() (string, error) {
-	v, err := c.GetViper("gohu.yaml")
+import "errors"
+
+func GetDomain() (string, error) {
+	if agolloClient == nil {
+		return "", errors.New(emptyConfigClientErr)
+	}
+	v, err := agolloClient.GetViper("gohu.yaml")
 	if err != nil {
-		return "", err
+		return "", errors.New(getViperErr)
 	}
 	return v.GetString("Domain"), nil
 }

@@ -1,7 +1,6 @@
 package svc
 
 import (
-	"context"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/user/dao/query"
@@ -9,8 +8,6 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	_ "github.com/spf13/viper/remote"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
@@ -22,45 +19,26 @@ type ServiceContext struct {
 	ClientSecret string
 }
 
+const clientId = "Default"
+
 func NewServiceContext(c config.Config) *ServiceContext {
 	logger := log.GetSugaredLogger()
 
 	// 读取远程配置文件
-	configClient, err := apollo.GetConfigClient()
+	db, err := apollo.GetMysqlDB("user.yaml")
 	if err != nil {
-		logger.Fatalf("get configClient failed, err: %v", err)
+		logger.Fatalf("initialize mysql failed, err: %v", err)
 	}
 
-	dsn, err := configClient.GetMysqlDsn("user.yaml")
-	logger.Debugf("dsn: %v", dsn)
+	rdb, err := apollo.GetRedisClient("user.yaml")
 	if err != nil {
-		logger.Fatalf("get mysql dsn failed, err: %v", err)
+		logger.Fatalf("initialize redis failed, err: %v", err)
 	}
 
-	// 连接mysql和redis
-	db, err := gorm.Open(mysql.Open(dsn))
+	clientSecret, err := apollo.GetClientSecret(clientId)
 	if err != nil {
-		logger.Fatalf("initiate mysql failed, err: %v", err)
+		logger.Fatalf("get client secret failed, err: %v", err)
 	}
-
-	redisOptions, err := configClient.NewRedisOptions("user.yaml")
-	logger.Debugf("redisOptions: \n%v", redisOptions)
-	if err != nil {
-		logger.Fatalf("get redisOptions failed, err: %v", err)
-	}
-	rdb := redis.NewClient(redisOptions)
-
-	_, err = rdb.Ping(context.Background()).Result()
-	if err != nil {
-		logger.Fatalf("initiate redis failed, err: %v", err)
-	}
-
-	v, err := configClient.GetViper("oauth.yaml")
-	if err != nil {
-		logger.Fatalf("get viper failed, err: %v", err)
-	}
-	clientId := "default"
-	clientSecret := v.GetString("Client.default.Secret")
 	return &ServiceContext{
 		Config:       c,
 		UserModel:    query.Use(db),

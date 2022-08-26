@@ -1,7 +1,6 @@
 package svc
 
 import (
-	"github.com/go-redis/redis/v8"
 	"github.com/zeromicro/go-zero/rest"
 	apollo "main/app/common/config"
 	"main/app/common/log"
@@ -25,23 +24,17 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	logger := log.GetSugaredLogger()
-	configClient, err := apollo.GetConfigClient()
+
+	rdb, err := apollo.GetRedisClient("user.yaml")
 	if err != nil {
-		logger.Errorf("get configClient failed, err: %v", err)
+		logger.Fatalf("initialize redis failed, err: %v", err)
 	}
 
-	redisOptions, err := configClient.NewRedisOptions("user.yaml")
-	logger.Debugf("redisOptions: \n%v", redisOptions)
-	if err != nil {
-		logger.Fatalf("get redisOptions failed, err: %v", err)
-	}
-	rdb := redis.NewClient(redisOptions)
-
-	cookieConfig, err := configClient.NewCookieConfig()
+	cookieConfig, err := apollo.NewCookieConfig()
 	if err != nil {
 		logger.Errorf("get cookieConfig failed, err: %v", err)
 	}
-	domain, err := configClient.GetDomain()
+	domain, err := apollo.GetDomain()
 	if err != nil {
 		logger.Errorf("get domain failed, err: %v", err)
 	}

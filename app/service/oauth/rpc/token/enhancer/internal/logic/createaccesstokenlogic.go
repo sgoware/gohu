@@ -58,6 +58,7 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 		// 访问令牌失效的情况,可以移除,也可以在后面创建新令牌的时候直接覆盖令牌
 		// TODO:
 	}
+
 	accessToken, err := l.svcCtx.Enhancer.GenerateToken(oauth2Details, model.AccessToken)
 	if err != nil {
 		logger.Errorf("generate access_token failed, err: %v", err)

@@ -1,12 +1,50 @@
 package config
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-// GetMysqlDsn 返回 mysql DSN
-func (c *Agollo) GetMysqlDsn(namespace string) (dsn string, err error) {
+func GetMysqlDB(namespace string) (db *gorm.DB, err error) {
+	if agolloClient == nil {
+		return nil, errors.New(emptyConfigClientErr)
+	}
+	dsn, err := agolloClient.getMysqlDsn(namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	db, err = gorm.Open(mysql.Open(dsn))
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
+func GetRedisClient(namespace string) (rdb *redis.Client, err error) {
+	if agolloClient == nil {
+		return nil, errors.New(emptyConfigClientErr)
+	}
+	redisOptions, err := agolloClient.newRedisOptions(namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	rdb = redis.NewClient(redisOptions)
+	_, err = rdb.Ping(context.Background()).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return rdb, nil
+}
+
+// getMysqlDsn 返回 mysql DSN
+func (c *Agollo) getMysqlDsn(namespace string) (dsn string, err error) {
 	v, err := c.GetViper(namespace)
 	if err != nil {
 		return "", err
@@ -31,8 +69,8 @@ func (c *Agollo) GetMysqlDsn(namespace string) (dsn string, err error) {
 	return dsn, nil
 }
 
-// NewRedisOptions 返回 *redisOptions
-func (c *Agollo) NewRedisOptions(namespace string) (*redis.Options, error) {
+// newRedisOptions 返回 *redisOptions
+func (c *Agollo) newRedisOptions(namespace string) (*redis.Options, error) {
 	v, err := c.GetViper(namespace)
 	if err != nil {
 		return nil, err

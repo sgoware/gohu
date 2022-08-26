@@ -1,0 +1,115 @@
+syntax = "proto3";
+package crud;
+option go_package = "./pb";
+
+message PublishQuestionReq{
+    int64 author_id=1;
+    string title=2;
+    string content=3;
+    string topic=4;
+    string tag=5;
+}
+
+message PublishQuestionRes{
+    int32 code=1;
+    string mag=2;
+    bool ok=3;
+}
+
+
+message UpdateQuestionReq{
+    int64 question_id=1;
+    string title=2;
+    string content=3;
+    string topic=4;
+    string tag=5;
+}
+
+message UpdateQuestionRes{
+    int32 code=1;
+    string mag=2;
+    bool ok=3;
+}
+
+
+message HideQuestionReq{
+    int64 question_id=1;
+}
+
+message HideQuestionRes{
+    int32 code=1;
+    string mag=2;
+    bool ok=3;
+}
+
+
+message DeleteQuestionReq{
+    int64 question_id=1;
+}
+
+message DeleteQuestionRes{
+    int32 code=1;
+    string mag=2;
+    bool ok=3;
+}
+
+
+
+message PublishAnswerReq{
+    int64 author_id=1;
+    string content=2;
+}
+
+message PublishAnswerRes{
+    int32 code=1;
+    string mag=2;
+    bool ok=3;
+}
+
+
+message UpdateAnswerReq{
+    int64 answer_id=1;
+    string content=2;
+}
+
+message UpdateAnswerRes{
+    int32 code=1;
+    string mag=2;
+    bool ok=3;
+}
+
+
+message HideAnswerReq{
+    int64 answer_id=1;
+}
+
+message HideAnswerRes{
+    int32 code=1;
+    string mag=2;
+    bool ok=3;
+}
+
+
+message DeleteAnswerReq{
+    int64 answer_id=1;
+}
+
+message DeleteAnswerRes{
+    int32 code=1;
+    string mag=2;
+    bool ok=3;
+}
+
+
+
+service Crud{
+    rpc PublishQuestion(PublishQuestionReq) returns(PublishQuestionRes);
+    rpc UpdateQuestion(UpdateQuestionReq) returns(UpdateQuestionRes);
+    rpc HideQuestion(HideQuestionReq) returns(HideQuestionRes);
+    rpc DeleteQuestion(DeleteQuestionReq) returns(DeleteQuestionRes);
+
+    rpc PublishAnswer(PublishAnswerReq) returns(PublishAnswerRes);
+    rpc UpdateAnswer(UpdateAnswerReq) returns(UpdateAnswerRes);
+    rpc HideAnswer(HideAnswerReq) returns(HideAnswerRes);
+    rpc DeleteAnswer(DeleteAnswerReq) returns(DeleteAnswerRes);
+}
