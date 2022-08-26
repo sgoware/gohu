@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"github.com/spf13/cast"
 	apollo "main/app/common/config"
 	"main/app/service/user/dao/query"
 	"strings"
@@ -94,6 +95,13 @@ func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 		return nil, ErrInvalidAuthorizationRequest
 	}
 
+	userModel := tokenGranter.UserModel.User
+	userDetail, err := userModel.WithContext(context.Background()).
+		Where(userModel.ID.Eq(cast.ToInt64(userId))).First()
+	if err != nil {
+		return nil, ErrUserDetailNotFound
+	}
+
 	// 根据用户信息和客户端信息生成访问令牌
 	return tokenGranter.TokenService.CreateAccessToken(ctx, &OAuth2Details{
 		Client: &ClientDetail{
@@ -103,7 +111,18 @@ func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 			RegisteredRedirectUri:       tokenGranter.ClientDetails[clientId].RegisteredRedirectUri,
 			AuthorizedGrantTypes:        tokenGranter.ClientDetails[clientId].AuthorizedGrantTypes,
 		},
-		User: &UserDetail{UserId: userId},
+
+		User: &UserDetail{
+			UserId:      userDetail.ID,
+			Username:    userDetail.Username,
+			NickName:    userDetail.Nickname,
+			LastIp:      userDetail.LastIP,
+			Vip:         userDetail.Vip,
+			Status:      userDetail.Status,
+			UpdateTime:  userDetail.UpdateTime,
+			CreateTime:  userDetail.CreateTime,
+			Authorities: nil, // TODO: 带加入权限字段
+		},
 	})
 
 }

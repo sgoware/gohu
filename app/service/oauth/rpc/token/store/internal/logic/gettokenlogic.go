@@ -7,6 +7,7 @@ import (
 	"main/app/service/oauth/model"
 	"main/app/service/oauth/rpc/token/store/internal/svc"
 	"main/app/service/oauth/rpc/token/store/pb"
+	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -29,7 +30,7 @@ func NewGetTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetToken
 func (l *GetTokenLogic) GetToken(in *pb.GetTokenReq) (*pb.GetTokenRes, error) {
 	logger := log.GetSugaredLogger()
 
-	if in.UserId == "" {
+	if in.UserId == 0 {
 		logger.Errorf("get token failed, err: %v", model.ErrInvalidTokenRequest)
 		return &pb.GetTokenRes{
 			Ok:  false,
@@ -37,7 +38,7 @@ func (l *GetTokenLogic) GetToken(in *pb.GetTokenReq) (*pb.GetTokenRes, error) {
 		}, nil
 	}
 
-	val, err := l.svcCtx.Rdb.Get(l.ctx, model.JwtToken+"_"+in.UserId).Result()
+	val, err := l.svcCtx.Rdb.Get(l.ctx, model.JwtToken+"_"+strconv.FormatInt(in.UserId, 10)).Result()
 	if err == nil {
 		res := &pb.GetTokenRes{
 			Ok:   true,

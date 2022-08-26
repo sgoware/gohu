@@ -10,7 +10,7 @@ message OAuth2Token{
 }
 
 message StoreTokenReq{
-    string user_id=1;
+    int64 user_id=1;
     OAuth2Token access_token=2;
 }
 
@@ -32,7 +32,7 @@ message CheckTokenRes{
 
 
 message GetTokenReq{
-    string user_id=1;
+    int64 user_id=1;
 }
 
 message GetTokenRes{

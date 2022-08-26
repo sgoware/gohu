@@ -9,4 +9,5 @@ var (
 	ErrInvalidTokenRequest               = errors.New("invalid token")
 	ErrExpiredToken                      = errors.New("token is expired")
 	ErrInvalidAuthorizationRequest       = errors.New("invalid authorization")
+	ErrUserDetailNotFound                = errors.New("user details not found")
 )

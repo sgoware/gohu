@@ -10,7 +10,7 @@ message ClientDetails{
     repeated string authorized_grant_types=5;
 }
 message UserDetails{
-    string user_id=1;
+    int64 user_id=1;
     string user_name=2;
     string nickname=3;
     string last_ip=4;
