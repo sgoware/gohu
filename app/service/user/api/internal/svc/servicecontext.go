@@ -19,7 +19,6 @@ type ServiceContext struct {
 	CrudRpcClient crud.Crud
 	VipRpcClient  vip.Vip
 	Cookie        *apollo.CookieConfig
-	Rdb           *redis.Client
 
 	AuthMiddleware rest.Middleware
 }

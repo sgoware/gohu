@@ -54,7 +54,9 @@ type ReadTokenReq struct {
 type UserDetails struct {
 	UserId      string   `json:"user_id"`
 	Username    string   `json:"username"`
+	Nickname    string   `json:"nickname"`
 	LastIp      string   `json:"last_ip"`
+	Vip         string   `json:"vip"`
 	Status      int      `json:"status"`
 	UpdateTime  string   `json:"update_time"`
 	CreateTime  string   `json:"create_time"`

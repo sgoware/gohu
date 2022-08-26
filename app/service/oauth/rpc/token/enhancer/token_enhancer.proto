@@ -12,11 +12,13 @@ message ClientDetails{
 message UserDetails{
     string user_id=1;
     string user_name=2;
-    string last_ip=3;
-    string status=4;
-    string update_time=5;
-    string create_time=6;
-    repeated string authorities=7;
+    string nickname=3;
+    string last_ip=4;
+    int32 vip=5;
+    string status=6;
+    string update_time=7;
+    string create_time=8;
+    repeated string authorities=9;
 }
 message OAuth2Details{
     ClientDetails client=1;

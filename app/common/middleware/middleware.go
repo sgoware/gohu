@@ -8,6 +8,7 @@ import (
 	"github.com/thedevsaddam/gojsonq/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 	"main/app/common/config"
+	"main/app/common/log"
 	"main/app/common/model/response"
 	"main/app/service/oauth/model"
 	"main/app/utils/cookie"
@@ -21,12 +22,15 @@ type AuthMiddleware struct {
 	Rdb *redis.Client
 }
 
+// NewAuthMiddleware TODO: 考虑将中间件换成 Oauth2 Proxy
 func NewAuthMiddleware(domain string, cookieConfig *config.CookieConfig, rdb *redis.Client) *AuthMiddleware {
 	return &AuthMiddleware{Domain: domain, CookieConfig: cookieConfig, Rdb: rdb}
 }
 
 func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		logger := log.GetSugaredLogger()
+
 		// 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URI
 		// 这里假设Token放在Header的Authorization中，并使用Bearer开头
 		var accessToken string
@@ -99,17 +103,10 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 		j := gojsonq.New().FromString(userDetailsRes.String())
-		// TODO: 待添加信息
-		userDetails := &model.UserDetail{
-			UserId:      cast.ToString(j.Find("data.user_details.user_id")),
-			Username:    "",
-			LastIp:      "",
-			Status:      0,
-			UpdateTime:  "",
-			CreateTime:  "",
-			Authorities: nil,
-		}
-		r = r.WithContext(context.WithValue(r.Context(), "user_id", userDetails.UserId))
+		userDetailsJsonContent := j.Find("data.user_details")
+		logger.Debugf("get user_details from oauth2_token: %v", userDetailsJsonContent)
+
+		r = r.WithContext(context.WithValue(r.Context(), "user_details", userDetailsJsonContent))
 		next(w, r)
 	}
 }
