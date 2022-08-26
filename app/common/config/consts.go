@@ -1,7 +1,9 @@
 package config
 
-const (
-	emptyConfigClientErr = "configClient is null(try to initialize a new one)"
-	getViperErr          = "get viper failed"
-	viperEmptyKeyErr     = "get viper key failed"
+import "errors"
+
+var (
+	errEmptyConfigClient = errors.New("configClient is null(try to initialize a new one)")
+	errGetViper          = errors.New("get viper failed")
+	errViperEmptyKey     = errors.New("get viper key failed")
 )

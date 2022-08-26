@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"net/http"
 )
 
@@ -12,11 +11,11 @@ type CookieConfig struct {
 
 func NewCookieConfig() (*CookieConfig, error) {
 	if agolloClient == nil {
-		return nil, errors.New(emptyConfigClientErr)
+		return nil, errEmptyConfigClient
 	}
 	v, err := agolloClient.GetViper("oauth.yaml")
 	if err != nil {
-		return nil, errors.New(getViperErr)
+		return nil, errGetViper
 	}
 	return &CookieConfig{
 		Secret: v.GetString("Cookie.Secret"),

@@ -1,19 +1,17 @@
 package config
 
-import "errors"
-
 func GetClientSecret(clientId string) (clientSecret string, err error) {
 	if agolloClient == nil {
-		return "", errors.New(emptyConfigClientErr)
+		return "", errEmptyConfigClient
 	}
 	v, err := agolloClient.GetViper("oauth.yaml")
 	if err != nil {
-		return "", errors.New(getViperErr)
+		return "", errGetViper
 	}
 
 	clientSecret = v.GetString("Client." + clientId + ".Secret")
 	if clientSecret == "" {
-		return "", errors.New(viperEmptyKeyErr)
+		return "", errViperEmptyKey
 	}
 	return clientSecret, nil
 }

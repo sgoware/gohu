@@ -2,7 +2,6 @@ package config
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
@@ -11,7 +10,7 @@ import (
 
 func GetMysqlDB(namespace string) (db *gorm.DB, err error) {
 	if agolloClient == nil {
-		return nil, errors.New(emptyConfigClientErr)
+		return nil, errEmptyConfigClient
 	}
 	dsn, err := agolloClient.getMysqlDsn(namespace)
 	if err != nil {
@@ -27,7 +26,7 @@ func GetMysqlDB(namespace string) (db *gorm.DB, err error) {
 
 func GetRedisClient(namespace string) (rdb *redis.Client, err error) {
 	if agolloClient == nil {
-		return nil, errors.New(emptyConfigClientErr)
+		return nil, errEmptyConfigClient
 	}
 	redisOptions, err := agolloClient.newRedisOptions(namespace)
 	if err != nil {
