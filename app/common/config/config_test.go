@@ -9,27 +9,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-func TestNewConfig(t *testing.T) {
-	tests := []struct {
-		name    string
-		wantErr bool
-	}{
-		{
-			name:    "test1",
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := NewConfigClient()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NewConfigClient() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-		})
-	}
-}
-
 func TestAgollo_GetMysqlDsn(t *testing.T) {
 	type args struct {
 		namespace string
@@ -83,20 +62,19 @@ func TestAgollo_NewRedisOptions(t *testing.T) {
 func TestNewConfigClient(t *testing.T) {
 	tests := []struct {
 		name    string
-		wantC   *Agollo
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "test",
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotC, err := NewConfigClient()
+			_, err := NewConfigClient()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewConfigClient() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-			if !reflect.DeepEqual(gotC, tt.wantC) {
-				t.Errorf("NewConfigClient() = %v, want %v", gotC, tt.wantC)
 			}
 		})
 	}
