@@ -29,7 +29,19 @@ message LoginRes{
     }
 }
 
+message ChangeNicknameReq{
+    int64 id=1;
+    string nickname=2;
+}
+
+message ChangeNicknameRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
 service Crud{
     rpc Login(LoginReq) returns(LoginRes);
     rpc Register(RegisterReq) returns(RegisterRes);
+    rpc ChangeNickName(ChangeNicknameReq) returns(ChangeNicknameRes);
 }

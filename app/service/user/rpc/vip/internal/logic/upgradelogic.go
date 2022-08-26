@@ -27,7 +27,6 @@ func NewUpgradeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpgradeLo
 }
 
 func (l *UpgradeLogic) Upgrade(in *pb.UpgradeReq) (res *pb.UpgradeRes, err error) {
-	// todo: add your logic here and delete this line
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 

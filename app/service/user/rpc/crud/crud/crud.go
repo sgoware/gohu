@@ -13,15 +13,18 @@ import (
 )
 
 type (
-	LoginReq      = pb.LoginReq
-	LoginRes      = pb.LoginRes
-	LoginRes_Data = pb.LoginRes_Data
-	RegisterReq   = pb.RegisterReq
-	RegisterRes   = pb.RegisterRes
+	ChangeNicknameReq = pb.ChangeNicknameReq
+	ChangeNicknameRes = pb.ChangeNicknameRes
+	LoginReq          = pb.LoginReq
+	LoginRes          = pb.LoginRes
+	LoginRes_Data     = pb.LoginRes_Data
+	RegisterReq       = pb.RegisterReq
+	RegisterRes       = pb.RegisterRes
 
 	Crud interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error)
 		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
+		ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error)
 	}
 
 	defaultCrud struct {
@@ -43,4 +46,9 @@ func (m *defaultCrud) Login(ctx context.Context, in *LoginReq, opts ...grpc.Call
 func (m *defaultCrud) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error) {
 	client := pb.NewCrudClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
+}
+
+func (m *defaultCrud) ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error) {
+	client := pb.NewCrudClient(m.cli.Conn())
+	return client.ChangeNickName(ctx, in, opts...)
 }

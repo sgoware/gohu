@@ -31,3 +31,8 @@ func (s *CrudServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.Regi
 	l := logic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
 }
+
+func (s *CrudServer) ChangeNickName(ctx context.Context, in *pb.ChangeNicknameReq) (*pb.ChangeNicknameRes, error) {
+	l := logic.NewChangeNickNameLogic(ctx, s.svcCtx)
+	return l.ChangeNickName(in)
+}

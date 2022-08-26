@@ -31,6 +31,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
+					Path:    "/api/user/nickname",
+					Handler: ChangeNicknameHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/api/user/vip/upgrade",
 					Handler: VipUpgradeHandler(serverCtx),
 				},

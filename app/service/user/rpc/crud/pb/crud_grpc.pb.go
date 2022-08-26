@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CrudClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error)
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
+	ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error)
 }
 
 type crudClient struct {
@@ -52,12 +53,22 @@ func (c *crudClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc
 	return out, nil
 }
 
+func (c *crudClient) ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error) {
+	out := new(ChangeNicknameRes)
+	err := c.cc.Invoke(ctx, "/crud.Crud/ChangeNickName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CrudServer is the server API for Crud service.
 // All implementations must embed UnimplementedCrudServer
 // for forward compatibility
 type CrudServer interface {
 	Login(context.Context, *LoginReq) (*LoginRes, error)
 	Register(context.Context, *RegisterReq) (*RegisterRes, error)
+	ChangeNickName(context.Context, *ChangeNicknameReq) (*ChangeNicknameRes, error)
 	mustEmbedUnimplementedCrudServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedCrudServer) Login(context.Context, *LoginReq) (*LoginRes, err
 }
 func (UnimplementedCrudServer) Register(context.Context, *RegisterReq) (*RegisterRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedCrudServer) ChangeNickName(context.Context, *ChangeNicknameReq) (*ChangeNicknameRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeNickName not implemented")
 }
 func (UnimplementedCrudServer) mustEmbedUnimplementedCrudServer() {}
 
@@ -120,6 +134,24 @@ func _Crud_Register_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Crud_ChangeNickName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeNicknameReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CrudServer).ChangeNickName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crud.Crud/ChangeNickName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CrudServer).ChangeNickName(ctx, req.(*ChangeNicknameReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Crud_ServiceDesc is the grpc.ServiceDesc for Crud service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var Crud_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Register",
 			Handler:    _Crud_Register_Handler,
+		},
+		{
+			MethodName: "ChangeNickName",
+			Handler:    _Crud_ChangeNickName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

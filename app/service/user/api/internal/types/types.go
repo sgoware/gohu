@@ -27,6 +27,16 @@ type LoginRes struct {
 	Data LoginResData `json:"data"`
 }
 
+type ChangeNicknameReq struct {
+	Nickname string `form:"nickname"`
+}
+
+type ChangeNicknameRes struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Ok   bool   `json:"ok"`
+}
+
 type VipUpgradeReq struct {
 }
 
