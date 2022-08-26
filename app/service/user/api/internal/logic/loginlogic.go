@@ -31,6 +31,7 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 	res, err := l.svcCtx.CrudRpcClient.Login(l.ctx, &crud.LoginReq{
 		Username: requ.Username,
 		Password: requ.Password,
+		LastIp:   cast.ToString(l.ctx.Value("lastIp")),
 	})
 	if err != nil {
 		logx.Errorf("login failed, err: %v", err)

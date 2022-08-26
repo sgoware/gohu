@@ -82,6 +82,17 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		return res, nil
 	}
 
+	// 更新最近登录 ip
+	_, err = userModel.WithContext(l.ctx).Where(userModel.Username.Eq(in.Username)).Update(userModel.LastIP, in.LastIp)
+	if err != nil {
+		logger.Errorf("database err, err: %v", err)
+		return &crud.LoginRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "login failed, err: internal err",
+			Data: nil,
+		}, err
+	}
+
 	// 生成 oauth 服务器的认证头
 	encodeAuthString := base64.StdEncoding.EncodeToString([]byte(l.svcCtx.ClientId + ":" + l.svcCtx.ClientSecret + ":" + cast.ToString(userInfo.ID)))
 	logger.Debugf("encodeAuthString: %v", encodeAuthString)

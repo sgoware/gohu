@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"main/app/common/log"
 	"main/app/utils/cookie"
 	"net/http"
@@ -23,7 +24,8 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 		logger.Debugf("recv args: %v", req)
 
-		l := logic.NewLoginLogic(r.Context(), svcCtx)
+		ctx := context.WithValue(r.Context(), "lastIp", r.RemoteAddr)
+		l := logic.NewLoginLogic(ctx, svcCtx)
 
 		res, err := l.Login(&req)
 		if err != nil {
