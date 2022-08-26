@@ -29,7 +29,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err error) {
 	res, err := l.svcCtx.CrudRpcClient.Login(l.ctx, &crud.LoginReq{
-		Uid:      requ.Uid,
+		Username: requ.Username,
 		Password: requ.Password,
 	})
 	if err != nil {
@@ -41,6 +41,8 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 			Msg:  res.Msg,
 		}, nil
 	}
+
+	// 向 oauth 服务器请求签发 token
 	resBody, err := req.NewRequest().SetHeader("Authorization", res.Data.AuthToken).
 		Post("https://" + l.svcCtx.Domain + "/api/oauth/token/get")
 	if err != nil {
@@ -57,12 +59,14 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 			Msg:  "login failed, err: internal server err",
 		}, nil
 	}
+
 	accessTokenValue := gojsonq.New().
 		FromString(resBody.String()).
 		Find("data.access_token.token_value")
 	refreshTokenValue := gojsonq.New().
 		FromString(resBody.String()).
 		Find("data.access_token.refresh_token.token_value")
+
 	return &types.LoginRes{
 		Code: int(res.Code),
 		Msg:  "login successfully",

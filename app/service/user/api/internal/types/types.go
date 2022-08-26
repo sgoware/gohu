@@ -2,8 +2,7 @@
 package types
 
 type RegisterReq struct {
-	Uid      string `form:"uid"`
-	Nickname string `form:"nickname"`
+	Username string `form:"username"`
 	Password string `form:"password"`
 }
 
@@ -13,7 +12,7 @@ type RegisterRes struct {
 }
 
 type LoginReq struct {
-	Uid      string `form:"uid"`
+	Username string `form:"username"`
 	Password string `form:"password"`
 }
 

@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"encoding/base64"
+	"encoding/hex"
+	"golang.org/x/crypto/sha3"
 	"main/app/common/log"
 	"main/app/service/user/rpc/crud/crud"
 	"main/app/service/user/rpc/crud/internal/svc"
@@ -10,7 +12,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
@@ -34,7 +35,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 	// 判断传入参数是否为空
-	if len(strings.TrimSpace(in.Uid)) == 0 || len(strings.TrimSpace(in.Password)) == 0 {
+	if len(strings.TrimSpace(in.Username)) == 0 || len(strings.TrimSpace(in.Password)) == 0 {
 		res = &crud.LoginRes{
 			Code: http.StatusOK,
 			Msg:  "login failed, err: param not fit",
@@ -43,9 +44,9 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		return res, nil
 	}
 
-	// 查找用户
+	// 在数据库中查找用户
 	userModel := l.svcCtx.UserModel.User
-	userInfo, err := userModel.WithContext(l.ctx).Where(userModel.UID.Eq(cast.ToInt64(in.Uid))).First()
+	userInfo, err := userModel.WithContext(l.ctx).Where(userModel.Username.Eq(in.Username)).First()
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
@@ -66,7 +67,11 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		}
 	}
 	logger.Debugf("userInfo: \n%v", userInfo)
-	if userInfo.Password != gmd5.MustEncryptString(in.Password) {
+
+	// 验证密码
+	d := sha3.Sum224([]byte(in.Password))
+	encryptedPassword := hex.EncodeToString(d[:])
+	if userInfo.Password != encryptedPassword {
 		res = &crud.LoginRes{
 			Code: http.StatusUnauthorized,
 			Msg:  "login failed, err: wrong password",
@@ -76,10 +81,13 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 
 		return res, nil
 	}
-	encodeAuthString := base64.StdEncoding.EncodeToString([]byte(l.svcCtx.ClientId + ":" + l.svcCtx.ClientSecret + ":" + cast.ToString(userInfo.UID)))
+
+	// 生成 oauth 服务器的认证头
+	encodeAuthString := base64.StdEncoding.EncodeToString([]byte(l.svcCtx.ClientId + ":" + l.svcCtx.ClientSecret + ":" + cast.ToString(userInfo.ID)))
 	logger.Debugf("encodeAuthString: %v", encodeAuthString)
 	basicAuthString := "Basic " + encodeAuthString
 	logger.Debugf("basicAuthString: %v", basicAuthString)
+
 	res = &crud.LoginRes{
 		Code: http.StatusOK,
 		Msg:  "get auth_token successfully",

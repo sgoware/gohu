@@ -25,8 +25,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRes, err error) {
 	res, err := l.svcCtx.CrudRpcClient.Register(l.ctx, &crud.RegisterReq{
-		Uid:      req.Uid,
-		Nickname: req.Nickname,
+		Username: req.Username,
 		Password: req.Password,
 	})
 	if err != nil {

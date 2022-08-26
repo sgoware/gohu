@@ -2,7 +2,8 @@ package logic
 
 import (
 	"context"
-	"github.com/spf13/cast"
+	"encoding/hex"
+	"golang.org/x/crypto/sha3"
 	"main/app/common/log"
 	"main/app/service/user/dao/model"
 	"main/app/service/user/rpc/crud/crud"
@@ -11,7 +12,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 )
@@ -34,7 +34,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	if len(strings.TrimSpace(in.Uid)) == 0 || len(strings.TrimSpace(in.Password)) == 0 {
+	if len(strings.TrimSpace(in.Username)) == 0 || len(strings.TrimSpace(in.Password)) == 0 {
 		res = &crud.RegisterRes{
 			Code: http.StatusOK,
 			Msg:  "create user failed, err: param err",
@@ -43,9 +43,10 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 		return res, nil
 	}
 	userModel := l.svcCtx.UserModel.User
-	_, err = userModel.WithContext(l.ctx).Where(userModel.UID.Eq(cast.ToInt64(in.Uid))).First()
+	_, err = userModel.WithContext(l.ctx).Where(userModel.Username.Eq(in.Username)).First()
 	switch err {
 	case nil:
+		// 用户已经存在的情况
 		{
 			res = &crud.RegisterRes{
 				Code: http.StatusForbidden,
@@ -55,11 +56,14 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 			return res, nil
 		}
 	case gorm.ErrRecordNotFound:
+		// 用户不存在的情况(可以创建用户)
 		{
+			// 密码使用sha3哈希然后存储
+			d := sha3.Sum224([]byte(in.Password))
+			encryptedPassword := hex.EncodeToString(d[:])
 			err := l.svcCtx.UserModel.User.WithContext(l.ctx).Create(&model.User{
-				UID:      cast.ToInt64(in.Uid),
-				Nickname: in.Nickname,
-				Password: gmd5.MustEncryptString(in.Password),
+				Username: in.Username,
+				Password: encryptedPassword,
 			})
 			if err != nil {
 				res = &crud.RegisterRes{
@@ -77,6 +81,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 				return res, nil
 			}
 		}
+		// 数据库查询失败的情况
 	default:
 		res = &crud.RegisterRes{
 			Code: http.StatusInternalServerError,

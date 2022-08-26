@@ -3,9 +3,8 @@ package crud;
 option go_package = "./pb";
 
 message RegisterReq{
-    string uid=1;
-    string nickname=2;
-    string password=3;
+    string username=1;
+    string password=2;
 }
 
 message RegisterRes{
@@ -16,7 +15,7 @@ message RegisterRes{
 
 
 message LoginReq{
-    string uid=1;
+    string username=1;
     string password=2;
 }
 
