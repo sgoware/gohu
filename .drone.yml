@@ -112,12 +112,14 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - ls
         - env
         - echo '----------build go----------'
-        - go build -o ./app/service/oauth/api/gohu-oauth-api -v ./app/service/oauth/api/oauth.go
-        - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
-        - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc -v ./app/service/oauth/rpc/token/store/token_store.go
-        - go build -o ./app/service/user/api/gohu-user-api -v ./app/service/user/api/user.go
-        - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc -v ./app/service/user/rpc/crud/crud.go
-        - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc -v ./app/service/user/rpc/vip/vip.go
+        - go build -v ./app/service/oauth/api/oauth.go -o ./app/service/oauth/api/gohu-oauth-api
+        - go build -v ./app/service/oauth/rpc/token/enhancer/token_enhancer.go -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc
+        - go build -v ./app/service/oauth/rpc/token/store/token_store.go -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc
+        - go build -v ./app/service/user/api/user.go -o ./app/service/user/api/gohu-user-api
+        - go build -v ./app/service/user/rpc/crud/crud.go -o ./app/service/user/rpc/crud/gohu-user-crud-rpc
+        - go build -v ./app/service/user/rpc/vip/vip.go -o ./app/service/user/rpc/vip/gohu-user-vip-rpc
+        - go build -v ./app/service/question/api/question.go -o ./app/service/question/api/gohu-question-api
+        - go build -v ./app/service/question/rpc/crud/crud.go -o ./app/service/question/rpc/crud/gohu-question-crud-rpc
         - echo '----------complete----------'
         - echo '----------export envs----------'
         - export APOLLO_APP_ID=$APOLLO_APP_ID
