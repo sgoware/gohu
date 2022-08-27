@@ -14,27 +14,28 @@ import (
 
 var domain string
 
-func GetIpLocFromApi(ip string) (loc string, err error) {
+func GetIpLocFromApi(ip string) (loc string) {
+	var err error
 	if domain == "" {
 		domain, err = apollo.GetDomain()
 		if err != nil {
-			return "", fmt.Errorf("get domain failed, %v", err)
+			return "未知"
 		}
 	}
 	apiAddr := "http://ip." + domain + "/api/parse?ip=" + ip
 	res, err := req.NewRequest().Get(apiAddr)
 	j := gojsonq.New().FromString(res.String())
 	if cast.ToBool(j.Find("ok")) == false {
-		return "", errors.New("query api failed")
+		return "未知"
 	}
 	j.Reset()
 	locStr := j.Find("location").(string)
 	output := strings.Split(locStr, "|")
 	if output[0] != "中国" {
-		return output[0], nil
+		return output[0]
 	}
 	strings.Trim(output[2], "省")
-	return output[2], nil
+	return output[2]
 }
 
 func GetIPLocFromLocal(rawIp string) (loc string, err error) {
