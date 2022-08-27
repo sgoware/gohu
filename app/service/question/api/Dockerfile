@@ -12,7 +12,7 @@ WORKDIR /server
 
 # 将代码复制到容器中
 #COPY etc /server/etc
-COPY ./gohu-user-api /server/gohu-user-api
+COPY ./gohu-question-api /server/gohu-question-api
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
