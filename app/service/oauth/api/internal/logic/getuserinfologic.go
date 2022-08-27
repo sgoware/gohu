@@ -29,7 +29,6 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (*types.GetUse
 	tokenService := token.GetTokenService()
 	userDetails, err := tokenService.GetUserDetails(l.ctx, req.AccessToken)
 	if err != nil {
-		logx.Errorf("get user details failed, err: %v", err)
 		return &types.GetUserInfoRes{
 			Code: http.StatusBadRequest,
 			Msg:  "get user details failed",
