@@ -36,7 +36,6 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 	if err != nil {
 		return nil, err
 	}
-	logger.Debugf("oauth2 details: %v", *oauth2Details)
 	existTokenRes, _ := l.svcCtx.TokenStoreRpcClient.GetToken(l.ctx, &tokenstore.GetTokenReq{
 		UserId: in.Oauth2Details.User.UserId,
 	})
