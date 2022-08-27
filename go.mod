@@ -10,10 +10,13 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/nsqio/go-nsq v1.1.0
+	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/reiver/go-telnet v0.0.0-20180421082511-9ff0b2ab096e
+	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.12.0
 	github.com/thedevsaddam/gojsonq/v2 v2.5.2
+	github.com/tidwall/gjson v1.14.3
 	github.com/zeromicro/go-zero v1.4.0
 	github.com/zeromicro/zero-contrib/zrpc/registry/consul v0.0.0-20220708020647-d13169872f75
 	go.uber.org/zap v1.21.0
@@ -69,7 +72,6 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20220827053931-279c6dd5aac7 // indirect
 	github.com/lucas-clemente/quic-go v0.28.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/marten-seemann/qpack v0.2.1 // indirect
@@ -86,7 +88,6 @@ require (
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/openzipkin/zipkin-go v0.4.0 // indirect
-	github.com/oschwald/geoip2-golang v1.8.0 // indirect
 	github.com/oschwald/maxminddb-golang v1.10.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.3 // indirect
@@ -98,12 +99,10 @@ require (
 	github.com/reiver/go-oi v1.0.0 // indirect
 	github.com/sagikazarmark/crypt v0.6.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/speps/go-hashids/v2 v2.0.1 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.0 // indirect
-	github.com/tidwall/gjson v1.14.3 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.4 // indirect
