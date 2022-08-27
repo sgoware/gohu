@@ -11,7 +11,7 @@ message ClientDetails{
 }
 message UserDetails{
     int64 user_id=1;
-    string user_name=2;
+    string username=2;
     string nickname=3;
     string last_ip=4;
     int32 vip=5;

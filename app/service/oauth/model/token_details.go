@@ -12,7 +12,7 @@ type UserDetail struct {
 	UserId int64 `json:"user_id,omitempty"` // 用户 id
 	//UserPassword string   //用户密码
 	Username    string   `json:"username,omitempty"`    // 用户名(唯一)
-	NickName    string   `json:"nick_name,omitempty"`   // 用户昵称
+	NickName    string   `json:"nickname,omitempty"`    // 用户昵称
 	LastIp      string   `json:"last_ip,omitempty"`     // 上次登录地址
 	Vip         int32    `json:"vip,omitempty"`         // vip 等级
 	Status      int32    `json:"status,omitempty"`      // 在线状态
