@@ -94,6 +94,34 @@ services:
       - APOLLO_SECRET=${APOLLO_SECRET}
     networks:
       - gohu_net
+  question-api:
+    build: app/service/question/api
+    container_name: gohu-question-api
+    restart: always
+    ports:
+      - "11130:11130"
+    environment:
+      - TZ=Asia/Shanghai
+      - APOLLO_APP_ID=${APOLLO_APP_ID}
+      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+      - APOLLO_IP=${APOLLO_IP}
+      - APOLLO_SECRET=${APOLLO_SECRET}
+    networks:
+      - gohu_net
+  question-crud-rpc:
+    build: app/service/question/rpc/crud
+    container_name: gohu-question-crud-rpc
+    restart: always
+    ports:
+      - "11131:11131"
+    environment:
+      - TZ=Asia/Shanghai
+      - APOLLO_APP_ID=${APOLLO_APP_ID}
+      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+      - APOLLO_IP=${APOLLO_IP}
+      - APOLLO_SECRET=${APOLLO_SECRET}
+    networks:
+      - gohu_net
 
 
 networks:
