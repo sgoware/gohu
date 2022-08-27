@@ -11,14 +11,14 @@ import (
 type UserDetail struct {
 	UserId int64 `json:"user_id,omitempty"` // 用户 id
 	//UserPassword string   //用户密码
-	Username    string    `json:"username,omitempty"`    // 用户名(唯一)
-	NickName    string    `json:"nick_name,omitempty"`   // 用户昵称
-	LastIp      string    `json:"last_ip,omitempty"`     // 上次登录地址
-	Vip         int32     `json:"vip,omitempty"`         // vip 等级
-	Status      int32     `json:"status,omitempty"`      // 在线状态
-	UpdateTime  time.Time `json:"update_time,omitempty"` // 用户信息更新时间
-	CreateTime  time.Time `json:"create_time,omitempty"` // 用户信息创建时间
-	Authorities []string  `json:"authorities,omitempty"` // 用户具备的权限
+	Username    string   `json:"username,omitempty"`    // 用户名(唯一)
+	NickName    string   `json:"nick_name,omitempty"`   // 用户昵称
+	LastIp      string   `json:"last_ip,omitempty"`     // 上次登录地址
+	Vip         int32    `json:"vip,omitempty"`         // vip 等级
+	Status      int32    `json:"status,omitempty"`      // 在线状态
+	UpdateTime  string   `json:"update_time,omitempty"` // 用户信息更新时间
+	CreateTime  string   `json:"create_time,omitempty"` // 用户信息创建时间
+	Authorities []string `json:"authorities,omitempty"` // 用户具备的权限
 }
 
 type ClientDetail struct {
