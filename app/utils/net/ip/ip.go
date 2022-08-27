@@ -2,8 +2,7 @@ package ip
 
 import (
 	"github.com/imroc/req/v3"
-	"github.com/spf13/cast"
-	"github.com/thedevsaddam/gojsonq/v2"
+	"github.com/tidwall/gjson"
 	apollo "main/app/common/config"
 	"strings"
 )
@@ -20,12 +19,11 @@ func GetIpLocFromApi(ip string) (loc string) {
 	}
 	apiAddr := "http://ip." + domain + "/api/parse?ip=" + ip
 	res, err := req.NewRequest().Get(apiAddr)
-	j := gojsonq.New().FromString(res.String())
-	if cast.ToBool(j.Find("ok")) == false {
+	j := gjson.Parse(res.String())
+	if j.Get("ok").Bool() == false {
 		return "未知"
 	}
-	j.Reset()
-	locStr := j.Find("location").(string)
+	locStr := j.Get("location").String()
 	output := strings.Split(locStr, "|")
 	if output[0] != "中国" {
 		return output[0]

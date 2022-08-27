@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/tidwall/gjson"
 	"main/app/service/user/api/internal/svc"
 	"main/app/service/user/api/internal/types"
 	"main/app/service/user/rpc/crud/crud"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/imroc/req/v3"
 	"github.com/spf13/cast"
-	"github.com/thedevsaddam/gojsonq/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -60,13 +60,9 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 			Msg:  "login failed, err: internal server err",
 		}, nil
 	}
-
-	accessTokenValue := gojsonq.New().
-		FromString(resBody.String()).
-		Find("data.access_token.token_value")
-	refreshTokenValue := gojsonq.New().
-		FromString(resBody.String()).
-		Find("data.access_token.refresh_token.token_value")
+	j := gjson.Parse(resBody.String())
+	accessTokenValue := j.Get("data.access_token.token_value").String()
+	refreshTokenValue := j.Get("data.access_token.refresh_token.token_value").String()
 
 	return &types.LoginRes{
 		Code: int(res.Code),

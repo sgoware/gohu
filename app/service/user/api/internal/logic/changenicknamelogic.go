@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/spf13/cast"
-	"github.com/thedevsaddam/gojsonq/v2"
+	"github.com/tidwall/gjson"
 	"main/app/service/user/rpc/crud/crud"
 
 	"main/app/service/user/api/internal/svc"
@@ -27,9 +27,9 @@ func NewChangeNicknameLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 }
 
 func (l *ChangeNicknameLogic) ChangeNickname(req *types.ChangeNicknameReq) (resp *types.ChangeNicknameRes, err error) {
-	j := gojsonq.New().FromInterface(l.ctx.Value("user_details"))
-	userId := cast.ToInt64(j.Find("user_id"))
-	res, _ := l.svcCtx.CrudRpcClient.ChangeNickName(l.ctx, &crud.ChangeNicknameReq{Id: cast.ToInt64(userId), Nickname: req.Nickname})
+	j := gjson.Parse(cast.ToString(l.ctx.Value("user_details")))
+	userId := j.Get("user_id").Int()
+	res, _ := l.svcCtx.CrudRpcClient.ChangeNickName(l.ctx, &crud.ChangeNicknameReq{Id: userId, Nickname: req.Nickname})
 
 	return &types.ChangeNicknameRes{
 		Code: int(res.Code),

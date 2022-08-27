@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/spf13/cast"
-	"github.com/thedevsaddam/gojsonq/v2"
+	"github.com/tidwall/gjson"
 	"main/app/service/user/rpc/vip/vip"
 
 	"main/app/service/user/api/internal/svc"
@@ -27,9 +27,9 @@ func NewVipResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VipReset
 }
 
 func (l *VipResetLogic) VipReset(req *types.VipResetReq) (*types.VipResetRes, error) {
-	j := gojsonq.New().FromInterface(l.ctx.Value("user_details"))
-	userId := cast.ToInt64(j.Find("user_id"))
-	res, _ := l.svcCtx.VipRpcClient.Reset(l.ctx, &vip.ResetReq{Id: cast.ToInt64(userId)})
+	j := gjson.Parse(cast.ToString(l.ctx.Value("user_details")))
+	userId := j.Get("user_id").Int()
+	res, _ := l.svcCtx.VipRpcClient.Reset(l.ctx, &vip.ResetReq{Id: userId})
 
 	return &types.VipResetRes{
 		Code: int(res.Code),

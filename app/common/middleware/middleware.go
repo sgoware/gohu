@@ -4,8 +4,7 @@ import (
 	"context"
 	"github.com/go-redis/redis/v8"
 	"github.com/imroc/req/v3"
-	"github.com/spf13/cast"
-	"github.com/thedevsaddam/gojsonq/v2"
+	"github.com/tidwall/gjson"
 	"github.com/zeromicro/go-zero/core/logx"
 	"main/app/common/config"
 	"main/app/common/log"
@@ -61,11 +60,12 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			logx.Errorf("%v", res)
 			return
 		}
-		ok = cast.ToBool(gojsonq.New().FromString(res.String()).Find("ok"))
+		j := gjson.Parse(res.String())
+		ok = j.Get("ok").Bool()
 		if !ok {
 			//不ok则认证失败，包括刷新令牌
 			//认证的时候若认证令牌过期，则刷新令牌
-			msg := cast.ToString(gojsonq.New().FromString(res.String()).Find("msg"))
+			msg := j.Get("msg").String()
 			// 认证令牌过期,用刷新令牌刷新
 			if msg == "accessToken is expired" {
 				ok = cookieWriter.Get("refresh-token", &refreshToken)
@@ -82,12 +82,9 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 				if res.StatusCode != http.StatusOK {
 					return
 				}
-				accessToken = cast.ToString(
-					gojsonq.New().FromString(res.String()).
-						Find("data.access_token.token_value"))
-				refreshToken = cast.ToString(
-					gojsonq.New().FromString(res.String()).
-						Find("data.access_token.refresh_token.token_value"))
+				j = gjson.Parse(res.String())
+				accessToken = j.Get("data.access_token.token_value").String()
+				refreshToken = j.Get("data.access_token.refresh_token.token_value").String()
 				cookieWriter.Set("x-token", accessToken)
 				cookieWriter.Set("refresh-token", refreshToken)
 			}
@@ -102,8 +99,8 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			logx.Errorf("%v", res)
 			return
 		}
-		j := gojsonq.New().FromString(userDetailsRes.String())
-		userDetailsJsonContent := j.Find("data.user_details")
+		j = gjson.Parse(userDetailsRes.String())
+		userDetailsJsonContent := j.Get("data.user_details").String()
 		logger.Debugf("get user_details from oauth2_token: %v", userDetailsJsonContent)
 
 		r = r.WithContext(context.WithValue(r.Context(), "user_details", userDetailsJsonContent))
