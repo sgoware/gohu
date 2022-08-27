@@ -33,7 +33,8 @@ func GetIpLocFromApi(ip string) (loc string, err error) {
 	if output[0] != "中国" {
 		return output[0], nil
 	}
-	return output[2] + output[3], nil
+	strings.Trim(output[2], "省")
+	return output[2], nil
 }
 
 func GetIPLocFromLocal(rawIp string) (loc string, err error) {

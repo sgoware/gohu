@@ -15,19 +15,19 @@ func TestGetIPLocFromApi(t *testing.T) {
 		{
 			name:    "国内直辖市",
 			args:    args{ip: "125.86.164.146"},
-			wantLoc: "重庆重庆市",
+			wantLoc: "重庆",
 			wantErr: false,
 		},
 		{
 			name:    "国内地级市1",
 			args:    args{ip: "222.209.14.199"},
-			wantLoc: "四川省成都市",
+			wantLoc: "四川",
 			wantErr: false,
 		},
 		{
 			name:    "国内地级市2",
 			args:    args{ip: "218.72.111.105"},
-			wantLoc: "浙江省杭州市",
+			wantLoc: "浙江",
 			wantErr: false,
 		},
 
