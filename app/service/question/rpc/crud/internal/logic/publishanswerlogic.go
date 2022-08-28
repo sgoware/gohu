@@ -49,6 +49,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 			Msg:  "answer already exist",
 		}
 		logger.Debugf("send message: %v", res.String())
+		return res, nil
 
 	case gorm.ErrRecordNotFound:
 
