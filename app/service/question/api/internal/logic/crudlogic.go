@@ -31,6 +31,7 @@ func NewCrudLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CrudLogic {
 
 func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 	logger := log.GetSugaredLogger()
+	res = &types.CrudRes{}
 
 	if req.Object == "" || req.Action == "" {
 		res = &types.CrudRes{
