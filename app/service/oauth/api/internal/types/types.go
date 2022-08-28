@@ -57,7 +57,7 @@ type UserDetails struct {
 	Nickname    string   `json:"nickname"`
 	LastIp      string   `json:"last_ip"`
 	Vip         int32    `json:"vip"`
-	Status      int32    `json:"status"`
+	State       int32    `json:"state"`
 	UpdateTime  string   `json:"update_time"`
 	CreateTime  string   `json:"create_time"`
 	Authorities []string `json:"authorities"`
