@@ -41,6 +41,8 @@ func (l *DeleteQuestionLogic) DeleteQuestion(in *pb.DeleteQuestionReq) (res *pb.
 			Msg:  "question not found",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	case nil:
 
 	default:
@@ -50,6 +52,8 @@ func (l *DeleteQuestionLogic) DeleteQuestion(in *pb.DeleteQuestionReq) (res *pb.
 			Msg:  "internal err",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
 	res = &pb.DeleteQuestionRes{

@@ -41,6 +41,8 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 			Msg:  "answer not found",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	case nil:
 
 	default:
@@ -50,6 +52,8 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 			Msg:  "internal err",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
 	res = &pb.DeleteAnswerRes{
