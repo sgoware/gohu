@@ -51,9 +51,18 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 	}
 
 	questionSubject, err := questionSubjectModel.WithContext(l.ctx).Select(questionSubjectModel.ID, questionSubjectModel.UserID).
+		Where(questionSubjectModel.UserID.Eq(j.Get("user_id").Int())).
 		Order(questionSubjectModel.ID.Desc()).Last()
+
 	if err != nil {
 		logger.Errorf("publish question failed, err: mysql err, %v", err)
+		res = &pb.PublishQuestionRes{
+			Code: http.StatusInternalServerError,
+			Mag:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
 	err = questionContentModel.WithContext(l.ctx).Create(&model.QuestionContent{
