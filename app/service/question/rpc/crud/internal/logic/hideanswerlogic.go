@@ -32,9 +32,9 @@ func (l *HideAnswerLogic) HideAnswer(in *pb.HideAnswerReq) (res *pb.HideAnswerRe
 
 	answerIndexModel := l.svcCtx.QuestionModel.AnswerIndex
 
-	_, err = answerIndexModel.WithContext(l.ctx).Select(answerIndexModel.State).
-		Where(answerIndexModel.ID.Eq(in.AnswerId)).
-		Update(answerIndexModel.State, 1)
+	answerIndex, err := answerIndexModel.WithContext(l.ctx).
+		Select(answerIndexModel.ID, answerIndexModel.UserID, answerIndexModel.State).
+		Where(answerIndexModel.ID.Eq(in.AnswerId)).First()
 	switch err {
 	case gorm.ErrRecordNotFound:
 		res = &pb.HideAnswerRes{
@@ -42,12 +42,11 @@ func (l *HideAnswerLogic) HideAnswer(in *pb.HideAnswerReq) (res *pb.HideAnswerRe
 			Mag:  "answer not found",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+
 	case nil:
-		res = &pb.HideAnswerRes{
-			Code: http.StatusOK,
-			Mag:  "hide answer successfully",
-			Ok:   true,
-		}
+
 	default:
 		logger.Errorf("update question failed, err: %v", err)
 		res = &pb.HideAnswerRes{
@@ -55,8 +54,36 @@ func (l *HideAnswerLogic) HideAnswer(in *pb.HideAnswerReq) (res *pb.HideAnswerRe
 			Mag:  "internal err",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
+	var state int32
+	if answerIndex.State == 0 {
+		state = 1
+	} else {
+		state = 0
+	}
+
+	_, err = answerIndexModel.WithContext(l.ctx).Select(answerIndexModel.State).
+		Where(answerIndexModel.ID.Eq(in.AnswerId)).
+		Update(answerIndexModel.State, state)
+	if err != nil {
+		logger.Errorf("update question failed, err: %v", err)
+		res = &pb.HideAnswerRes{
+			Code: http.StatusInternalServerError,
+			Mag:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	res = &pb.HideAnswerRes{
+		Code: http.StatusOK,
+		Mag:  "hide answer successfully",
+		Ok:   true,
+	}
 	logger.Debugf("send message: %v", res.String())
 	return res, nil
 }

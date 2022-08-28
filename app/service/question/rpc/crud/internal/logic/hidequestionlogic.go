@@ -4,10 +4,9 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"main/app/common/log"
-	"net/http"
-
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,9 +31,9 @@ func (l *HideQuestionLogic) HideQuestion(in *pb.HideQuestionReq) (res *pb.HideQu
 
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 
-	_, err = questionSubjectModel.WithContext(l.ctx).Select(questionSubjectModel.State).
-		Where(questionSubjectModel.ID.Eq(in.QuestionId)).
-		Update(questionSubjectModel.State, 1)
+	questionSubject, err := questionSubjectModel.WithContext(l.ctx).
+		Select(questionSubjectModel.ID, questionSubjectModel.UserID, questionSubjectModel.State).
+		Where(questionSubjectModel.ID.Eq(in.QuestionId)).First()
 	switch err {
 	case gorm.ErrRecordNotFound:
 		res = &pb.HideQuestionRes{
@@ -42,12 +41,11 @@ func (l *HideQuestionLogic) HideQuestion(in *pb.HideQuestionReq) (res *pb.HideQu
 			Mag:  "question not found",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+
 	case nil:
-		res = &pb.HideQuestionRes{
-			Code: http.StatusOK,
-			Mag:  "hide question successfully",
-			Ok:   true,
-		}
+
 	default:
 		logger.Errorf("update question failed, err: %v", err)
 		res = &pb.HideQuestionRes{
@@ -55,8 +53,35 @@ func (l *HideQuestionLogic) HideQuestion(in *pb.HideQuestionReq) (res *pb.HideQu
 			Mag:  "internal err",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
 	}
 
+	var state int32
+	if questionSubject.State == 0 {
+		state = 1
+	} else {
+		state = 0
+	}
+
+	_, err = questionSubjectModel.WithContext(l.ctx).Select(questionSubjectModel.State).
+		Where(questionSubjectModel.ID.Eq(in.QuestionId)).
+		Update(questionSubjectModel.State, state)
+	if err != nil {
+		logger.Errorf("update question failed, err: %v", err)
+		res = &pb.HideQuestionRes{
+			Code: http.StatusInternalServerError,
+			Mag:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	res = &pb.HideQuestionRes{
+		Code: http.StatusOK,
+		Mag:  "hide question successfully",
+		Ok:   true,
+	}
 	logger.Debugf("send message: %v", res.String())
 	return res, nil
 }
