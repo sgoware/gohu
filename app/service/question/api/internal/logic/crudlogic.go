@@ -6,7 +6,6 @@ import (
 	"github.com/spf13/cast"
 	"main/app/common/log"
 	"main/app/service/question/rpc/crud/crud"
-	"main/app/utils/mapping"
 	"net/http"
 
 	"main/app/service/question/api/internal/svc"
@@ -67,17 +66,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			err = mapping.Struct2Struct(rpcRes, res)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
 
+			res = &types.CrudRes{
+				Code: int(rpcRes.Code),
+				Msg:  rpcRes.Mag,
+				Ok:   rpcRes.Ok,
+			}
+			return res, err
 			// TODO: 使用队列发布消息
 			// l.svcCtx.
 
@@ -105,16 +100,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			err = mapping.Struct2Struct(rpcRes, res)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
+
+			res = &types.CrudRes{
+				Code: int(rpcRes.Code),
+				Msg:  rpcRes.Mag,
+				Ok:   rpcRes.Ok,
 			}
+			return res, err
 
 		case "hide":
 			rpcReq := &crud.HideQuestionReq{}
@@ -138,16 +130,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			err = mapping.Struct2Struct(rpcRes, res)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
+
+			res = &types.CrudRes{
+				Code: int(rpcRes.Code),
+				Msg:  rpcRes.Mag,
+				Ok:   rpcRes.Ok,
 			}
+			return res, err
 
 		case "delete":
 			rpcReq := &crud.DeleteQuestionReq{}
@@ -172,16 +161,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			err = mapping.Struct2Struct(rpcRes, res)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
+
+			res = &types.CrudRes{
+				Code: int(rpcRes.Code),
+				Msg:  rpcRes.Mag,
+				Ok:   rpcRes.Ok,
 			}
+			return res, err
 
 		default:
 			res = &types.CrudRes{
@@ -217,16 +203,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			err = mapping.Struct2Struct(rpcRes, res)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
+
+			res = &types.CrudRes{
+				Code: int(rpcRes.Code),
+				Msg:  rpcRes.Mag,
+				Ok:   rpcRes.Ok,
 			}
+			return res, err
 
 		case "update":
 			rpcReq := &crud.UpdateAnswerReq{}
@@ -250,16 +233,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			err = mapping.Struct2Struct(rpcRes, res)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
+
+			res = &types.CrudRes{
+				Code: int(rpcRes.Code),
+				Msg:  rpcRes.Mag,
+				Ok:   rpcRes.Ok,
 			}
+			return res, err
 
 		case "hide":
 			rpcReq := &crud.HideAnswerReq{}
@@ -283,16 +263,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			err = mapping.Struct2Struct(rpcRes, res)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
+
+			res = &types.CrudRes{
+				Code: int(rpcRes.Code),
+				Msg:  rpcRes.Mag,
+				Ok:   rpcRes.Ok,
 			}
+			return res, err
 
 		case "delete":
 			rpcReq := &crud.DeleteAnswerReq{}
@@ -316,16 +293,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			err = mapping.Struct2Struct(rpcRes, res)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
+
+			res = &types.CrudRes{
+				Code: int(rpcRes.Code),
+				Msg:  rpcRes.Mag,
+				Ok:   rpcRes.Ok,
 			}
+			return res, err
 
 		default:
 			res = &types.CrudRes{
