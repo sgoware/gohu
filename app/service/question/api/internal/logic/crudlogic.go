@@ -72,12 +72,9 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
-			return res, err
+			return res, nil
 			// TODO: 使用队列发布消息
 			// l.svcCtx.
-
-			return res, nil
-
 		case "update":
 			rpcReq := &crud.UpdateQuestionReq{}
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
@@ -318,6 +315,4 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 		}
 		return res, nil
 	}
-
-	return
 }
