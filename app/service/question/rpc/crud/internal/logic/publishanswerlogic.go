@@ -60,6 +60,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 			Msg:  "internal err",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", res.String())
 		return res, nil
 	}
 
