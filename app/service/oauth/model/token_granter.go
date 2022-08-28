@@ -96,9 +96,9 @@ func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 		return nil, ErrInvalidAuthorizationRequest
 	}
 
-	userModel := tokenGranter.UserModel.User
-	userDetail, err := userModel.WithContext(context.Background()).
-		Where(userModel.ID.Eq(cast.ToInt64(userId))).First()
+	userSubjectModel := tokenGranter.UserModel.UserSubject
+	userDetail, err := userSubjectModel.WithContext(context.Background()).
+		Where(userSubjectModel.ID.Eq(cast.ToInt64(userId))).First()
 	if err != nil {
 		return nil, ErrUserDetailNotFound
 	}
@@ -119,7 +119,7 @@ func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 			NickName:    userDetail.Nickname,
 			LastIp:      userDetail.LastIP,
 			Vip:         userDetail.Vip,
-			Status:      userDetail.Status,
+			State:       userDetail.State,
 			UpdateTime:  userDetail.UpdateTime.Format("2006-01-02 15:04:05 MST"),
 			CreateTime:  userDetail.CreateTime.Format("2006-01-02 15:04:05 MST"),
 			Authorities: nil, // TODO: 待加入权限字段

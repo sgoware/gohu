@@ -15,7 +15,7 @@ type UserDetail struct {
 	NickName    string   `json:"nickname,omitempty"`    // 用户昵称
 	LastIp      string   `json:"last_ip,omitempty"`     // 上次登录地址
 	Vip         int32    `json:"vip,omitempty"`         // vip 等级
-	Status      int32    `json:"status,omitempty"`      // 在线状态
+	State       int32    `json:"state,omitempty"`       // 在线状态
 	UpdateTime  string   `json:"update_time,omitempty"` // 用户信息更新时间
 	CreateTime  string   `json:"create_time,omitempty"` // 用户信息创建时间
 	Authorities []string `json:"authorities,omitempty"` // 用户具备的权限

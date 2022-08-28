@@ -126,7 +126,7 @@ func (j *JWT) GetUserDetails(tokenValue string) (*model.UserDetail, error) {
 					NickName:    claims.NickName,
 					LastIp:      claims.LastIp,
 					Vip:         claims.Vip,
-					Status:      claims.Status,
+					State:       claims.State,
 					UpdateTime:  claims.UpdateTime,
 					CreateTime:  claims.CreateTime,
 					Authorities: claims.Authorities,

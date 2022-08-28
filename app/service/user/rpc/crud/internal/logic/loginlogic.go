@@ -45,8 +45,8 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	}
 
 	// 在数据库中查找用户
-	userModel := l.svcCtx.UserModel.User
-	userInfo, err := userModel.WithContext(l.ctx).Where(userModel.Username.Eq(in.Username)).First()
+	userSubjectModel := l.svcCtx.UserModel.UserSubject
+	userInfo, err := userSubjectModel.WithContext(l.ctx).Where(userSubjectModel.Username.Eq(in.Username)).First()
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
@@ -84,7 +84,9 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	}
 
 	// 更新最近登录 ip
-	_, err = userModel.WithContext(l.ctx).Where(userModel.Username.Eq(in.Username)).Update(userModel.LastIP, in.LastIp)
+	_, err = userSubjectModel.WithContext(l.ctx).
+		Where(userSubjectModel.Username.Eq(in.Username)).
+		Update(userSubjectModel.LastIP, in.LastIp)
 	if err != nil {
 		logger.Errorf("database err, err: %v", err)
 		res = &crud.LoginRes{

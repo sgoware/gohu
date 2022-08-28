@@ -30,8 +30,8 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	userModel := l.svcCtx.UserModel
-	_, err = userModel.WithContext(l.ctx).User.Where(userModel.User.Nickname.Eq(in.Nickname)).First()
+	userSubjectModel := l.svcCtx.UserModel.UserSubject
+	_, err = userSubjectModel.WithContext(l.ctx).Where(userSubjectModel.Nickname.Eq(in.Nickname)).First()
 	switch err {
 	case nil:
 		// 用户名已经存在
@@ -46,9 +46,9 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 		}
 	case gorm.ErrRecordNotFound:
 		{
-			_, err := l.svcCtx.UserModel.User.WithContext(l.ctx).
-				Where(userModel.User.ID.Eq(in.Id)).
-				Update(userModel.User.Nickname, in.Nickname)
+			_, err := userSubjectModel.WithContext(l.ctx).
+				Where(userSubjectModel.ID.Eq(in.Id)).
+				Update(userSubjectModel.Nickname, in.Nickname)
 			if err != nil {
 				logger.Errorf("change nickname failed, err: %v", err)
 				res = &pb.ChangeNicknameRes{

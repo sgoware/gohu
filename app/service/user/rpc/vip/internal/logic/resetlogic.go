@@ -29,9 +29,11 @@ func (l *ResetLogic) Reset(in *pb.ResetReq) (res *pb.ResetRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	userModel := l.svcCtx.UserModel
-	_, err = userModel.WithContext(l.ctx).User.Select(userModel.User.ID, userModel.User.Vip).
-		Where(userModel.User.ID.Eq(in.Id)).Update(userModel.User.Vip, 0)
+	userSubjectModel := l.svcCtx.UserModel.UserSubject
+	_, err = userSubjectModel.WithContext(l.ctx).
+		Select(userSubjectModel.ID, userSubjectModel.Vip).
+		Where(userSubjectModel.ID.Eq(in.Id)).
+		Update(userSubjectModel.Vip, 0)
 	if err != nil {
 		logger.Errorf("reset vip failed, err: %v", err)
 		return &pb.ResetRes{

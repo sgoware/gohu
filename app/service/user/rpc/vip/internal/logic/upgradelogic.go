@@ -30,13 +30,15 @@ func (l *UpgradeLogic) Upgrade(in *pb.UpgradeReq) (res *pb.UpgradeRes, err error
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	userModel := l.svcCtx.UserModel
-	userInfo, _ := userModel.WithContext(l.ctx).User.Select(userModel.User.ID, userModel.User.Vip).
-		Where(userModel.User.ID.Eq(cast.ToInt64(in.Id))).First()
+	userSubjectModel := l.svcCtx.UserModel.UserSubject
+	userInfo, _ := userSubjectModel.WithContext(l.ctx).
+		Select(userSubjectModel.ID, userSubjectModel.Vip).
+		Where(userSubjectModel.ID.Eq(cast.ToInt64(in.Id))).First()
 	if userInfo.Vip < 9 {
-		userModel.WithContext(l.ctx).User.Select(userModel.User.ID, userModel.User.Vip).
-			Where(userModel.User.ID.Eq(userInfo.ID)).
-			Update(userModel.User.Vip, userInfo.Vip+1)
+		userSubjectModel.WithContext(l.ctx).
+			Select(userSubjectModel.ID, userSubjectModel.Vip).
+			Where(userSubjectModel.ID.Eq(userInfo.ID)).
+			Update(userSubjectModel.Vip, userInfo.Vip+1)
 		res = &pb.UpgradeRes{
 			Code: http.StatusOK,
 			Msg:  "vip upgrade successfully",

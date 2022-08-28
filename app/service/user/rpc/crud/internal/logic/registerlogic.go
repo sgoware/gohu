@@ -43,8 +43,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
 	}
-	userModel := l.svcCtx.UserModel.User
-	_, err = userModel.WithContext(l.ctx).Where(userModel.Username.Eq(in.Username)).First()
+	userSubjectModel := l.svcCtx.UserModel.UserSubject
+	_, err = userSubjectModel.WithContext(l.ctx).Where(userSubjectModel.Username.Eq(in.Username)).First()
 	switch err {
 	case nil:
 		// 用户已经存在的情况
@@ -66,7 +66,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 			// 生成默认昵称
 			defaultNickname := uuid.NewRandomString(in.Username, "username", 10)
 
-			err := l.svcCtx.UserModel.User.WithContext(l.ctx).Create(&model.User{
+			err := userSubjectModel.WithContext(l.ctx).Create(&model.UserSubject{
 				Username: in.Username,
 				Password: encryptedPassword,
 				Nickname: "gohu_" + defaultNickname,
