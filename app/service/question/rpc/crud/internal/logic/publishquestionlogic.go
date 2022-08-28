@@ -50,10 +50,10 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		return res, nil
 	}
 
-	questionSubject, err := questionSubjectModel.WithContext(l.ctx).Select(questionSubjectModel.ID, questionSubjectModel.UserID).
+	questionSubject, err := questionSubjectModel.WithContext(l.ctx).
+		Select(questionSubjectModel.ID, questionSubjectModel.UserID).
 		Where(questionSubjectModel.UserID.Eq(j.Get("user_id").Int())).
 		Order(questionSubjectModel.ID.Desc()).Last()
-
 	if err != nil {
 		logger.Errorf("publish question failed, err: mysql err, %v", err)
 		res = &pb.PublishQuestionRes{
