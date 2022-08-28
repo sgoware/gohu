@@ -57,7 +57,7 @@ func (l *StoreTokenLogic) StoreToken(in *pb.StoreTokenReq) (res *pb.StoreTokenRe
 	l.svcCtx.Rdb.Set(l.ctx,
 		model.JwtToken+"_"+strconv.FormatInt(in.UserId, 10),
 		accessTokenString,
-		time.Unix(in.AccessToken.ExpiresAt, 0).Sub(time.Now()))
+		time.Unix(in.AccessToken.RefreshToken.ExpiresAt, 0).Sub(time.Now()))
 
 	res = &pb.StoreTokenRes{
 		Code: http.StatusOK,
