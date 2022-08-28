@@ -15,7 +15,7 @@ import (
 
 const (
 	// app下的所有命名空间
-	namespaces = "gohu.yaml,database-dsn,oauth.yaml,user.yaml,NSQ"
+	namespaces = "gohu.yaml,database-dsn,oauth.yaml,user.yaml,NSQ,question.yaml"
 
 	// app default namespace
 	// 有关服务器的配置
@@ -84,9 +84,7 @@ func NewConfigClient() (c *Agollo, err error) {
 	c.client = client
 	agolloClient = c
 
-	logger.Info("Initialize config successfully!")
-
-	return
+	return agolloClient, nil
 }
 
 func GetConfigClient() (*Agollo, error) {
