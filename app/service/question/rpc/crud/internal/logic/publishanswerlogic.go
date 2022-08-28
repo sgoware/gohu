@@ -81,6 +81,11 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		return nil, err
 	}
 
+	res = &pb.PublishAnswerRes{
+		Code: http.StatusOK,
+		Mag:  "publish question successfully",
+		Ok:   true,
+	}
 	logger.Debugf("send message: %v", res.String())
 	return res, nil
 }

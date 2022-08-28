@@ -30,6 +30,7 @@ func NewPublishQuestionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *P
 func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *pb.PublishQuestionRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
+
 	j := gjson.Parse(in.UserDetails)
 
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
