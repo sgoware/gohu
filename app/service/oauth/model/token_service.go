@@ -57,7 +57,7 @@ func (tokenService *RpcTokenService) CreateAccessToken(ctx context.Context, oaut
 				Nickname:    oauth2Details.User.NickName,
 				LastIp:      oauth2Details.User.LastIp,
 				Vip:         oauth2Details.User.Vip,
-				Status:      oauth2Details.User.State,
+				State:       oauth2Details.User.State,
 				UpdateTime:  oauth2Details.User.UpdateTime,
 				CreateTime:  oauth2Details.User.CreateTime,
 				Authorities: nil,
