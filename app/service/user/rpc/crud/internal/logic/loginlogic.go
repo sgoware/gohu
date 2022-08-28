@@ -59,11 +59,13 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	default:
 		{
 			logger.Errorf("database err, err: %v", err)
-			return &crud.LoginRes{
+			res = &crud.LoginRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
 				Data: nil,
-			}, err
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, err
 		}
 	}
 	logger.Debugf("userInfo: \n%v", userInfo)
@@ -85,11 +87,12 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	_, err = userModel.WithContext(l.ctx).Where(userModel.Username.Eq(in.Username)).Update(userModel.LastIP, in.LastIp)
 	if err != nil {
 		logger.Errorf("database err, err: %v", err)
-		return &crud.LoginRes{
+		res = &crud.LoginRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
 			Data: nil,
-		}, err
+		}
+		return res, err
 	}
 
 	// 生成 oauth 服务器的认证头
