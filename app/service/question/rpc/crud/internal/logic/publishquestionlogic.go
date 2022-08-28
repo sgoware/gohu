@@ -35,6 +35,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 	questionContentModel := l.svcCtx.QuestionModel.QuestionContent
 
+	questionSubjectModel.WithContext(l.ctx)
 	err = questionSubjectModel.WithContext(l.ctx).Create(&model.QuestionSubject{
 		UserID: j.Get("user_id").Int(),
 	})
@@ -49,12 +50,19 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		return nil, err
 	}
 
+	questionSubject, err := questionSubjectModel.WithContext(l.ctx).Select(questionSubjectModel.ID, questionSubjectModel.UserID).
+		Order(questionSubjectModel.ID.Desc()).Last()
+	if err != nil {
+		logger.Errorf("publish question failed, err: mysql err, %v", err)
+	}
+
 	err = questionContentModel.WithContext(l.ctx).Create(&model.QuestionContent{
-		Title:   in.Title,
-		Topic:   in.Topic,
-		Tag:     in.Tag,
-		Content: in.Content,
-		IPLoc:   ip.GetIpLocFromApi(j.Get("last_ip").String()),
+		QuestionID: questionSubject.ID,
+		Title:      in.Title,
+		Topic:      in.Topic,
+		Tag:        in.Tag,
+		Content:    in.Content,
+		IPLoc:      ip.GetIpLocFromApi(j.Get("last_ip").String()),
 	})
 	if err != nil {
 		logger.Errorf("publish question failed, err: %v", err)
