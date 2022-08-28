@@ -47,7 +47,7 @@ func (l *UpdateQuestionLogic) UpdateQuestion(in *pb.UpdateQuestionReq) (res *pb.
 	case gorm.ErrRecordNotFound:
 		res = &pb.UpdateQuestionRes{
 			Code: http.StatusBadRequest,
-			Mag:  "update question failed, err: question not found",
+			Mag:  "question not found",
 			Ok:   false,
 		}
 	case nil:
@@ -60,7 +60,7 @@ func (l *UpdateQuestionLogic) UpdateQuestion(in *pb.UpdateQuestionReq) (res *pb.
 		logger.Errorf("update question failed, err: %v", err)
 		res = &pb.UpdateQuestionRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "update question failed, err: internal err",
+			Mag:  "internal err",
 			Ok:   false,
 		}
 	}

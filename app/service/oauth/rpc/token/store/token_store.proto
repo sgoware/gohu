@@ -15,8 +15,9 @@ message StoreTokenReq{
 }
 
 message StoreTokenRes{
-    bool ok=1;
+    int32 code=1;
     string msg=2;
+    bool ok=3;
 }
 
 
@@ -25,9 +26,10 @@ message CheckTokenReq{
 }
 
 message CheckTokenRes{
-    bool ok=1;
+    int32 code=1;
     string msg=2;
-    bool is_exist=3;
+    bool ok=3;
+    bool is_exist=4;
 }
 
 
@@ -36,9 +38,10 @@ message GetTokenReq{
 }
 
 message GetTokenRes{
-    bool ok=1;
+    int32 code=1;
     string msg=2;
-    Data data=3;
+    bool ok=3;
+    Data data=4;
     message Data{
         OAuth2Token oauth_token=1;
     }
@@ -50,8 +53,9 @@ message RemoveTokenReq{
 }
 
 message RemoveTokenRes{
-    bool ok=1;
+    int32 code=1;
     string msg=2;
+    bool ok=3;
 }
 
 

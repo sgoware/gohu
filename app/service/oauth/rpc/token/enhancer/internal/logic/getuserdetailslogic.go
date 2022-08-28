@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"main/app/common/log"
 	"main/app/utils/mapping"
+	"net/http"
 
 	"main/app/service/oauth/rpc/token/enhancer/internal/svc"
 	"main/app/service/oauth/rpc/token/enhancer/pb"
@@ -25,28 +27,34 @@ func NewGetUserDetailsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 	}
 }
 
-func (l *GetUserDetailsLogic) GetUserDetails(in *pb.GetUserDetailsReq) (*pb.GetUserDetailsRes, error) {
+func (l *GetUserDetailsLogic) GetUserDetails(in *pb.GetUserDetailsReq) (res *pb.GetUserDetailsRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
 	userDetails, err := l.svcCtx.Enhancer.GetUserDetails(in.AccessToken)
 	if err != nil {
-		logger.Errorf("parse oauth_token failed, err: %v", err)
-		return &pb.GetUserDetailsRes{
-			Ok:  false,
-			Msg: "read oauth_token failed",
-		}, err
+		res = &pb.GetUserDetailsRes{
+			Code: http.StatusOK,
+			Msg:  fmt.Sprintf("parse oauth token failed, %v", err),
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, err
 	}
-	logger.Debugf("userDetails: %v", userDetails)
-	res := &pb.GetUserDetailsRes{
+	res = &pb.GetUserDetailsRes{
 		Ok:   true,
-		Msg:  "get user details successfully",
+		Msg:  "get user details from oauth token successfully",
 		Data: &pb.GetUserDetailsRes_Data{UserDetails: &pb.UserDetails{}},
 	}
 	err = mapping.Struct2Struct(userDetails, res.Data.UserDetails)
 	if err != nil {
-		logger.Errorf("mapping struct failed, err: %v", err)
-		return nil, err
+		res = &pb.GetUserDetailsRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, err
 	}
 
 	logger.Debugf("send message: %v", res.String())

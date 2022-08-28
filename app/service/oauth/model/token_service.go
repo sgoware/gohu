@@ -2,11 +2,11 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"main/app/service/oauth/rpc/token/enhancer/tokenenhancer"
 	"main/app/service/oauth/rpc/token/store/tokenstore"
 	"main/app/utils/mapping"
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
@@ -65,13 +65,12 @@ func (tokenService *RpcTokenService) CreateAccessToken(ctx context.Context, oaut
 		},
 	})
 	if err != nil {
-		logx.Errorf("create access_token failed, err: %v", err)
 		return nil, err
 	}
 	accessToken := &OAuth2Token{}
 	err = mapping.Struct2Struct(res.Data.AccessToken, accessToken)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("mapping struct failed, %v", err)
 	}
 	return accessToken, nil
 }
@@ -80,13 +79,12 @@ func (tokenService *RpcTokenService) RefreshAccessToken(ctx context.Context, ref
 	res, err := tokenService.TokenEnhancerClient.RefreshAccessToken(ctx,
 		&tokenenhancer.RefreshAccessTokenReq{RefreshToken: refreshTokenValue})
 	if err != nil {
-		logx.Errorf("refresh access_token failed, err: %v", err)
 		return nil, err
 	}
 	accessToken := &OAuth2Token{}
 	err = mapping.Struct2Struct(res.Data.AccessToken, accessToken)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("mapping struct failed, %v", err)
 	}
 	return accessToken, nil
 }
@@ -94,13 +92,12 @@ func (tokenService *RpcTokenService) RefreshAccessToken(ctx context.Context, ref
 func (tokenService *RpcTokenService) ReadAccessToken(ctx context.Context, accessTokenValue string) (*OAuth2Token, error) {
 	res, err := tokenService.TokenEnhancerClient.ReadOauthToken(ctx, &tokenenhancer.ReadTokenReq{OauthToken: accessTokenValue})
 	if err != nil {
-		logx.Errorf("read access_token failed, err: %v", err)
 		return nil, err
 	}
 	accessToken := &OAuth2Token{}
 	err = mapping.Struct2Struct(res.Data.AccessToken, accessToken)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("mapping struct failed, %v", err)
 	}
 	return accessToken, nil
 }
@@ -108,13 +105,12 @@ func (tokenService *RpcTokenService) ReadAccessToken(ctx context.Context, access
 func (tokenService *RpcTokenService) GetUserDetails(ctx context.Context, accessTokenValue string) (*UserDetail, error) {
 	res, err := tokenService.TokenEnhancerClient.GetUserDetails(ctx, &tokenenhancer.GetUserDetailsReq{AccessToken: accessTokenValue})
 	if err != nil {
-		logx.Errorf("get user details failed, err: %v", err)
 		return nil, err
 	}
 	userDetails := &UserDetail{}
 	err = mapping.Struct2Struct(res.Data.UserDetails, userDetails)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("mapping struct failed, %v", err)
 	}
 	return userDetails, nil
 }

@@ -2,12 +2,14 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"main/app/common/log"
 	"main/app/service/oauth/model"
 	"main/app/service/oauth/rpc/token/enhancer/internal/svc"
 	"main/app/service/oauth/rpc/token/enhancer/pb"
 	"main/app/service/oauth/rpc/token/store/tokenstore"
 	"main/app/utils/mapping"
+	"net/http"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -34,13 +36,19 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 	oauth2Details := &model.OAuth2Details{}
 	err = mapping.Struct2Struct(in.Oauth2Details, oauth2Details)
 	if err != nil {
-		return nil, err
+		res = &pb.CreateAccessTokenRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 	existTokenRes, _ := l.svcCtx.TokenStoreRpcClient.GetToken(l.ctx, &tokenstore.GetTokenReq{
 		UserId: in.Oauth2Details.User.UserId,
 	})
-	logger.Debugf("existTokenRes: %v", existTokenRes)
 	if existTokenRes.Ok {
+		// 获取到存在的令牌
 		if !time.Unix(existTokenRes.Data.OauthToken.ExpiresAt, 0).Before(time.Now()) {
 			res = &pb.CreateAccessTokenRes{
 				Ok:   true,
@@ -50,22 +58,28 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 			err = mapping.Struct2Struct(existTokenRes.Data.OauthToken, res.Data.AccessToken)
 			if err != nil {
 				logger.Errorf("mapping struct failed, err: %v", err)
-				return nil, err
+				res = &pb.CreateAccessTokenRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, nil
 			}
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
 		}
-		// 访问令牌失效的情况,可以移除,也可以在后面创建新令牌的时候直接覆盖令牌
-		// TODO:
 	}
-
+	// 生成新的令牌
 	accessToken, err := l.svcCtx.Enhancer.GenerateToken(oauth2Details, model.AccessToken)
 	if err != nil {
-		logger.Errorf("generate access_token failed, err: %v", err)
-		return &pb.CreateAccessTokenRes{
-			Ok:  false,
-			Msg: "generate access_token failed",
-		}, nil
+		res = &pb.CreateAccessTokenRes{
+			Code: http.StatusInternalServerError,
+			Msg:  fmt.Sprintf("generate access_token failed, %v", err),
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 	logger.Debugf("generated token: %v", accessToken)
 	res = &pb.CreateAccessTokenRes{
@@ -76,8 +90,16 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 	err = mapping.Struct2Struct(accessToken, res.Data.AccessToken)
 	if err != nil {
 		logger.Errorf("mapping struct failed, err: %v", err)
-		return nil, err
+		res = &pb.CreateAccessTokenRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
+
+	// 存储令牌到redis
 	storeToken := &tokenstore.StoreTokenReq{
 		UserId:      oauth2Details.User.UserId,
 		AccessToken: &tokenstore.OAuth2Token{},
@@ -85,12 +107,23 @@ func (l *CreateAccessTokenLogic) CreateAccessToken(in *pb.CreateAccessTokenReq) 
 	err = mapping.Struct2Struct(accessToken, storeToken.AccessToken)
 	if err != nil {
 		logger.Errorf("mapping struct failed, err: %v", err)
-		return nil, err
+		res = &pb.CreateAccessTokenRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
-	_, err = l.svcCtx.TokenStoreRpcClient.StoreToken(l.ctx, storeToken)
-	if err != nil {
-		logger.Errorf("store token failed, err: %v", err)
-		return nil, err
+	storeTokenRes, _ := l.svcCtx.TokenStoreRpcClient.StoreToken(l.ctx, storeToken)
+	if !storeTokenRes.Ok {
+		res = &pb.CreateAccessTokenRes{
+			Code: res.Code,
+			Msg:  fmt.Sprintf("store token failed, %v", storeTokenRes.Msg),
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
 	logger.Debugf("send message: %v", res.String())

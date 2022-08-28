@@ -40,9 +40,10 @@ message CreateAccessTokenReq{
 }
 
 message CreateAccessTokenRes{
-    bool ok=1;
+    int32 code=1;
     string msg=2;
-    Data data=3;
+    bool ok=3;
+    Data data=4;
     message Data{
         OAuth2Token access_token=1;
     }
@@ -54,9 +55,10 @@ message RefreshAccessTokenReq{
 }
 
 message RefreshAccessTokenRes{
-    bool ok=1;
+    int32 code=1;
     string msg=2;
-    Data data=3;
+    bool ok=3;
+    Data data=4;
     message Data{
         OAuth2Token access_token=1;
     }
@@ -68,9 +70,10 @@ message ReadTokenReq{
 }
 
 message ReadTokenRes{
-    bool ok=1;
+    int32 code=1;
     string msg=2;
-    Data data=3;
+    bool ok=3;
+    Data data=4;
     message Data{
         OAuth2Token access_token=1;
     }
@@ -83,9 +86,10 @@ message GetUserDetailsReq{
 }
 
 message GetUserDetailsRes{
-    bool ok=1;
+    int32 code=1;
     string msg=2;
-    Data data=3;
+    bool ok=3;
+    Data data=4;
     message Data{
         UserDetails user_details=1;
     }

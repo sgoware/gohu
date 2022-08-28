@@ -37,8 +37,8 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	// 判断传入参数是否为空
 	if len(strings.TrimSpace(in.Username)) == 0 || len(strings.TrimSpace(in.Password)) == 0 {
 		res = &crud.LoginRes{
-			Code: http.StatusOK,
-			Msg:  "login failed, err: param not fit",
+			Code: http.StatusBadRequest,
+			Msg:  "param not fit",
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
@@ -52,7 +52,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	case gorm.ErrRecordNotFound:
 		res = &crud.LoginRes{
 			Code: http.StatusNotFound,
-			Msg:  "login failed, err: uid not exist",
+			Msg:  "uid not exist",
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
@@ -61,7 +61,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 			logger.Errorf("database err, err: %v", err)
 			return &crud.LoginRes{
 				Code: http.StatusInternalServerError,
-				Msg:  "login failed, err: internal err",
+				Msg:  "internal err",
 				Data: nil,
 			}, err
 		}
@@ -74,11 +74,10 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	if userInfo.Password != encryptedPassword {
 		res = &crud.LoginRes{
 			Code: http.StatusUnauthorized,
-			Msg:  "login failed, err: wrong password",
+			Msg:  "wrong password",
 			Data: nil,
 		}
 		logger.Debugf("send message: %v", res.String())
-
 		return res, nil
 	}
 
@@ -88,7 +87,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		logger.Errorf("database err, err: %v", err)
 		return &crud.LoginRes{
 			Code: http.StatusInternalServerError,
-			Msg:  "login failed, err: internal err",
+			Msg:  "internal err",
 			Data: nil,
 		}, err
 	}

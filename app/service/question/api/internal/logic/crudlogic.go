@@ -50,7 +50,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "publish question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -60,7 +60,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "publish question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -69,7 +69,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "publish question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -87,7 +87,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "update question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -96,7 +96,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "update question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -105,7 +105,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "update question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -118,7 +118,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "hide question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -127,7 +127,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "hide question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -136,7 +136,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "hide question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -149,7 +149,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "delete question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -158,7 +158,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "delete question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -167,7 +167,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "delete question failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -191,7 +191,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "publish answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -201,7 +201,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "publish answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -210,7 +210,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "publish answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -223,7 +223,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "update answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -232,7 +232,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "update answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -241,7 +241,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "update answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -254,7 +254,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "hide answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -263,7 +263,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "hide answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -272,7 +272,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "hide answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -285,7 +285,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "delete answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -294,7 +294,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "delete answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err
@@ -303,7 +303,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			if err != nil {
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "delete answer failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				return res, err

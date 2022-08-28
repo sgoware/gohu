@@ -39,7 +39,7 @@ func (l *HideQuestionLogic) HideQuestion(in *pb.HideQuestionReq) (res *pb.HideQu
 	case gorm.ErrRecordNotFound:
 		res = &pb.HideQuestionRes{
 			Code: http.StatusBadRequest,
-			Mag:  "hide question failed, err: question not found",
+			Mag:  "question not found",
 			Ok:   false,
 		}
 	case nil:
@@ -52,7 +52,7 @@ func (l *HideQuestionLogic) HideQuestion(in *pb.HideQuestionReq) (res *pb.HideQu
 		logger.Errorf("update question failed, err: %v", err)
 		res = &pb.HideQuestionRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "hide question failed, err: internal err",
+			Mag:  "internal err",
 			Ok:   false,
 		}
 	}

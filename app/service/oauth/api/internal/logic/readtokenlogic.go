@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"main/app/common/log"
 	"main/app/service/oauth/api/internal/svc"
 	"main/app/service/oauth/api/internal/token"
 	"main/app/service/oauth/api/internal/types"
@@ -26,13 +28,14 @@ func NewReadTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ReadTok
 }
 
 func (l *ReadTokenLogic) ReadToken(req *types.ReadTokenReq) (*types.ReadTokenRes, error) {
+	logger := log.GetSugaredLogger()
+
 	tokenService := token.GetTokenService()
 	oauthToken, err := tokenService.ReadAccessToken(l.ctx, req.OAuth2Token)
 	if err != nil {
-		logx.Errorf("parse token failed, err: %v", err)
 		return &types.ReadTokenRes{
 			Code: http.StatusBadRequest,
-			Msg:  "invalid token",
+			Msg:  fmt.Sprintf("invalid token, %v", err),
 		}, nil
 	}
 
@@ -43,7 +46,11 @@ func (l *ReadTokenLogic) ReadToken(req *types.ReadTokenReq) (*types.ReadTokenRes
 	}
 	err = mapping.Struct2Struct(oauthToken, resp.Data.AccessToken)
 	if err != nil {
-		return nil, err
+		logger.Errorf("mapping struct failed, err: %v", err)
+		return &types.ReadTokenRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+		}, nil
 	}
 	return resp, nil
 }

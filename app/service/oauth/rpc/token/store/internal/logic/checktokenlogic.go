@@ -6,9 +6,9 @@ import (
 	"main/app/service/oauth/model"
 	"main/app/service/oauth/rpc/token/store/internal/svc"
 	"main/app/service/oauth/rpc/token/store/pb"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type CheckTokenLogic struct {
@@ -25,38 +25,36 @@ func NewCheckTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckT
 	}
 }
 
-func (l *CheckTokenLogic) CheckToken(in *pb.CheckTokenReq) (*pb.CheckTokenRes, error) {
+func (l *CheckTokenLogic) CheckToken(in *pb.CheckTokenReq) (res *pb.CheckTokenRes, err error) {
 	logger := log.GetSugaredLogger()
+	logger.Debugf("recv message: %v", in.String())
 
 	if in.UserId == " " {
-		logger.Errorf("check token failed, err: %v", model.ErrInvalidTokenRequest)
-		return &pb.CheckTokenRes{
+		res = &pb.CheckTokenRes{
+			Code:    http.StatusBadRequest,
+			Msg:     model.ErrInvalidUserId.Error(),
 			Ok:      false,
-			Msg:     "check token failed, err: invalid token request",
 			IsExist: false,
-		}, nil
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
-	_, err := l.svcCtx.Rdb.Get(l.ctx, model.JwtToken+" "+in.UserId).Result()
-	if err == nil {
-		return &pb.CheckTokenRes{
+	_, err = l.svcCtx.Rdb.Get(l.ctx, model.JwtToken+" "+in.UserId).Result()
+	if err != nil {
+		res = &pb.CheckTokenRes{
+			Code:    http.StatusOK,
+			Msg:     "token is not exist",
 			Ok:      true,
-			Msg:     "check token successfully",
-			IsExist: true,
-		}, nil
-	} else {
-		if err != redis.ErrEmptyKey {
-			return &pb.CheckTokenRes{
-				Ok:      false,
-				Msg:     "check token failed, err: redis err",
-				IsExist: false,
-			}, nil
-		} else {
-			return &pb.CheckTokenRes{
-				Ok:      true,
-				Msg:     "check token successfully",
-				IsExist: false,
-			}, nil
+			IsExist: false,
 		}
+		return res, nil
 	}
+	res = &pb.CheckTokenRes{
+		Code:    http.StatusOK,
+		Msg:     "token is exist",
+		Ok:      true,
+		IsExist: true,
+	}
+	return res, nil
 }

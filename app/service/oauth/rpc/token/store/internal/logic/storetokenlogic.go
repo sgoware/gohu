@@ -6,6 +6,7 @@ import (
 	"main/app/service/oauth/model"
 	"main/app/service/oauth/rpc/token/store/internal/svc"
 	"main/app/service/oauth/rpc/token/store/pb"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -27,30 +28,42 @@ func NewStoreTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *StoreT
 	}
 }
 
-func (l *StoreTokenLogic) StoreToken(in *pb.StoreTokenReq) (*pb.StoreTokenRes, error) {
+func (l *StoreTokenLogic) StoreToken(in *pb.StoreTokenReq) (res *pb.StoreTokenRes, err error) {
 	logger := log.GetSugaredLogger()
+	logger.Debugf("recv message: %v", in.String())
 
 	if in.UserId == 0 || in.AccessToken == nil {
-		logger.Errorf("store token failed, err: %v", model.ErrInvalidTokenRequest)
-		return &pb.StoreTokenRes{
-			Ok:  false,
-			Msg: "store token failed, err: invalid token request",
-		}, nil
+		res = &pb.StoreTokenRes{
+			Code: http.StatusBadRequest,
+			Msg:  "invalid param",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
 	accessTokenString, err := jsonx.MarshalToString(in.AccessToken)
 	if err != nil {
 		logger.Errorf("marshal access_token to string failed, err: %v", err)
-		return &pb.StoreTokenRes{
-			Ok:  false,
-			Msg: "marshal access_token to string failed",
-		}, nil
+		res = &pb.StoreTokenRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
-	logger.Debugf("%v", accessTokenString)
-	l.svcCtx.Rdb.Set(l.ctx, model.JwtToken+"_"+strconv.FormatInt(in.UserId, 10), accessTokenString, time.Unix(in.AccessToken.ExpiresAt, 0).Sub(time.Now()))
 
-	return &pb.StoreTokenRes{
-		Ok:  true,
-		Msg: "store token successfully",
-	}, nil
+	l.svcCtx.Rdb.Set(l.ctx,
+		model.JwtToken+"_"+strconv.FormatInt(in.UserId, 10),
+		accessTokenString,
+		time.Unix(in.AccessToken.ExpiresAt, 0).Sub(time.Now()))
+
+	res = &pb.StoreTokenRes{
+		Code: http.StatusOK,
+		Msg:  "store token successfully",
+		Ok:   true,
+	}
+	logger.Debugf("send message: %v", res.String())
+	return res, nil
 }

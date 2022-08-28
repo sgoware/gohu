@@ -34,7 +34,10 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 		LastIp:   cast.ToString(l.ctx.Value("lastIp")),
 	})
 	if err != nil {
-		logx.Errorf("login failed, err: %v", err)
+		return &types.LoginRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "login failed, err: internal err",
+		}, nil
 	}
 	if res.Data == nil {
 		return &types.LoginRes{

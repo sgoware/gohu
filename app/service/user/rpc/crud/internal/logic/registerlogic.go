@@ -37,8 +37,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 
 	if len(strings.TrimSpace(in.Username)) == 0 || len(strings.TrimSpace(in.Password)) == 0 {
 		res = &crud.RegisterRes{
-			Code: http.StatusOK,
-			Msg:  "create user failed, err: param err",
+			Code: http.StatusBadRequest,
+			Msg:  "param err",
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
@@ -51,7 +51,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 		{
 			res = &crud.RegisterRes{
 				Code: http.StatusForbidden,
-				Msg:  "create user failed, err: user already exist",
+				Msg:  "user already exist",
 			}
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
@@ -75,7 +75,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 			if err != nil {
 				res = &crud.RegisterRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "create user failed, err: internal err",
+					Msg:  "internal err",
 				}
 				logger.Debugf("send message: %v", res.String())
 				return res, err
@@ -92,7 +92,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 	default:
 		res = &crud.RegisterRes{
 			Code: http.StatusInternalServerError,
-			Msg:  "create user failed, err: internal err",
+			Msg:  "internal err",
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, err

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"main/app/common/log"
 	"main/app/service/oauth/api/internal/svc"
 	"main/app/service/oauth/api/internal/token"
 	"main/app/service/oauth/api/internal/types"
@@ -26,10 +27,11 @@ func NewGetTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetToken
 }
 
 func (l *GetTokenLogic) GetToken(req *types.GetTokenByAuthReq) (res *types.GetTokenByAuthRes, err error) {
+	logger := log.GetSugaredLogger()
+
 	tokenGranter := token.GetTokenGranter()
 	accessToken, err := tokenGranter.Grant(l.ctx, token.GrantByAuth, req.Authorization)
 	if err != nil {
-		logx.Errorf("get token by auth failed, err: %v", err)
 		return &types.GetTokenByAuthRes{
 			Code: http.StatusBadRequest,
 			Msg:  err.Error(),
@@ -43,7 +45,11 @@ func (l *GetTokenLogic) GetToken(req *types.GetTokenByAuthReq) (res *types.GetTo
 	}
 	err = mapping.Struct2Struct(accessToken, res.Data.AccessToken)
 	if err != nil {
-		return nil, err
+		logger.Errorf("mapping struct failed, err: %v", err)
+		return &types.GetTokenByAuthRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+		}, nil
 	}
 	return res, nil
 }

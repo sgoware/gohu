@@ -38,7 +38,7 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 		{
 			res = &pb.ChangeNicknameRes{
 				Code: http.StatusBadRequest,
-				Msg:  "change nickname failed, err: nickname already exist",
+				Msg:  "nickname already exist",
 				Ok:   false,
 			}
 			logger.Debugf("send message: %v", res.String())
@@ -50,9 +50,10 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 				Where(userModel.User.ID.Eq(in.Id)).
 				Update(userModel.User.Nickname, in.Nickname)
 			if err != nil {
+				logger.Errorf("change nickname failed, err: %v", err)
 				res = &pb.ChangeNicknameRes{
 					Code: http.StatusInternalServerError,
-					Msg:  "change nickname failed, err: internal err",
+					Msg:  "internal err",
 					Ok:   false,
 				}
 				logger.Debugf("send message: %v", res.String())
@@ -67,7 +68,7 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 	default:
 		res = &pb.ChangeNicknameRes{
 			Code: http.StatusInternalServerError,
-			Msg:  "change nickname failed, err: internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())

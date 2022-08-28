@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"main/app/common/log"
 	"main/app/service/oauth/api/internal/svc"
 	"main/app/service/oauth/api/internal/token"
 	"main/app/service/oauth/api/internal/types"
@@ -26,12 +27,14 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (*types.GetUserInfoRes, error) {
+	logger := log.GetSugaredLogger()
+
 	tokenService := token.GetTokenService()
 	userDetails, err := tokenService.GetUserDetails(l.ctx, req.AccessToken)
 	if err != nil {
 		return &types.GetUserInfoRes{
 			Code: http.StatusBadRequest,
-			Msg:  "get user details failed",
+			Msg:  err.Error(),
 		}, nil
 	}
 	resp := &types.GetUserInfoRes{
@@ -41,7 +44,11 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (*types.GetUse
 	}
 	err = mapping.Struct2Struct(userDetails, resp.Data.UserDetails)
 	if err != nil {
-		return nil, err
+		logger.Errorf("mapping struct failed, err: %v", err)
+		return &types.GetUserInfoRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+		}, nil
 	}
 	return resp, nil
 }

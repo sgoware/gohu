@@ -33,7 +33,7 @@ func (l *ResetLogic) Reset(in *pb.ResetReq) (res *pb.ResetRes, err error) {
 	_, err = userModel.WithContext(l.ctx).User.Select(userModel.User.ID, userModel.User.Vip).
 		Where(userModel.User.ID.Eq(in.Id)).Update(userModel.User.Vip, 0)
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Errorf("reset vip failed, err: %v", err)
 		return &pb.ResetRes{
 			Code: http.StatusOK,
 			Msg:  "internal err",

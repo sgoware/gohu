@@ -39,10 +39,10 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		UserID: j.Get("user_id").Int(),
 	})
 	if err != nil {
-		logger.Errorf("publish question failed, err: mysql err")
+		logger.Errorf("publish question failed, err: %v", err)
 		res = &pb.PublishQuestionRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "publish question failed, err: internal err",
+			Mag:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -57,10 +57,10 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		IPLoc:   ip.GetIpLocFromApi(j.Get("last_ip").String()),
 	})
 	if err != nil {
-		logger.Errorf("publish question failed, err: mysql err")
+		logger.Errorf("publish question failed, err: %v", err)
 		res = &pb.PublishQuestionRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "publish question failed, err: internal err",
+			Mag:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())

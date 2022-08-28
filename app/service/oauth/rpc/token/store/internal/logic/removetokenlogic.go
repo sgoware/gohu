@@ -6,6 +6,7 @@ import (
 	"main/app/service/oauth/model"
 	"main/app/service/oauth/rpc/token/store/internal/svc"
 	"main/app/service/oauth/rpc/token/store/pb"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,21 +25,27 @@ func NewRemoveTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Remov
 	}
 }
 
-func (l *RemoveTokenLogic) RemoveToken(in *pb.RemoveTokenReq) (*pb.RemoveTokenRes, error) {
+func (l *RemoveTokenLogic) RemoveToken(in *pb.RemoveTokenReq) (res *pb.RemoveTokenRes, err error) {
 	logger := log.GetSugaredLogger()
+	logger.Debugf("recv message: %v", in.String())
 
 	if in.UserId == " " {
-		logger.Error("remove token failed, err: %v", model.ErrInvalidTokenRequest)
-		return &pb.RemoveTokenRes{
-			Ok:  false,
-			Msg: "remove token failed, err: invalid token request",
-		}, nil
+		res = &pb.RemoveTokenRes{
+			Code: http.StatusBadRequest,
+			Msg:  model.ErrInvalidUserId.Error(),
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
 	l.svcCtx.Rdb.Set(l.ctx, model.JwtToken+" "+in.UserId, 1, 0)
 
-	return &pb.RemoveTokenRes{
-		Ok:  true,
-		Msg: "remove token successfully",
-	}, nil
+	res = &pb.RemoveTokenRes{
+		Code: http.StatusOK,
+		Msg:  "remove token successfully",
+		Ok:   true,
+	}
+	logger.Debugf("send message: %v", res)
+	return res, nil
 }
