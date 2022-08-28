@@ -19,7 +19,7 @@ type ServiceContext struct {
 	ClientSecret string
 }
 
-const clientId = "Default"
+const clientId = "default"
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	logger := log.GetSugaredLogger()
