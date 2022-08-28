@@ -12,7 +12,7 @@ var domain string
 func GetIpLocFromApi(ip string) (loc string) {
 	var err error
 	if domain == "" {
-		domain, err = apollo.GetDomain()
+		domain, err = apollo.GetMainDomain()
 		if err != nil {
 			return "未知"
 		}
