@@ -24,13 +24,10 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRes, err error) {
-	res, err := l.svcCtx.CrudRpcClient.Register(l.ctx, &crud.RegisterReq{
+	res, _ := l.svcCtx.CrudRpcClient.Register(l.ctx, &crud.RegisterReq{
 		Username: req.Username,
 		Password: req.Password,
 	})
-	if err != nil {
-		logx.Errorf("create user failed, err: %v", err)
-	}
 	return &types.RegisterRes{
 		Code: int(res.Code),
 		Msg:  res.Msg,

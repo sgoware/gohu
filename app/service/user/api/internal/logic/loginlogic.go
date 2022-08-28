@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/tidwall/gjson"
+	"main/app/common/log"
 	"main/app/service/user/api/internal/svc"
 	"main/app/service/user/api/internal/types"
 	"main/app/service/user/rpc/crud/crud"
@@ -28,15 +29,18 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err error) {
+	logger := log.GetSugaredLogger()
+
 	res, err := l.svcCtx.CrudRpcClient.Login(l.ctx, &crud.LoginReq{
 		Username: requ.Username,
 		Password: requ.Password,
 		LastIp:   cast.ToString(l.ctx.Value("lastIp")),
 	})
 	if err != nil {
+		logger.Errorf("login failed, err: %v", err)
 		return &types.LoginRes{
 			Code: http.StatusInternalServerError,
-			Msg:  "login failed, err: internal err",
+			Msg:  "internal err",
 		}, nil
 	}
 	if res.Data == nil {
@@ -50,17 +54,17 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 	resBody, err := req.NewRequest().SetHeader("Authorization", res.Data.AuthToken).
 		Post("https://" + l.svcCtx.Domain + "/api/oauth/token/get")
 	if err != nil {
-		logx.Infof("%v", err)
+		logger.Errorf("login failed, err: %v", err)
 		return &types.LoginRes{
 			Code: http.StatusInternalServerError,
-			Msg:  "login failed, err: internal server err",
+			Msg:  "internal err",
 		}, nil
 	}
 	if resBody.StatusCode != http.StatusOK {
-		logx.Infof("%v", res.String())
+		logger.Errorf("login failed, err: %v", err)
 		return &types.LoginRes{
 			Code: http.StatusInternalServerError,
-			Msg:  "login failed, err: internal server err",
+			Msg:  "internal err",
 		}, nil
 	}
 	j := gjson.Parse(resBody.String())
