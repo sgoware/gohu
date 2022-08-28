@@ -44,7 +44,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		logger.Errorf("publish question failed, err: %v", err)
 		res = &pb.PublishQuestionRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -59,7 +59,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		logger.Errorf("publish question failed, err: mysql err, %v", err)
 		res = &pb.PublishQuestionRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -78,7 +78,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		logger.Errorf("publish question failed, err: %v", err)
 		res = &pb.PublishQuestionRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -87,7 +87,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 
 	res = &pb.PublishQuestionRes{
 		Code: http.StatusOK,
-		Mag:  "publish question successfully",
+		Msg:  "publish question successfully",
 		Ok:   true,
 	}
 	logger.Debugf("send message: %v", res.String())

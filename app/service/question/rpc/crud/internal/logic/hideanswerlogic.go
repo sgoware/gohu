@@ -39,7 +39,7 @@ func (l *HideAnswerLogic) HideAnswer(in *pb.HideAnswerReq) (res *pb.HideAnswerRe
 	case gorm.ErrRecordNotFound:
 		res = &pb.HideAnswerRes{
 			Code: http.StatusBadRequest,
-			Mag:  "answer not found",
+			Msg:  "answer not found",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -51,7 +51,7 @@ func (l *HideAnswerLogic) HideAnswer(in *pb.HideAnswerReq) (res *pb.HideAnswerRe
 		logger.Errorf("update question failed, err: %v", err)
 		res = &pb.HideAnswerRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -72,7 +72,7 @@ func (l *HideAnswerLogic) HideAnswer(in *pb.HideAnswerReq) (res *pb.HideAnswerRe
 		logger.Errorf("update question failed, err: %v", err)
 		res = &pb.HideAnswerRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -81,7 +81,7 @@ func (l *HideAnswerLogic) HideAnswer(in *pb.HideAnswerReq) (res *pb.HideAnswerRe
 
 	res = &pb.HideAnswerRes{
 		Code: http.StatusOK,
-		Mag:  "hide answer successfully",
+		Msg:  "hide answer successfully",
 		Ok:   true,
 	}
 	logger.Debugf("send message: %v", res.String())

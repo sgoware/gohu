@@ -12,7 +12,7 @@ message PublishQuestionReq{
 
 message PublishQuestionRes{
     int32 code=1;
-    string mag=2;
+    string msg=2;
     bool ok=3;
 }
 
@@ -27,7 +27,7 @@ message UpdateQuestionReq{
 
 message UpdateQuestionRes{
     int32 code=1;
-    string mag=2;
+    string msg=2;
     bool ok=3;
 }
 
@@ -38,7 +38,7 @@ message HideQuestionReq{
 
 message HideQuestionRes{
     int32 code=1;
-    string mag=2;
+    string msg=2;
     bool ok=3;
 }
 
@@ -49,7 +49,7 @@ message DeleteQuestionReq{
 
 message DeleteQuestionRes{
     int32 code=1;
-    string mag=2;
+    string msg=2;
     bool ok=3;
 }
 
@@ -63,7 +63,7 @@ message PublishAnswerReq{
 
 message PublishAnswerRes{
     int32 code=1;
-    string mag=2;
+    string msg=2;
     bool ok=3;
 }
 
@@ -75,7 +75,7 @@ message UpdateAnswerReq{
 
 message UpdateAnswerRes{
     int32 code=1;
-    string mag=2;
+    string msg=2;
     bool ok=3;
 }
 
@@ -86,7 +86,7 @@ message HideAnswerReq{
 
 message HideAnswerRes{
     int32 code=1;
-    string mag=2;
+    string msg=2;
     bool ok=3;
 }
 
@@ -97,7 +97,7 @@ message DeleteAnswerReq{
 
 message DeleteAnswerRes{
     int32 code=1;
-    string mag=2;
+    string msg=2;
     bool ok=3;
 }
 

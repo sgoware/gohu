@@ -39,20 +39,20 @@ func (l *UpdateAnswerLogic) UpdateAnswer(in *pb.UpdateAnswerReq) (res *pb.Update
 	case gorm.ErrRecordNotFound:
 		res = &pb.UpdateAnswerRes{
 			Code: http.StatusBadRequest,
-			Mag:  "answer not found",
+			Msg:  "answer not found",
 			Ok:   false,
 		}
 	case nil:
 		res = &pb.UpdateAnswerRes{
 			Code: http.StatusOK,
-			Mag:  "update answer successfully",
+			Msg:  "update answer successfully",
 			Ok:   true,
 		}
 	default:
 		logger.Errorf("update question failed, err: %v", err)
 		res = &pb.UpdateAnswerRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 	}

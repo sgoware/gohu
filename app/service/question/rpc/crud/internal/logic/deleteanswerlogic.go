@@ -38,7 +38,7 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 	case gorm.ErrRecordNotFound:
 		res = &pb.DeleteAnswerRes{
 			Code: http.StatusBadRequest,
-			Mag:  "answer not found",
+			Msg:  "answer not found",
 			Ok:   false,
 		}
 	case nil:
@@ -47,14 +47,14 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 		logger.Errorf("update Answer failed, err: %v", err)
 		res = &pb.DeleteAnswerRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 	}
 
 	res = &pb.DeleteAnswerRes{
 		Code: http.StatusOK,
-		Mag:  "delete answer successfully",
+		Msg:  "delete answer successfully",
 		Ok:   true,
 	}
 

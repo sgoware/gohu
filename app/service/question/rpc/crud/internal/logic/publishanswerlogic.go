@@ -35,6 +35,22 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	answerIndexModel := l.svcCtx.QuestionModel.AnswerIndex
 	answerContentModel := l.svcCtx.QuestionModel.AnswerContent
 
+	_, err = answerIndexModel.WithContext(l.ctx).
+		Select(answerIndexModel.UserID, answerIndexModel.QuestionID).
+		Where(answerIndexModel.UserID.Eq(j.Get("user_id")),
+			answerIndexModel.QuestionID.Eq(in.QuestionId),
+		).
+		First()
+	switch err {
+	case nil:
+		{
+			res = &pb.PublishAnswerRes{
+				Code: http.StatusForbidden,
+				Msg:  "answer already exist",
+			}
+		}
+	}
+
 	err = answerIndexModel.WithContext(l.ctx).Create(&model.AnswerIndex{
 		QuestionID: in.QuestionId,
 		UserID:     j.Get("user_id").Int(),
@@ -43,7 +59,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		logger.Errorf("publish answer failed, err: %v", err)
 		res = &pb.PublishAnswerRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -58,7 +74,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		logger.Errorf("publish answer failed, err: mysql err, %v", err)
 		res = &pb.PublishAnswerRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -74,7 +90,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		logger.Errorf("publish answer failed, err: %v", err)
 		res = &pb.PublishAnswerRes{
 			Code: http.StatusInternalServerError,
-			Mag:  "internal err",
+			Msg:  "internal err",
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -83,7 +99,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 
 	res = &pb.PublishAnswerRes{
 		Code: http.StatusOK,
-		Mag:  "publish question successfully",
+		Msg:  "publish question successfully",
 		Ok:   true,
 	}
 	logger.Debugf("send message: %v", res.String())
