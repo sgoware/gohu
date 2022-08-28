@@ -69,7 +69,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
-				Msg:  rpcRes.Mag,
+				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
 			return res, err
@@ -103,7 +103,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
-				Msg:  rpcRes.Mag,
+				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
 			return res, err
@@ -133,7 +133,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
-				Msg:  rpcRes.Mag,
+				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
 			return res, err
@@ -164,7 +164,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
-				Msg:  rpcRes.Mag,
+				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
 			return res, err
@@ -206,7 +206,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
-				Msg:  rpcRes.Mag,
+				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
 			return res, err
@@ -236,7 +236,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
-				Msg:  rpcRes.Mag,
+				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
 			return res, err
@@ -266,7 +266,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
-				Msg:  rpcRes.Mag,
+				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
 			return res, err
@@ -296,7 +296,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
-				Msg:  rpcRes.Mag,
+				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
 			return res, err
