@@ -48,6 +48,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
 			logger.Debugf("rpcReq: %v", rpcReq)
 			if err != nil {
+				logger.Errorf("unmarshal data failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -67,6 +68,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			err = mapping.Struct2Struct(rpcRes, res)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -85,6 +87,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
 			logger.Debugf("rpcReq: %v", rpcReq)
 			if err != nil {
+				logger.Errorf("unmarshal data failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -103,6 +106,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			err = mapping.Struct2Struct(rpcRes, res)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -116,6 +120,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
 			logger.Debugf("rpcReq: %v", rpcReq)
 			if err != nil {
+				logger.Errorf("unmarshal data failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -134,6 +139,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			err = mapping.Struct2Struct(rpcRes, res)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -147,6 +153,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
 			logger.Debugf("rpcReq: %v", rpcReq)
 			if err != nil {
+				logger.Errorf("unmarshal data failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -156,6 +163,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			rpcRes, err := l.svcCtx.CrudRpcClient.DeleteQuestion(l.ctx, rpcReq)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -165,6 +173,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			err = mapping.Struct2Struct(rpcRes, res)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -189,6 +198,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
 			logger.Debugf("rpcReq: %v", rpcReq)
 			if err != nil {
+				logger.Errorf("unmarshal data failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -208,6 +218,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			err = mapping.Struct2Struct(rpcRes, res)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -221,6 +232,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
 			logger.Debugf("rpcReq: %v", rpcReq)
 			if err != nil {
+				logger.Errorf("unmarshal data failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -239,6 +251,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			err = mapping.Struct2Struct(rpcRes, res)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -252,6 +265,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
 			logger.Debugf("rpcReq: %v", rpcReq)
 			if err != nil {
+				logger.Errorf("unmarshal data failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -270,6 +284,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			err = mapping.Struct2Struct(rpcRes, res)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -283,6 +298,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			err = json.Unmarshal([]byte(req.Data), &rpcReq)
 			logger.Debugf("rpcReq: %v", rpcReq)
 			if err != nil {
+				logger.Errorf("unmarshal data failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -301,6 +317,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			}
 			err = mapping.Struct2Struct(rpcRes, res)
 			if err != nil {
+				logger.Errorf("mapping struct failed, err: %v", err)
 				res = &types.CrudRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",

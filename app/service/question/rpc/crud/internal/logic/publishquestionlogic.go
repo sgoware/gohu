@@ -47,7 +47,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
-		return nil, err
+		return res, nil
 	}
 
 	questionSubject, err := questionSubjectModel.WithContext(l.ctx).Select(questionSubjectModel.ID, questionSubjectModel.UserID).
@@ -72,7 +72,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
-		return nil, err
+		return res, nil
 	}
 
 	res = &pb.PublishQuestionRes{
