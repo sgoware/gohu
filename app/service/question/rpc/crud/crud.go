@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const serviceName = ".rpc.crud"
+const serviceName = "question.rpc.crud"
 
 var c config.Config
 
