@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/tidwall/gjson"
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 	"main/app/common/log"
 	"main/app/service/question/dao/model"
 	"main/app/service/question/rpc/crud/internal/svc"
@@ -37,18 +38,28 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 
 	_, err = answerIndexModel.WithContext(l.ctx).
 		Select(answerIndexModel.UserID, answerIndexModel.QuestionID).
-		Where(answerIndexModel.UserID.Eq(j.Get("user_id")),
+		Where(answerIndexModel.UserID.Eq(j.Get("user_id").Int()),
 			answerIndexModel.QuestionID.Eq(in.QuestionId),
 		).
 		First()
 	switch err {
 	case nil:
-		{
-			res = &pb.PublishAnswerRes{
-				Code: http.StatusForbidden,
-				Msg:  "answer already exist",
-			}
+		res = &pb.PublishAnswerRes{
+			Code: http.StatusForbidden,
+			Msg:  "answer already exist",
 		}
+		logger.Debugf("send message: %v", res.String())
+
+	case gorm.ErrRecordNotFound:
+
+	default:
+		logger.Errorf("publish answer failed, err: mysql err, %v", err)
+		res = &pb.PublishAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		return res, nil
 	}
 
 	err = answerIndexModel.WithContext(l.ctx).Create(&model.AnswerIndex{
@@ -63,7 +74,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
-		return nil, err
+		return res, nil
 	}
 
 	answerIndex, err := answerIndexModel.WithContext(l.ctx).
@@ -94,7 +105,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
-		return nil, err
+		return res, nil
 	}
 
 	res = &pb.PublishAnswerRes{
