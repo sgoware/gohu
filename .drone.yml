@@ -120,6 +120,9 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc ./app/service/user/rpc/vip/vip.go
         - go build -o ./app/service/question/api/gohu-question-api ./app/service/question/api/question.go
         - go build -o ./app/service/question/rpc/crud/gohu-question-crud-rpc ./app/service/question/rpc/crud/crud.go
+        - go build -o ./app/service/comment/api/gohu-comment-api ./app/service/comment/api/comment.go
+        - go build -o ./app/service/comment/mq/gohu-comment-mq ./app/service/comment/mq/mq.go
+        - go build -o ./app/service/comment/rpc/crud/gohu-comment-crud-rpc ./app/service/comment/rpc/crud/crud.go
         - echo '----------complete----------'
         - echo '----------export envs----------'
         - export APOLLO_APP_ID=$APOLLO_APP_ID
