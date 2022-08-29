@@ -114,7 +114,7 @@ func (c *Agollo) GetViper(namespace string) (*viper.Viper, error) {
 }
 
 func (c *Agollo) UnmarshalServiceConfig(namespace, serviceType, serviceName string, dst interface{}) (err error) {
-	if serviceType == "api" {
+	if serviceType == "api" || serviceType == "mq" {
 		return c.UnmarshalKey(namespace, serviceType, dst)
 	}
 	return c.UnmarshalKey(namespace, serviceType+"."+serviceName, dst)
