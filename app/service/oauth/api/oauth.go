@@ -58,7 +58,7 @@ func main() {
 	namespace, serviceType, serviceSingleName := utils.GetServiceDetails(serviceName)
 	err = configClient.UnmarshalServiceConfig(namespace, serviceType, serviceSingleName, &c)
 	if err != nil {
-		logger.Panicf("UnmarshalKey into service config failed, err: %v", err)
+		logger.Fatalf("UnmarshalKey into service config failed, err: %v", err)
 	}
 
 	// 启动微服务服务器

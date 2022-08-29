@@ -39,14 +39,14 @@ func main() {
 	// 初始化配置管理器
 	configClient, err := apollo.NewConfigClient()
 	if err != nil {
-		logger.Panicf("Initialize Apollo Client failed, err: %v", err)
+		logger.Fatalf("Initialize Apollo Client failed, err: %v", err)
 	}
 
 	// 初始化微服务设置
 	namespace, serviceType, serviceSingleName := utils.GetServiceDetails(serviceName)
 	err = configClient.UnmarshalServiceConfig(namespace, serviceType, serviceSingleName, &c)
 	if err != nil {
-		logger.Panicf("UnmarshalKey into service config failed, err: %v", err)
+		logger.Fatalf("UnmarshalKey into service config failed, err: %v", err)
 	}
 
 	ctx := svc.NewServiceContext(c)
