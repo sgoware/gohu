@@ -97,7 +97,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	}
 
 	// 发布消息-初始化评论模块
-	err = mq.Publish("question", answerIndex.ID)
+	err = mq.Publish(1, answerIndex.ID)
 	if err != nil {
 		logger.Errorf("publish answer info to nsq failed, err: %v", err)
 		res = &pb.PublishAnswerRes{
