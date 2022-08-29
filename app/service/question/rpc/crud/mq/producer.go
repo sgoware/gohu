@@ -8,12 +8,12 @@ import (
 	mynsq "main/app/common/mq/nsq"
 )
 
-type InitMessage struct {
-	Action string   `json:"action"`
-	Data   InitData `json:"data"`
+type AnswerSubjectMessage struct {
+	Action string            `json:"action"`
+	Data   AnswerSubjectData `json:"data"`
 }
 
-type InitData struct {
+type AnswerSubjectData struct {
 	ObjType int32 `json:"obj_type"`
 	ObjId   int64 `json:"obj_id"`
 }
@@ -32,9 +32,9 @@ func Publish(objType int32, objId int64, action string) (err error) {
 	if producer == nil {
 		return errors.New("empty producer")
 	}
-	message, err := json.Marshal(InitMessage{
+	message, err := json.Marshal(AnswerSubjectMessage{
 		Action: action,
-		Data: InitData{
+		Data: AnswerSubjectData{
 			ObjType: objType,
 			ObjId:   objId,
 		},

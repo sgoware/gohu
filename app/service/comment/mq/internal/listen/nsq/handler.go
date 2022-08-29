@@ -14,7 +14,7 @@ type CommentSubjectHandler struct {
 }
 
 func (m *CommentSubjectHandler) HandleMessage(nsqMsg *nsq.Message) (err error) {
-	msg := &questionMqProduct.InitMessage{}
+	msg := &questionMqProduct.AnswerSubjectMessage{}
 	err = json.Unmarshal(nsqMsg.Body, &msg)
 	if err != nil {
 		return err
