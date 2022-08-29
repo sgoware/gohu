@@ -42,7 +42,7 @@ func Publish(objType int32, objId int64) (err error) {
 	if err != nil {
 		return fmt.Errorf("marshal message failed, %v", err)
 	}
-	err = producer.Publish("comment", message)
+	err = producer.Publish("comment-subject", message)
 	if err != nil {
 		return fmt.Errorf("publish msg to nsq failed, %v", err)
 	}
