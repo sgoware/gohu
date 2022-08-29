@@ -32,7 +32,7 @@ func (l *InitSubjectLogic) InitSubject(in *pb.InitSubjectReq) (res *pb.InitSubje
 	commentSubjectModel := l.svcCtx.CommentModel.CommentSubject
 
 	_, err = commentSubjectModel.WithContext(l.ctx).
-		Where(commentSubjectModel.ObjType.Eq(in.ObjType), commentSubjectModel.ID.Eq(in.ObjId)).
+		Where(commentSubjectModel.ObjType.Eq(in.ObjType), commentSubjectModel.ObjID.Eq(in.ObjId)).
 		FirstOrCreate()
 	if err != nil {
 		logger.Errorf("init comment subject failed, err: mysql err, %v", err)
