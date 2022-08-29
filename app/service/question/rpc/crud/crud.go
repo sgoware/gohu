@@ -4,7 +4,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	apollo "main/app/common/config"
 	"main/app/common/log"
-	"main/app/service/question/rpc/crud/internal/mq"
+	"main/app/service/question/rpc/crud/mq"
 	"main/app/utils"
 
 	"main/app/service/question/rpc/crud/internal/config"

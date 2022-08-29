@@ -81,14 +81,20 @@ func NewLoggerWithOptions(options Options) error {
 
 func GetLogger() *zap.Logger {
 	if logger == nil {
-		InitLogger()
+		err := InitLogger()
+		if err != nil {
+			return nil
+		}
 	}
 	return logger
 }
 
 func GetSugaredLogger() *zap.SugaredLogger {
 	if sugaredLogger == nil {
-		InitLogger()
+		err := InitLogger()
+		if err != nil {
+			return nil
+		}
 	}
 	return sugaredLogger
 }
