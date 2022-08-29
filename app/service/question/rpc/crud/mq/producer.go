@@ -28,12 +28,12 @@ func InitProducer() (err error) {
 	return nil
 }
 
-func Publish(objType int32, objId int64) (err error) {
+func Publish(objType int32, objId int64, action string) (err error) {
 	if producer == nil {
 		return errors.New("empty producer")
 	}
 	message, err := json.Marshal(InitMessage{
-		Action: "init",
+		Action: action,
 		Data: InitData{
 			ObjType: objType,
 			ObjId:   objId,

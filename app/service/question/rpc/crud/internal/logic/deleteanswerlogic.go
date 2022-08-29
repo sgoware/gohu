@@ -4,6 +4,7 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"main/app/common/log"
+	"main/app/service/question/rpc/crud/mq"
 	"net/http"
 
 	"main/app/service/question/rpc/crud/internal/svc"
@@ -53,6 +54,18 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	// 发布消息-删除评论模块
+	err = mq.Publish(1, in.AnswerId, "delete")
+	if err != nil {
+		logger.Errorf("publish answer info to nsq failed, err: %v", err)
+		res = &pb.DeleteAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
 		return res, nil
 	}
 
