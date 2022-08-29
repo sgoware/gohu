@@ -1,0 +1,90 @@
+syntax = "v1"
+
+info(
+    title: "user-api"
+    desc: "user-api"
+    author: "StellarisW"
+)
+
+type (
+    RegisterReq {
+        Username string `form:"username"`
+        Password string `form:"password"`
+    }
+    RegisterRes {
+        Code int    `json:"code"`
+        Msg  string `json:"msg"`
+    }
+
+    LoginReq {
+        Username string `form:"username"`
+        Password string `form:"password"`
+    }
+
+    LoginResData {
+        AccessToken  string `json:"access_token"`
+        RefreshToken string `json:"refresh_token"`
+    }
+    LoginRes {
+        Code int          `json:"code"`
+        Msg  string       `json:"msg"`
+        Data LoginResData `json:"data"`
+    }
+
+    ChangeNicknameReq {
+        Nickname string `form:"nickname"`
+    }
+    ChangeNicknameRes {
+        Code int    `json:"code"`
+        Msg  string `json:"msg"`
+        Ok   bool   `json:"ok"`
+    }
+
+    VipUpgradeReq {
+    }
+    VipUpgradeResData {
+        VipLevel int `json:"vip_level"`
+    }
+    VipUpgradeRes {
+        Code int               `json:"code"`
+        Msg  string            `json:"msg"`
+        Data VipUpgradeResData `json:"data"`
+    }
+
+    VipResetReq {
+    }
+    VipResetRes {
+        Code int    `json:"code"`
+        Msg  string `json:"msg"`
+        Ok   bool   `json:"ok"`
+    }
+)
+
+//@server(
+//	middleware: AgentInfoMiddleware
+//)
+service user {
+    @doc(
+        summary: "user services"
+    )
+    @handler Register
+    post /api/user/register (RegisterReq) returns (RegisterRes)
+
+    @handler Login
+    post /api/user/login (LoginReq) returns (LoginRes)
+
+}
+
+@server(
+    middleware: AuthMiddleware
+)
+service user {
+    @handler ChangeNickname
+    post /api/user/nickname (ChangeNicknameReq) returns (ChangeNicknameRes)
+
+    @handler VipUpgrade
+    post /api/user/vip/upgrade (VipUpgradeReq) returns (VipUpgradeRes)
+
+    @handler VipReset
+    post /api/user/vip/reset (VipResetReq) returns (VipResetRes)
+}
