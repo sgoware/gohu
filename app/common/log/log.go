@@ -15,7 +15,7 @@ var (
 	sugaredLogger *zap.SugaredLogger
 )
 
-func NewLogger() *zap.Logger {
+func InitLogger() error {
 	options := Options{
 		SavePath:     "log",
 		EncoderType:  ConsoleEncode,
@@ -25,11 +25,14 @@ func NewLogger() *zap.Logger {
 	return NewLoggerWithOptions(options)
 }
 
-func NewLoggerWithOptions(options Options) *zap.Logger {
+func NewLoggerWithOptions(options Options) error {
 	// 创建日志保存的文件夹
 	if err := file.IsNotExistMkDir(options.SavePath); err != nil {
 		fmt.Printf("Create %v directory\n", options.SavePath)
-		_ = os.Mkdir(options.SavePath, os.ModePerm)
+		err = os.Mkdir(options.SavePath, os.ModePerm)
+		if err != nil {
+			return err
+		}
 	}
 	dynamicLevel := zap.NewAtomicLevel()
 	// 调试级别
@@ -73,19 +76,19 @@ func NewLoggerWithOptions(options Options) *zap.Logger {
 	//sugar.DPanic("test")
 	//sugar.Panic("test") //打印后程序停止,defer执行
 	//sugar.Fatal("test") //打印后程序停止,defer不执行
-	return logger
+	return nil
 }
 
 func GetLogger() *zap.Logger {
 	if logger == nil {
-		NewLogger()
+		InitLogger()
 	}
 	return logger
 }
 
 func GetSugaredLogger() *zap.SugaredLogger {
 	if sugaredLogger == nil {
-		NewLogger()
+		InitLogger()
 	}
 	return sugaredLogger
 }

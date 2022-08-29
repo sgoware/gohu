@@ -4,6 +4,7 @@ import (
 	"context"
 	"main/app/common/log"
 	"main/app/service/question/dao/model"
+	"main/app/service/question/rpc/crud/internal/mq"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
 	"main/app/utils/net/ip"
@@ -67,6 +68,18 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	// 发布消息-初始化评论模块
+	err = mq.Publish("question", questionSubject.ID)
+	if err != nil {
+		logger.Errorf("publish question info to nsq failed, err: %v", err)
+		res = &pb.PublishQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
 		return res, nil
 	}
 

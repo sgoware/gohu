@@ -21,12 +21,18 @@ var c config.Config
 
 func main() {
 	// 初始化日志管理器
-	_ = log.NewLogger()
-	logWriter, _ := log.GetZapWriter()
+	err := log.InitLogger()
+	if err != nil {
+		panic("initialize logger failed")
+	}
+	logger := log.GetSugaredLogger()
+
+	logWriter, err := log.GetZapWriter()
+	if err != nil {
+		logger.Fatalf("get log writer failed")
+	}
 	logx.MustSetup(log.GetLogXConfig(utils.GetServiceFullName(serviceName), "info"))
 	logx.SetWriter(logWriter)
-
-	logger := log.GetSugaredLogger()
 
 	// 初始化配置管理器
 	configClient, err := apollo.NewConfigClient()

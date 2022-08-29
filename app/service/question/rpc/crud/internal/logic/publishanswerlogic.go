@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"main/app/common/log"
 	"main/app/service/question/dao/model"
+	"main/app/service/question/rpc/crud/internal/mq"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
 	"main/app/utils/net/ip"
@@ -92,6 +93,18 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	// 发布消息-初始化评论模块
+	err = mq.Publish("question", answerIndex.ID)
+	if err != nil {
+		logger.Errorf("publish answer info to nsq failed, err: %v", err)
+		res = &pb.PublishAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
 		return res, nil
 	}
 

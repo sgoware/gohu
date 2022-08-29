@@ -23,7 +23,7 @@ func GetLogXConfig(serviceName, level string) logx.LogConf {
 
 func GetZapWriter() (logx.Writer, error) {
 	if logger == nil {
-		return nil, errors.New("logger is null, try user NewLogger to initialize a logger")
+		return nil, errors.New("logger is null, try user InitLogger to initialize a logger")
 	}
 	return &ZapWriter{
 		logger: logger,

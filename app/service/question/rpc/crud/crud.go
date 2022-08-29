@@ -4,6 +4,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	apollo "main/app/common/config"
 	"main/app/common/log"
+	"main/app/service/question/rpc/crud/internal/mq"
 	"main/app/utils"
 
 	"main/app/service/question/rpc/crud/internal/config"
@@ -24,12 +25,18 @@ var c config.Config
 
 func main() {
 	// 初始化日志管理器
-	_ = log.NewLogger()
-	lowWriter, _ := log.GetZapWriter()
-	logx.MustSetup(log.GetLogXConfig(utils.GetServiceFullName(serviceName), "info"))
-	logx.SetWriter(lowWriter)
-
+	err := log.InitLogger()
+	if err != nil {
+		panic("initialize logger failed")
+	}
 	logger := log.GetSugaredLogger()
+
+	logWriter, err := log.GetZapWriter()
+	if err != nil {
+		logger.Fatalf("get log writer failed")
+	}
+	logx.MustSetup(log.GetLogXConfig(utils.GetServiceFullName(serviceName), "info"))
+	logx.SetWriter(logWriter)
 
 	// 初始化配置管理器
 	configClient, err := apollo.NewConfigClient()
@@ -45,6 +52,12 @@ func main() {
 	}
 
 	ctx := svc.NewServiceContext(c)
+
+	// 初始化mq生产者
+	err = mq.InitProducer()
+	if err != nil {
+		logger.Panicf("initialize nsq producer failed, err: %v", err)
+	}
 
 	// 启动微服务服务器
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
