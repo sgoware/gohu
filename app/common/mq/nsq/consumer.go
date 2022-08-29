@@ -2,17 +2,34 @@ package nsq
 
 import (
 	"github.com/nsqio/go-nsq"
+	"go.uber.org/zap"
 	"main/app/common/log"
 	"time"
 )
 
-func NewConsumer(topic string, channel string) (consumer *nsq.Consumer, err error) {
+type ConsumerService struct {
+	consumer *nsq.Consumer
+	logger   *zap.SugaredLogger
+}
+
+func (m *ConsumerService) Start() {
+	err := m.consumer.ConnectToNSQLookupds(MustGetNSQLookupAddrs())
+	if err != nil {
+		m.logger.Errorf("start nsq consumer service failed, err: %v", err)
+	}
+}
+
+func (m *ConsumerService) Stop() {
+	m.Stop()
+}
+
+func NewConsumerService(topic string, channel string, handler nsq.Handler) (service *ConsumerService, err error) {
 	config, err := GetConfig()
 	if err != nil {
 		return nil, err
 	}
 	config.LookupdPollInterval = 15 * time.Second
-	consumer, err = nsq.NewConsumer(topic, channel, config)
+	consumer, err := nsq.NewConsumer(topic, channel, config)
 	if err != nil {
 		return nil, err
 	}
@@ -23,12 +40,7 @@ func NewConsumer(topic string, channel string) (consumer *nsq.Consumer, err erro
 		consumer.SetLogger(logger, nsq.LogLevel(i))
 	}
 
-	h := &PrintHandler{Title: "print"}
-	consumer.AddHandler(h)
-	err = consumer.ConnectToNSQLookupds(MustGetNSQLookupAddrs())
-	if err != nil {
-		return nil, err
-	}
+	consumer.AddHandler(handler)
 
-	return consumer, nil
+	return &ConsumerService{consumer: consumer, logger: zapLogger}, nil
 }
