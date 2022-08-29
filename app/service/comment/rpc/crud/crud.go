@@ -18,8 +18,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-// TODO: 填写 rpc 名称
-const serviceName = ".rpc.crud"
+const serviceName = "crud.rpc.crud"
 
 var c config.Config
 
