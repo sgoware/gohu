@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/service"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/comment/mq/internal/config"
 	"main/app/service/comment/mq/internal/listen"
 	"main/app/utils"
+
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/service"
+	_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 )
 
 const serviceName = "comment.mq"
