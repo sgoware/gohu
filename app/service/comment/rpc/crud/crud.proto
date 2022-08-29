@@ -27,8 +27,8 @@ message PublishCommentReq{
     string user_details=1;
     int64 subject_id=2;
     int64 root_id=3;
-    int64 comment_id=5;
-    string content=6;
+    int64 comment_id=4;
+    string content=5;
 }
 message PublishCommentRes{
     int32 code=1;
