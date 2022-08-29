@@ -18,12 +18,12 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	logger := log.GetSugaredLogger()
 
-	db, err := apollo.GetMysqlDB("user.yaml")
+	db, err := apollo.GetMysqlDB("question.yaml")
 	if err != nil {
 		logger.Fatalf("initialize mysql failed, err: %v", err)
 	}
 
-	rdb, err := apollo.GetRedisClient("user.yaml")
+	rdb, err := apollo.GetRedisClient("question.yaml")
 	if err != nil {
 		logger.Fatalf("initialize redis failed, err: %v", err)
 	}
