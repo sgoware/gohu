@@ -1,0 +1,28 @@
+syntax = "v1"
+
+info(
+    title: "user-api"
+    desc: "user-api"
+    author: "StellarisW"
+)
+
+type (
+    CrudReq {
+        Action string `form:"action"`
+        Data   string `form:"data"`
+    }
+    CrudRes {
+        Code int    `json:"code"`
+        Msg  string `json:"msg"`
+        Ok   bool   `json:"ok"`
+    }
+)
+
+@server(
+    middleware: AuthMiddleware
+)
+service comment {
+    @handler Crud
+    post /api/comment/crud (CrudReq) returns (CrudRes)
+
+}

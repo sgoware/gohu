@@ -1,0 +1,56 @@
+package main
+
+import (
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/service"
+	apollo "main/app/common/config"
+	"main/app/common/log"
+	"main/app/service/comment/mq/internal/config"
+	"main/app/service/comment/mq/internal/listen"
+	"main/app/utils"
+)
+
+const serviceName = "comment.mq"
+
+var c config.Config
+
+func main() {
+	// 初始化日志管理器
+	err := log.InitLogger()
+	if err != nil {
+		panic("initialize logger failed")
+	}
+	logger := log.GetSugaredLogger()
+
+	logWriter, err := log.GetZapWriter()
+	if err != nil {
+		logger.Fatalf("get log writer failed")
+	}
+	logx.MustSetup(log.GetLogXConfig(utils.GetServiceFullName(serviceName), "info"))
+	logx.SetWriter(logWriter)
+
+	// 初始化配置管理器
+	configClient, err := apollo.NewConfigClient()
+	if err != nil {
+		logger.Panicf("initialize Apollo Client failed, err: %v", err)
+	}
+
+	// 初始化微服务设置
+	namespace, serviceType, serviceSingleName := utils.GetServiceDetails(serviceName)
+	err = configClient.UnmarshalServiceConfig(namespace, serviceType, serviceSingleName, &c)
+	if err != nil {
+		logger.Fatalf("UnmarshalKey into service config failed, err: %v", err)
+	}
+
+	serviceGroup := service.NewServiceGroup()
+	defer serviceGroup.Stop()
+	mqs, err := listen.Mqs(c)
+	if err != nil {
+		logger.Fatalf("listen services failed, err: %v", err)
+	}
+	for _, mq := range mqs {
+		serviceGroup.Add(mq)
+	}
+
+	serviceGroup.Start()
+}

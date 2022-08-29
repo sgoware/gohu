@@ -1,0 +1,68 @@
+syntax = "proto3";
+package crud;
+option go_package = "./pb";
+
+message InitSubjectReq{
+    int32 obj_type=1;
+    int64 obj_id=2;
+}
+message InitSubjectRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+message DeleteSubjectReq{
+    int32 obj_type=1;
+    int64 obj_id=2;
+}
+message DeleteSubjectRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+
+message PublishCommentReq{
+    string user_details=1;
+    int64 subject_id=2;
+    int64 root_id=3;
+    int32 comment_floor=4;
+    int64 comment_id=5;
+    int32 reply_floor=6;
+    string content=7;
+}
+message PublishCommentRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+message UpdateCommentReq{
+    int64 comment_id=1;
+    string content=7;
+}
+message UpdateCommentRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+message DeleteCommentReq{
+    int64 comment_id=1;
+}
+message DeleteCommentRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+
+service Crud{
+    rpc InitSubject(InitSubjectReq) returns(InitSubjectRes);
+    rpc DeleteSubject(DeleteSubjectReq) returns(DeleteSubjectRes);
+
+    rpc PublishComment(PublishCommentReq) returns(PublishCommentRes);
+    rpc UpdateComment(UpdateCommentReq) returns(UpdateCommentRes);
+    rpc DeleteComment(DeleteCommentReq) returns(DeleteCommentRes);
+}
