@@ -57,15 +57,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				return res, err
 			}
 			rpcReq.UserDetails = cast.ToString(l.ctx.Value("user_details"))
-			rpcRes, err := l.svcCtx.CrudRpcClient.PublishQuestion(l.ctx, rpcReq)
-			if err != nil {
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
+			rpcRes, _ := l.svcCtx.CrudRpcClient.PublishQuestion(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
@@ -88,15 +80,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			rpcRes, err := l.svcCtx.CrudRpcClient.UpdateQuestion(l.ctx, rpcReq)
-			if err != nil {
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
+			rpcRes, _ := l.svcCtx.CrudRpcClient.UpdateQuestion(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
@@ -118,15 +102,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			rpcRes, err := l.svcCtx.CrudRpcClient.HideQuestion(l.ctx, rpcReq)
-			if err != nil {
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
+			rpcRes, _ := l.svcCtx.CrudRpcClient.HideQuestion(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
@@ -148,16 +124,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			rpcRes, err := l.svcCtx.CrudRpcClient.DeleteQuestion(l.ctx, rpcReq)
-			if err != nil {
-				logger.Errorf("mapping struct failed, err: %v", err)
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
+			rpcRes, _ := l.svcCtx.CrudRpcClient.DeleteQuestion(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
@@ -191,15 +158,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				return res, err
 			}
 			rpcReq.UserDetails = cast.ToString(l.ctx.Value("user_details"))
-			rpcRes, err := l.svcCtx.CrudRpcClient.PublishAnswer(l.ctx, rpcReq)
-			if err != nil {
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
+			rpcRes, _ := l.svcCtx.CrudRpcClient.PublishAnswer(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
@@ -221,15 +180,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			rpcRes, err := l.svcCtx.CrudRpcClient.UpdateAnswer(l.ctx, rpcReq)
-			if err != nil {
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
+			rpcRes, _ := l.svcCtx.CrudRpcClient.UpdateAnswer(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
@@ -251,15 +202,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			rpcRes, err := l.svcCtx.CrudRpcClient.HideAnswer(l.ctx, rpcReq)
-			if err != nil {
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
+			rpcRes, _ := l.svcCtx.CrudRpcClient.HideAnswer(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
@@ -281,15 +224,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 				}
 				return res, err
 			}
-			rpcRes, err := l.svcCtx.CrudRpcClient.DeleteAnswer(l.ctx, rpcReq)
-			if err != nil {
-				res = &types.CrudRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				return res, err
-			}
+			rpcRes, _ := l.svcCtx.CrudRpcClient.DeleteAnswer(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
 				Code: int(rpcRes.Code),
