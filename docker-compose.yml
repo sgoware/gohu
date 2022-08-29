@@ -94,6 +94,7 @@ services:
       - APOLLO_SECRET=${APOLLO_SECRET}
     networks:
       - gohu_net
+
   question-api:
     build: app/service/question/api
     container_name: gohu-question-api
@@ -122,6 +123,7 @@ services:
       - APOLLO_SECRET=${APOLLO_SECRET}
     networks:
       - gohu_net
+
   comment-api:
     build: app/service/comment/api
     container_name: gohu-comment-api
