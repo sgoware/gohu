@@ -29,6 +29,7 @@ func newAnswerIndex(db *gorm.DB) answerIndex {
 	_answerIndex.ID = field.NewInt64(tableName, "id")
 	_answerIndex.QuestionID = field.NewInt64(tableName, "question_id")
 	_answerIndex.UserID = field.NewInt64(tableName, "user_id")
+	_answerIndex.IPLoc = field.NewString(tableName, "ip_loc")
 	_answerIndex.ApproveCount = field.NewInt32(tableName, "approve_count")
 	_answerIndex.LikeCount = field.NewInt32(tableName, "like_count")
 	_answerIndex.CollectCount = field.NewInt32(tableName, "collect_count")
@@ -49,6 +50,7 @@ type answerIndex struct {
 	ID           field.Int64
 	QuestionID   field.Int64
 	UserID       field.Int64
+	IPLoc        field.String
 	ApproveCount field.Int32
 	LikeCount    field.Int32
 	CollectCount field.Int32
@@ -75,6 +77,7 @@ func (a *answerIndex) updateTableName(table string) *answerIndex {
 	a.ID = field.NewInt64(table, "id")
 	a.QuestionID = field.NewInt64(table, "question_id")
 	a.UserID = field.NewInt64(table, "user_id")
+	a.IPLoc = field.NewString(table, "ip_loc")
 	a.ApproveCount = field.NewInt32(table, "approve_count")
 	a.LikeCount = field.NewInt32(table, "like_count")
 	a.CollectCount = field.NewInt32(table, "collect_count")
@@ -106,10 +109,11 @@ func (a *answerIndex) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *answerIndex) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 10)
+	a.fieldMap = make(map[string]field.Expr, 11)
 	a.fieldMap["id"] = a.ID
 	a.fieldMap["question_id"] = a.QuestionID
 	a.fieldMap["user_id"] = a.UserID
+	a.fieldMap["ip_loc"] = a.IPLoc
 	a.fieldMap["approve_count"] = a.ApproveCount
 	a.fieldMap["like_count"] = a.LikeCount
 	a.fieldMap["collect_count"] = a.CollectCount

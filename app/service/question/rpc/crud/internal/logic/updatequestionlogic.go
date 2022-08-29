@@ -29,20 +29,28 @@ func (l *UpdateQuestionLogic) UpdateQuestion(in *pb.UpdateQuestionReq) (res *pb.
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
+	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 	questionContentModel := l.svcCtx.QuestionModel.QuestionContent
 
-	_, err = questionContentModel.WithContext(l.ctx).Select(
-		questionContentModel.Title,
-		questionContentModel.Content,
-		questionContentModel.Topic,
-		questionContentModel.Tag).
-		Where(questionContentModel.QuestionID.Eq(in.QuestionId)).
-		Updates(model.QuestionContent{
-			Title:   in.Title,
-			Topic:   in.Topic,
-			Tag:     in.Tag,
-			Content: in.Content,
+	_, err = questionSubjectModel.WithContext(l.ctx).Select(
+		questionSubjectModel.ID,
+		questionSubjectModel.Title,
+		questionSubjectModel.Topic,
+		questionSubjectModel.Tag,
+	).
+		Where(questionSubjectModel.ID.Eq(in.QuestionId)).
+		Updates(model.QuestionSubject{
+			Title: in.Title,
+			Topic: in.Topic,
+			Tag:   in.Tag,
 		})
+
+	_, err = questionContentModel.WithContext(l.ctx).Select(
+		questionContentModel.QuestionID,
+		questionContentModel.Content,
+	).
+		Where(questionContentModel.QuestionID.Eq(in.QuestionId)).
+		Update(questionContentModel.Content, in.Content)
 	switch err {
 	case gorm.ErrRecordNotFound:
 		res = &pb.UpdateQuestionRes{

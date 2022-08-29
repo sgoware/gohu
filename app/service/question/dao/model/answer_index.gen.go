@@ -12,9 +12,10 @@ const TableNameAnswerIndex = "answer_index"
 
 // AnswerIndex mapped from table <answer_index>
 type AnswerIndex struct {
-	ID           int64     `gorm:"column:id;primaryKey" json:"id"`                                // 主键
+	ID           int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 主键
 	QuestionID   int64     `gorm:"column:question_id;not null" json:"question_id"`                // 问题 id
 	UserID       int64     `gorm:"column:user_id;not null" json:"user_id"`                        // 回答者 id
+	IPLoc        string    `gorm:"column:ip_loc;not null" json:"ip_loc"`                          // 回答者 IP 归属地
 	ApproveCount int32     `gorm:"column:approve_count;not null" json:"approve_count"`            // 赞同数
 	LikeCount    int32     `gorm:"column:like_count;not null" json:"like_count"`                  // 喜欢数
 	CollectCount int32     `gorm:"column:collect_count;not null" json:"collect_count"`            // 收藏数

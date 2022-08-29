@@ -27,11 +27,7 @@ func newQuestionContent(db *gorm.DB) questionContent {
 	tableName := _questionContent.questionContentDo.TableName()
 	_questionContent.ALL = field.NewField(tableName, "*")
 	_questionContent.QuestionID = field.NewInt64(tableName, "question_id")
-	_questionContent.Title = field.NewString(tableName, "title")
-	_questionContent.Topic = field.NewString(tableName, "topic")
-	_questionContent.Tag = field.NewString(tableName, "tag")
 	_questionContent.Content = field.NewString(tableName, "content")
-	_questionContent.IPLoc = field.NewString(tableName, "ip_loc")
 	_questionContent.Meta = field.NewString(tableName, "meta")
 	_questionContent.CreateTime = field.NewTime(tableName, "create_time")
 	_questionContent.UpdateTime = field.NewTime(tableName, "update_time")
@@ -46,11 +42,7 @@ type questionContent struct {
 
 	ALL        field.Field
 	QuestionID field.Int64
-	Title      field.String
-	Topic      field.String
-	Tag        field.String
 	Content    field.String
-	IPLoc      field.String
 	Meta       field.String
 	CreateTime field.Time
 	UpdateTime field.Time
@@ -71,11 +63,7 @@ func (q questionContent) As(alias string) *questionContent {
 func (q *questionContent) updateTableName(table string) *questionContent {
 	q.ALL = field.NewField(table, "*")
 	q.QuestionID = field.NewInt64(table, "question_id")
-	q.Title = field.NewString(table, "title")
-	q.Topic = field.NewString(table, "topic")
-	q.Tag = field.NewString(table, "tag")
 	q.Content = field.NewString(table, "content")
-	q.IPLoc = field.NewString(table, "ip_loc")
 	q.Meta = field.NewString(table, "meta")
 	q.CreateTime = field.NewTime(table, "create_time")
 	q.UpdateTime = field.NewTime(table, "update_time")
@@ -103,13 +91,9 @@ func (q *questionContent) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (q *questionContent) fillFieldMap() {
-	q.fieldMap = make(map[string]field.Expr, 9)
+	q.fieldMap = make(map[string]field.Expr, 5)
 	q.fieldMap["question_id"] = q.QuestionID
-	q.fieldMap["title"] = q.Title
-	q.fieldMap["topic"] = q.Topic
-	q.fieldMap["tag"] = q.Tag
 	q.fieldMap["content"] = q.Content
-	q.fieldMap["ip_loc"] = q.IPLoc
 	q.fieldMap["meta"] = q.Meta
 	q.fieldMap["create_time"] = q.CreateTime
 	q.fieldMap["update_time"] = q.UpdateTime

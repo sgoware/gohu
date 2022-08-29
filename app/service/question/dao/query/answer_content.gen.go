@@ -28,7 +28,6 @@ func newAnswerContent(db *gorm.DB) answerContent {
 	_answerContent.ALL = field.NewField(tableName, "*")
 	_answerContent.AnswerID = field.NewInt64(tableName, "answer_id")
 	_answerContent.Content = field.NewString(tableName, "content")
-	_answerContent.IPLoc = field.NewString(tableName, "ip_loc")
 	_answerContent.Meta = field.NewString(tableName, "meta")
 	_answerContent.CreateTime = field.NewTime(tableName, "create_time")
 	_answerContent.UpdateTime = field.NewTime(tableName, "update_time")
@@ -44,7 +43,6 @@ type answerContent struct {
 	ALL        field.Field
 	AnswerID   field.Int64
 	Content    field.String
-	IPLoc      field.String
 	Meta       field.String
 	CreateTime field.Time
 	UpdateTime field.Time
@@ -66,7 +64,6 @@ func (a *answerContent) updateTableName(table string) *answerContent {
 	a.ALL = field.NewField(table, "*")
 	a.AnswerID = field.NewInt64(table, "answer_id")
 	a.Content = field.NewString(table, "content")
-	a.IPLoc = field.NewString(table, "ip_loc")
 	a.Meta = field.NewString(table, "meta")
 	a.CreateTime = field.NewTime(table, "create_time")
 	a.UpdateTime = field.NewTime(table, "update_time")
@@ -94,10 +91,9 @@ func (a *answerContent) GetFieldByName(fieldName string) (field.OrderExpr, bool)
 }
 
 func (a *answerContent) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 6)
+	a.fieldMap = make(map[string]field.Expr, 5)
 	a.fieldMap["answer_id"] = a.AnswerID
 	a.fieldMap["content"] = a.Content
-	a.fieldMap["ip_loc"] = a.IPLoc
 	a.fieldMap["meta"] = a.Meta
 	a.fieldMap["create_time"] = a.CreateTime
 	a.fieldMap["update_time"] = a.UpdateTime

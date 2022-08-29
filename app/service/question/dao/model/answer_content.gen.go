@@ -14,7 +14,6 @@ const TableNameAnswerContent = "answer_content"
 type AnswerContent struct {
 	AnswerID   int64     `gorm:"column:answer_id;primaryKey" json:"answer_id"`                  // 回答 id
 	Content    string    `gorm:"column:content" json:"content"`                                 // 回答内容
-	IPLoc      string    `gorm:"column:ip_loc;not null" json:"ip_loc"`                          // 回答者 IP 归属地
 	Meta       string    `gorm:"column:meta" json:"meta"`                                       // 元数据
 	CreateTime time.Time `gorm:"autoCreateTime;column:create_time;not null" json:"create_time"` // 创建时间
 	UpdateTime time.Time `gorm:"autoUpdateTime;column:update_time;not null" json:"update_time"` // 修改时间

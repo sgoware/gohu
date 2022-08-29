@@ -39,6 +39,10 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 	questionSubjectModel.WithContext(l.ctx)
 	err = questionSubjectModel.WithContext(l.ctx).Create(&model.QuestionSubject{
 		UserID: j.Get("user_id").Int(),
+		IPLoc:  ip.GetIpLocFromApi(j.Get("last_ip").String()),
+		Title:  in.Title,
+		Topic:  in.Topic,
+		Tag:    in.Tag,
 	})
 	if err != nil {
 		logger.Errorf("publish question failed, err: %v", err)
@@ -68,11 +72,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 
 	err = questionContentModel.WithContext(l.ctx).Create(&model.QuestionContent{
 		QuestionID: questionSubject.ID,
-		Title:      in.Title,
-		Topic:      in.Topic,
-		Tag:        in.Tag,
 		Content:    in.Content,
-		IPLoc:      ip.GetIpLocFromApi(j.Get("last_ip").String()),
 	})
 	if err != nil {
 		logger.Errorf("publish question failed, err: %v", err)

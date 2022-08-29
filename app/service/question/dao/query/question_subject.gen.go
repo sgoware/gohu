@@ -28,6 +28,10 @@ func newQuestionSubject(db *gorm.DB) questionSubject {
 	_questionSubject.ALL = field.NewField(tableName, "*")
 	_questionSubject.ID = field.NewInt64(tableName, "id")
 	_questionSubject.UserID = field.NewInt64(tableName, "user_id")
+	_questionSubject.IPLoc = field.NewString(tableName, "ip_loc")
+	_questionSubject.Title = field.NewString(tableName, "title")
+	_questionSubject.Topic = field.NewString(tableName, "topic")
+	_questionSubject.Tag = field.NewString(tableName, "tag")
 	_questionSubject.SubCount = field.NewInt32(tableName, "sub_count")
 	_questionSubject.AnswerCount = field.NewInt32(tableName, "answer_count")
 	_questionSubject.ViewCount = field.NewInt64(tableName, "view_count")
@@ -47,6 +51,10 @@ type questionSubject struct {
 	ALL         field.Field
 	ID          field.Int64
 	UserID      field.Int64
+	IPLoc       field.String
+	Title       field.String
+	Topic       field.String
+	Tag         field.String
 	SubCount    field.Int32
 	AnswerCount field.Int32
 	ViewCount   field.Int64
@@ -72,6 +80,10 @@ func (q *questionSubject) updateTableName(table string) *questionSubject {
 	q.ALL = field.NewField(table, "*")
 	q.ID = field.NewInt64(table, "id")
 	q.UserID = field.NewInt64(table, "user_id")
+	q.IPLoc = field.NewString(table, "ip_loc")
+	q.Title = field.NewString(table, "title")
+	q.Topic = field.NewString(table, "topic")
+	q.Tag = field.NewString(table, "tag")
 	q.SubCount = field.NewInt32(table, "sub_count")
 	q.AnswerCount = field.NewInt32(table, "answer_count")
 	q.ViewCount = field.NewInt64(table, "view_count")
@@ -103,9 +115,13 @@ func (q *questionSubject) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (q *questionSubject) fillFieldMap() {
-	q.fieldMap = make(map[string]field.Expr, 9)
+	q.fieldMap = make(map[string]field.Expr, 13)
 	q.fieldMap["id"] = q.ID
 	q.fieldMap["user_id"] = q.UserID
+	q.fieldMap["ip_loc"] = q.IPLoc
+	q.fieldMap["title"] = q.Title
+	q.fieldMap["topic"] = q.Topic
+	q.fieldMap["tag"] = q.Tag
 	q.fieldMap["sub_count"] = q.SubCount
 	q.fieldMap["answer_count"] = q.AnswerCount
 	q.fieldMap["view_count"] = q.ViewCount

@@ -67,6 +67,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	err = answerIndexModel.WithContext(l.ctx).Create(&model.AnswerIndex{
 		QuestionID: in.QuestionId,
 		UserID:     j.Get("user_id").Int(),
+		IPLoc:      ip.GetIpLocFromApi(j.Get("last_ip").String()),
 	})
 	if err != nil {
 		logger.Errorf("publish answer failed, err: %v", err)
@@ -97,7 +98,6 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	err = answerContentModel.WithContext(l.ctx).Create(&model.AnswerContent{
 		AnswerID: answerIndex.ID,
 		Content:  in.Content,
-		IPLoc:    ip.GetIpLocFromApi(j.Get("last_ip").String()),
 	})
 	if err != nil {
 		logger.Errorf("publish answer failed, err: %v", err)
