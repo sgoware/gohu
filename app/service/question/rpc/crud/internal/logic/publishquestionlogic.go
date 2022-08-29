@@ -36,7 +36,6 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 	questionContentModel := l.svcCtx.QuestionModel.QuestionContent
 
-	questionSubjectModel.WithContext(l.ctx)
 	err = questionSubjectModel.WithContext(l.ctx).Create(&model.QuestionSubject{
 		UserID: j.Get("user_id").Int(),
 		IPLoc:  ip.GetIpLocFromApi(j.Get("last_ip").String()),
