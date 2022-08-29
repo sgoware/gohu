@@ -4,12 +4,17 @@ import (
 	"github.com/nsqio/go-nsq"
 	"go.uber.org/zap"
 	"main/app/common/log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
 type ConsumerService struct {
 	consumer *nsq.Consumer
-	logger   *zap.SugaredLogger
+	channel  chan os.Signal
+
+	logger *zap.SugaredLogger
 }
 
 func (m *ConsumerService) Start() {
@@ -17,10 +22,13 @@ func (m *ConsumerService) Start() {
 	if err != nil {
 		m.logger.Errorf("start nsq consumer service failed, err: %v", err)
 	}
+	signal.Notify(m.channel, syscall.SIGINT)
+	<-m.channel
 }
 
 func (m *ConsumerService) Stop() {
 	m.Stop()
+	close(m.channel)
 }
 
 func NewConsumerService(topic string, channel string, handler nsq.Handler) (service *ConsumerService, err error) {
@@ -42,5 +50,5 @@ func NewConsumerService(topic string, channel string, handler nsq.Handler) (serv
 
 	consumer.AddHandler(handler)
 
-	return &ConsumerService{consumer: consumer, logger: zapLogger}, nil
+	return &ConsumerService{consumer: consumer, channel: make(chan os.Signal), logger: zapLogger}, nil
 }
