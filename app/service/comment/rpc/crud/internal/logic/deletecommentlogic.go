@@ -29,25 +29,11 @@ func (l *DeleteCommentLogic) DeleteComment(in *pb.DeleteCommentReq) (res *pb.Del
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
+	// 级联删除commentContent
 	commentIndexModel := l.svcCtx.CommentModel.CommentIndex
-	commentContentModel := l.svcCtx.CommentModel.CommentContent
 
 	_, err = commentIndexModel.WithContext(l.ctx).
-		Where(commentIndexModel.CommentID.Eq(in.CommentId)).
-		Delete()
-	if err != nil {
-		logger.Errorf("delete comment failed, err: mysql err, %v", err)
-		res = &pb.DeleteCommentRes{
-			Code: http.StatusInternalServerError,
-			Msg:  "internal err",
-			Ok:   false,
-		}
-		logger.Debugf("send message: %v", res.String())
-		return res, nil
-	}
-
-	_, err = commentContentModel.WithContext(l.ctx).
-		Where(commentContentModel.CommentID.Eq(in.CommentId)).
+		Where(commentIndexModel.ID.Eq(in.CommentId)).
 		Delete()
 	if err != nil {
 		logger.Errorf("delete comment failed, err: mysql err, %v", err)
