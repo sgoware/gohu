@@ -12,8 +12,9 @@ type (
 		Password string `form:"password"`
 	}
 	RegisterRes {
-		Code int    `json:"code"`
+		Code int32  `json:"code"`
 		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
 	}
 
 	LoginReq {
@@ -26,8 +27,9 @@ type (
 		RefreshToken string `json:"refresh_token"`
 	}
 	LoginRes {
-		Code int          `json:"code"`
+		Code int32        `json:"code"`
 		Msg  string       `json:"msg"`
+		Ok   bool         `json:"ok"`
 		Data LoginResData `json:"data"`
 	}
 
@@ -35,7 +37,7 @@ type (
 		Nickname string `form:"nickname"`
 	}
 	ChangeNicknameRes {
-		Code int    `json:"code"`
+		Code int32  `json:"code"`
 		Msg  string `json:"msg"`
 		Ok   bool   `json:"ok"`
 	}
@@ -111,18 +113,19 @@ type (
 	VipUpgradeReq {
 	}
 	VipUpgradeResData {
-		VipLevel int `json:"vip_level"`
+		VipLevel int32 `json:"vip_level"`
 	}
 	VipUpgradeRes {
-		Code int               `json:"code"`
+		Code int32             `json:"code"`
 		Msg  string            `json:"msg"`
+		Ok   bool              `json:"ok"`
 		Data VipUpgradeResData `json:"data"`
 	}
 
 	VipResetReq {
 	}
 	VipResetRes {
-		Code int    `json:"code"`
+		Code int32  `json:"code"`
 		Msg  string `json:"msg"`
 		Ok   bool   `json:"ok"`
 	}

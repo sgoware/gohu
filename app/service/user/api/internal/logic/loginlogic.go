@@ -45,8 +45,9 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 	}
 	if res.Data == nil {
 		return &types.LoginRes{
-			Code: int(res.Code),
+			Code: res.Code,
 			Msg:  res.Msg,
+			Ok:   res.Ok,
 		}, nil
 	}
 
@@ -58,6 +59,7 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 		return &types.LoginRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
+			Ok:   false,
 		}, nil
 	}
 	if resBody.StatusCode != http.StatusOK {
@@ -65,6 +67,7 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 		return &types.LoginRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
+			Ok:   false,
 		}, nil
 	}
 	j := gjson.Parse(resBody.String())
@@ -72,8 +75,9 @@ func (l *LoginLogic) Login(requ *types.LoginReq) (resp *types.LoginRes, err erro
 	refreshTokenValue := j.Get("data.access_token.refresh_token.token_value").String()
 
 	return &types.LoginRes{
-		Code: int(res.Code),
+		Code: http.StatusOK,
 		Msg:  "login successfully",
+		Ok:   true,
 		Data: types.LoginResData{
 			AccessToken:  cast.ToString(accessTokenValue),
 			RefreshToken: cast.ToString(refreshTokenValue),

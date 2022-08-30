@@ -10,6 +10,7 @@ message RegisterReq{
 message RegisterRes{
     int32 code=1;
     string msg=2;
+    bool ok=3;
 }
 
 
@@ -23,7 +24,8 @@ message LoginReq{
 message LoginRes{
     int32 code=1;
     string msg=2;
-    Data data=3;
+    bool ok=3;
+    Data data=4;
     message Data{
         string auth_token=1;
     }

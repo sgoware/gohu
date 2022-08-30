@@ -32,7 +32,7 @@ func (l *ChangeNicknameLogic) ChangeNickname(req *types.ChangeNicknameReq) (resp
 	res, _ := l.svcCtx.CrudRpcClient.ChangeNickName(l.ctx, &crud.ChangeNicknameReq{Id: userId, Nickname: req.Nickname})
 
 	return &types.ChangeNicknameRes{
-		Code: int(res.Code),
+		Code: res.Code,
 		Msg:  res.Msg,
 		Ok:   res.Ok,
 	}, nil

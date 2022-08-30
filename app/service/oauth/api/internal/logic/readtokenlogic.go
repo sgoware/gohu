@@ -36,12 +36,14 @@ func (l *ReadTokenLogic) ReadToken(req *types.ReadTokenReq) (*types.ReadTokenRes
 		return &types.ReadTokenRes{
 			Code: http.StatusBadRequest,
 			Msg:  fmt.Sprintf("invalid token, %v", err),
+			Ok:   false,
 		}, nil
 	}
 
 	resp := &types.ReadTokenRes{
 		Code: http.StatusOK,
 		Msg:  "check token successfully",
+		Ok:   true,
 		Data: types.ReadTokenResData{AccessToken: &types.OAuth2Token{}},
 	}
 	err = mapping.Struct2Struct(oauthToken, resp.Data.AccessToken)
@@ -50,6 +52,7 @@ func (l *ReadTokenLogic) ReadToken(req *types.ReadTokenReq) (*types.ReadTokenRes
 		return &types.ReadTokenRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
+			Ok:   false,
 		}, nil
 	}
 	return resp, nil

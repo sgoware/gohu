@@ -9,7 +9,8 @@ message UpgradeReq{
 message UpgradeRes{
     int32 code=1;
     string msg=2;
-    Data data=3;
+    bool ok=3;
+    Data data=4;
     message Data{
         int32 vip_level=1;
     }

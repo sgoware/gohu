@@ -32,8 +32,9 @@ func (l *VipUpgradeLogic) VipUpgrade(req *types.VipUpgradeReq) (*types.VipUpgrad
 	res, _ := l.svcCtx.VipRpcClient.Upgrade(l.ctx, &vip.UpgradeReq{Id: userId})
 
 	return &types.VipUpgradeRes{
-		Code: int(res.Code),
+		Code: res.Code,
 		Msg:  res.Msg,
-		Data: types.VipUpgradeResData{VipLevel: int(res.Data.VipLevel)},
+		Ok:   res.Ok,
+		Data: types.VipUpgradeResData{VipLevel: res.Data.VipLevel},
 	}, nil
 }

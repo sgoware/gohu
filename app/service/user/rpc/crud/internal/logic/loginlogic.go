@@ -39,6 +39,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		res = &crud.LoginRes{
 			Code: http.StatusBadRequest,
 			Msg:  "param not fit",
+			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
@@ -53,6 +54,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		res = &crud.LoginRes{
 			Code: http.StatusNotFound,
 			Msg:  "uid not exist",
+			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
@@ -62,7 +64,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 			res = &crud.LoginRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
-				Data: nil,
+				Ok:   false,
 			}
 			logger.Debugf("send message: %v", res.String())
 			return res, err
@@ -77,7 +79,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		res = &crud.LoginRes{
 			Code: http.StatusUnauthorized,
 			Msg:  "wrong password",
-			Data: nil,
+			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
@@ -92,7 +94,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		res = &crud.LoginRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
-			Data: nil,
+			Ok:   false,
 		}
 		return res, err
 	}
@@ -106,6 +108,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	res = &crud.LoginRes{
 		Code: http.StatusOK,
 		Msg:  "get auth_token successfully",
+		Ok:   true,
 		Data: &crud.LoginRes_Data{AuthToken: basicAuthString},
 	}
 	logger.Debugf("send message: %v", res.String())

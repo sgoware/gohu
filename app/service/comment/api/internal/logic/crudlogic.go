@@ -65,7 +65,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (resp *types.CrudRes, err error) {
 		rpcReq.UserDetails = cast.ToString(l.ctx.Value("user_details"))
 		rpcRes, _ := l.svcCtx.CrudRpcClient.PublishComment(l.ctx, rpcReq)
 		res = &types.CrudRes{
-			Code: int(rpcRes.Code),
+			Code: rpcRes.Code,
 			Msg:  rpcRes.Msg,
 			Ok:   rpcRes.Ok,
 		}
@@ -87,7 +87,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (resp *types.CrudRes, err error) {
 
 		rpcRes, _ := l.svcCtx.CrudRpcClient.UpdateComment(l.ctx, rpcReq)
 		res = &types.CrudRes{
-			Code: int(rpcRes.Code),
+			Code: rpcRes.Code,
 			Msg:  rpcRes.Msg,
 			Ok:   rpcRes.Ok,
 		}
@@ -109,7 +109,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (resp *types.CrudRes, err error) {
 
 		rpcRes, _ := l.svcCtx.CrudRpcClient.DeleteComment(l.ctx, rpcReq)
 		res = &types.CrudRes{
-			Code: int(rpcRes.Code),
+			Code: rpcRes.Code,
 			Msg:  rpcRes.Msg,
 			Ok:   rpcRes.Ok,
 		}

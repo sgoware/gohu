@@ -7,7 +7,7 @@ type CrudReq struct {
 }
 
 type CrudRes struct {
-	Code int    `json:"code"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Ok   bool   `json:"ok"`
 }

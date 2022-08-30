@@ -60,7 +60,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			rpcRes, _ := l.svcCtx.CrudRpcClient.PublishQuestion(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
-				Code: int(rpcRes.Code),
+				Code: rpcRes.Code,
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
@@ -83,7 +83,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			rpcRes, _ := l.svcCtx.CrudRpcClient.UpdateQuestion(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
-				Code: int(rpcRes.Code),
+				Code: rpcRes.Code,
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
@@ -105,7 +105,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			rpcRes, _ := l.svcCtx.CrudRpcClient.HideQuestion(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
-				Code: int(rpcRes.Code),
+				Code: rpcRes.Code,
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
@@ -127,7 +127,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			rpcRes, _ := l.svcCtx.CrudRpcClient.DeleteQuestion(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
-				Code: int(rpcRes.Code),
+				Code: rpcRes.Code,
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
@@ -161,7 +161,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			rpcRes, _ := l.svcCtx.CrudRpcClient.PublishAnswer(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
-				Code: int(rpcRes.Code),
+				Code: rpcRes.Code,
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
@@ -183,7 +183,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			rpcRes, _ := l.svcCtx.CrudRpcClient.UpdateAnswer(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
-				Code: int(rpcRes.Code),
+				Code: rpcRes.Code,
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
@@ -205,7 +205,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			rpcRes, _ := l.svcCtx.CrudRpcClient.HideAnswer(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
-				Code: int(rpcRes.Code),
+				Code: rpcRes.Code,
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}
@@ -227,7 +227,7 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (res *types.CrudRes, err error) {
 			rpcRes, _ := l.svcCtx.CrudRpcClient.DeleteAnswer(l.ctx, rpcReq)
 
 			res = &types.CrudRes{
-				Code: int(rpcRes.Code),
+				Code: rpcRes.Code,
 				Msg:  rpcRes.Msg,
 				Ok:   rpcRes.Ok,
 			}

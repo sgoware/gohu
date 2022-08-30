@@ -17,8 +17,9 @@ type GetTokenByAuthResData struct {
 }
 
 type GetTokenByAuthRes struct {
-	Code int                   `json:"code"`
+	Code int32                 `json:"code"`
 	Msg  string                `json:"msg"`
+	Ok   bool                  `json:"ok"`
 	Data GetTokenByAuthResData `json:"data"`
 }
 
@@ -42,7 +43,7 @@ type CheckTokenReq struct {
 }
 
 type CheckTokenRes struct {
-	Code int    `json:"code"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Ok   bool   `json:"ok"`
 }
@@ -82,8 +83,9 @@ type ReadTokenResData struct {
 }
 
 type ReadTokenRes struct {
-	Code int              `json:"code"`
+	Code int32            `json:"code"`
 	Msg  string           `json:"msg"`
+	Ok   bool             `json:"ok"`
 	Data ReadTokenResData `json:"data"`
 }
 
@@ -96,7 +98,8 @@ type GetUserInfoResData struct {
 }
 
 type GetUserInfoRes struct {
-	Code int                `json:"code"`
+	Code int32              `json:"code"`
 	Msg  string             `json:"msg"`
+	Ok   bool               `json:"ok"`
 	Data GetUserInfoResData `json:"data"`
 }

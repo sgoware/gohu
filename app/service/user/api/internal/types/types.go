@@ -7,8 +7,9 @@ type RegisterReq struct {
 }
 
 type RegisterRes struct {
-	Code int    `json:"code"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
+	Ok   bool   `json:"ok"`
 }
 
 type LoginReq struct {
@@ -22,8 +23,9 @@ type LoginResData struct {
 }
 
 type LoginRes struct {
-	Code int          `json:"code"`
+	Code int32        `json:"code"`
 	Msg  string       `json:"msg"`
+	Ok   bool         `json:"ok"`
 	Data LoginResData `json:"data"`
 }
 
@@ -32,7 +34,7 @@ type ChangeNicknameReq struct {
 }
 
 type ChangeNicknameRes struct {
-	Code int    `json:"code"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Ok   bool   `json:"ok"`
 }
@@ -119,12 +121,13 @@ type VipUpgradeReq struct {
 }
 
 type VipUpgradeResData struct {
-	VipLevel int `json:"vip_level"`
+	VipLevel int32 `json:"vip_level"`
 }
 
 type VipUpgradeRes struct {
-	Code int               `json:"code"`
+	Code int32             `json:"code"`
 	Msg  string            `json:"msg"`
+	Ok   bool              `json:"ok"`
 	Data VipUpgradeResData `json:"data"`
 }
 
@@ -132,7 +135,7 @@ type VipResetReq struct {
 }
 
 type VipResetRes struct {
-	Code int    `json:"code"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Ok   bool   `json:"ok"`
 }

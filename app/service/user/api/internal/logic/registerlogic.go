@@ -29,7 +29,8 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		Password: req.Password,
 	})
 	return &types.RegisterRes{
-		Code: int(res.Code),
+		Code: res.Code,
 		Msg:  res.Msg,
+		Ok:   res.Ok,
 	}, nil
 }

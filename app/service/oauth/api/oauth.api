@@ -1,120 +1,122 @@
 syntax = "v1"
 
 info(
-    title: "oauth-api"
-    desc: "oauth-api"
-    author: "StellarisW"
+	title: "oauth-api"
+	desc: "oauth-api"
+	author: "StellarisW"
 )
 
 type OAuth2Token {
-    RefreshToken *OAuth2Token `json:"refresh_token"`
-    TokenType    string       `json:"token_type"`
-    TokenValue   string       `json:"token_value"`
-    ExpireTime   int64        `json:"expires_at"`
+	RefreshToken *OAuth2Token `json:"refresh_token"`
+	TokenType    string       `json:"token_type"`
+	TokenValue   string       `json:"token_value"`
+	ExpireTime   int64        `json:"expires_at"`
 }
 
 type GetTokenByAuthReq {
-    Authorization string `header:"Authorization"`
+	Authorization string `header:"Authorization"`
 }
 
 type GetTokenByAuthResData {
-    AccessToken *OAuth2Token `json:"access_token"`
+	AccessToken *OAuth2Token `json:"access_token"`
 }
 type GetTokenByAuthRes {
-    Code int                   `json:"code"`
-    Msg  string                `json:"msg"`
-    Data GetTokenByAuthResData `json:"data"`
+	Code int32                 `json:"code"`
+	Msg  string                `json:"msg"`
+	Ok   bool                  `json:"ok"`
+	Data GetTokenByAuthResData `json:"data"`
 }
 
 type GetTokenByRefreshTokenReq {
-    RefreshToken string `path:"refresh_token"`
+	RefreshToken string `path:"refresh_token"`
 }
 
 type GetTokenByRefreshTokenResData {
-    AccessToken *OAuth2Token `json:"access_token"`
+	AccessToken *OAuth2Token `json:"access_token"`
 }
 type GetTokenByRefreshTokenRes {
-    Code int                           `json:"code"`
-    Msg  string                        `json:"msg"`
-    Data GetTokenByRefreshTokenResData `json:"data"`
+	Code int                           `json:"code"`
+	Msg  string                        `json:"msg"`
+	Data GetTokenByRefreshTokenResData `json:"data"`
 }
 
 type CheckTokenReq {
-    OAtuh2Token string `form:"oauth2_token"`
-    TokenType   string `form:"token_type"`
+	OAtuh2Token string `form:"oauth2_token"`
+	TokenType   string `form:"token_type"`
 }
 
 type CheckTokenRes {
-    Code int    `json:"code"`
-    Msg  string `json:"msg"`
-    Ok   bool   `json:"ok"`
+	Code int32  `json:"code"`
+	Msg  string `json:"msg"`
+	Ok   bool   `json:"ok"`
 }
 
 type ReadTokenReq {
-    OAuth2Token string `form:"oauth2_token"`
+	OAuth2Token string `form:"oauth2_token"`
 }
 
 type UserDetails {
-    UserId      int64    `json:"user_id"`
-    Username    string   `json:"username"`
-    Nickname    string   `json:"nickname"`
-    LastIp      string   `json:"last_ip"`
-    Vip         int32    `json:"vip"`
-    State       int32    `json:"state"`
-    UpdateTime  string   `json:"update_time"`
-    CreateTime  string   `json:"create_time"`
-    Authorities []string `json:"authorities"`
+	UserId      int64    `json:"user_id"`
+	Username    string   `json:"username"`
+	Nickname    string   `json:"nickname"`
+	LastIp      string   `json:"last_ip"`
+	Vip         int32    `json:"vip"`
+	State       int32    `json:"state"`
+	UpdateTime  string   `json:"update_time"`
+	CreateTime  string   `json:"create_time"`
+	Authorities []string `json:"authorities"`
 }
 type ClientDetails {
-    ClientId                    string   `json:"client_id"`
-    ExpiresTime                 int64    `json:"expires_time"`
-    AccessTokenValiditySeconds  int64    `json:"access_token_validity_seconds"`
-    RefreshTokenValiditySeconds int64    `json:"refresh_token_validity_seconds"`
-    AuthorizedGrantTypes        []string `json:"authorized_grant_types"`
+	ClientId                    string   `json:"client_id"`
+	ExpiresTime                 int64    `json:"expires_time"`
+	AccessTokenValiditySeconds  int64    `json:"access_token_validity_seconds"`
+	RefreshTokenValiditySeconds int64    `json:"refresh_token_validity_seconds"`
+	AuthorizedGrantTypes        []string `json:"authorized_grant_types"`
 }
 type OAuth2Details {
-    UserDetails   UserDetails   `json:"user_details"`
-    ClientDetails ClientDetails `json:"client_details"`
-    Issuer        string        `json:"issuer"`
+	UserDetails   UserDetails   `json:"user_details"`
+	ClientDetails ClientDetails `json:"client_details"`
+	Issuer        string        `json:"issuer"`
 }
 type ReadTokenResData {
-    AccessToken *OAuth2Token `json:"oauth2_token"`
+	AccessToken *OAuth2Token `json:"oauth2_token"`
 }
 type ReadTokenRes {
-    Code int              `json:"code"`
-    Msg  string           `json:"msg"`
-    Data ReadTokenResData `json:"data"`
+	Code int32            `json:"code"`
+	Msg  string           `json:"msg"`
+	Ok   bool             `json:"ok"`
+	Data ReadTokenResData `json:"data"`
 }
 
 type GetUserInfoReq {
-    AccessToken string `form:"access_token"`
+	AccessToken string `form:"access_token"`
 }
 type GetUserInfoResData {
-    UserDetails *UserDetails `json:"user_details"`
+	UserDetails *UserDetails `json:"user_details"`
 }
 type GetUserInfoRes {
-    Code int                `json:"code"`
-    Msg  string             `json:"msg"`
-    Data GetUserInfoResData `json:"data"`
+	Code int32              `json:"code"`
+	Msg  string             `json:"msg"`
+	Ok   bool               `json:"ok"`
+	Data GetUserInfoResData `json:"data"`
 }
 
 service oauth {
-    @doc(
-        summary:"token center"
-    )
-    @handler GetToken
-    post /api/oauth/token/get (GetTokenByAuthReq) returns (GetTokenByAuthRes)
-
-    @handler RefreshToken
-    post /api/oauth/token/refresh (GetTokenByRefreshTokenReq) returns (GetTokenByRefreshTokenRes)
-
-    @handler CheckToken
-    post /api/oauth/token/check (CheckTokenReq) returns (CheckTokenRes)
-
-    @handler ReadToken
-    post /api/oauth/token/read (ReadTokenReq) returns (ReadTokenRes)
-
-    @handler GetUserInfo
-    post /api/oauth/token/get/user (GetUserInfoReq) returns (GetUserInfoRes)
-
+	@doc(
+		summary: "token center"
+	)
+	@handler GetToken
+	post /api/oauth/token/get (GetTokenByAuthReq) returns (GetTokenByAuthRes)
+	
+	@handler RefreshToken
+	post /api/oauth/token/refresh (GetTokenByRefreshTokenReq) returns (GetTokenByRefreshTokenRes)
+	
+	@handler CheckToken
+	post /api/oauth/token/check (CheckTokenReq) returns (CheckTokenRes)
+	
+	@handler ReadToken
+	post /api/oauth/token/read (ReadTokenReq) returns (ReadTokenRes)
+	
+	@handler GetUserInfo
+	post /api/oauth/token/get/user (GetUserInfoReq) returns (GetUserInfoRes)
 }

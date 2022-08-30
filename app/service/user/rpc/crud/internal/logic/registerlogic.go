@@ -39,6 +39,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 		res = &crud.RegisterRes{
 			Code: http.StatusBadRequest,
 			Msg:  "param err",
+			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
@@ -52,6 +53,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 			res = &crud.RegisterRes{
 				Code: http.StatusForbidden,
 				Msg:  "user already exist",
+				Ok:   false,
 			}
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
@@ -76,6 +78,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 				res = &crud.RegisterRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
+					Ok:   false,
 				}
 				logger.Debugf("send message: %v", res.String())
 				return res, err
@@ -83,6 +86,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 				res = &crud.RegisterRes{
 					Code: http.StatusOK,
 					Msg:  "create user successfully",
+					Ok:   true,
 				}
 				logger.Debugf("send message: %v", res.String())
 				return res, nil
@@ -93,6 +97,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 		res = &crud.RegisterRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
+			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, err

@@ -32,7 +32,7 @@ func (l *VipResetLogic) VipReset(req *types.VipResetReq) (*types.VipResetRes, er
 	res, _ := l.svcCtx.VipRpcClient.Reset(l.ctx, &vip.ResetReq{Id: userId})
 
 	return &types.VipResetRes{
-		Code: int(res.Code),
+		Code: res.Code,
 		Msg:  res.Msg,
 		Ok:   res.Ok,
 	}, nil

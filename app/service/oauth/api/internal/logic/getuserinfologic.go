@@ -35,11 +35,13 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (*types.GetUse
 		return &types.GetUserInfoRes{
 			Code: http.StatusBadRequest,
 			Msg:  err.Error(),
+			Ok:   false,
 		}, nil
 	}
 	resp := &types.GetUserInfoRes{
 		Code: http.StatusOK,
 		Msg:  "get user details successfully",
+		Ok:   true,
 		Data: types.GetUserInfoResData{UserDetails: &types.UserDetails{}},
 	}
 	err = mapping.Struct2Struct(userDetails, resp.Data.UserDetails)
@@ -48,6 +50,7 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (*types.GetUse
 		return &types.GetUserInfoRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
+			Ok:   false,
 		}, nil
 	}
 	return resp, nil

@@ -35,12 +35,14 @@ func (l *GetTokenLogic) GetToken(req *types.GetTokenByAuthReq) (res *types.GetTo
 		return &types.GetTokenByAuthRes{
 			Code: http.StatusBadRequest,
 			Msg:  err.Error(),
+			Ok:   false,
 		}, nil
 	}
 
 	res = &types.GetTokenByAuthRes{
 		Code: http.StatusOK,
 		Msg:  "get token successfully",
+		Ok:   true,
 		Data: types.GetTokenByAuthResData{AccessToken: &types.OAuth2Token{}},
 	}
 	err = mapping.Struct2Struct(accessToken, res.Data.AccessToken)
@@ -49,6 +51,7 @@ func (l *GetTokenLogic) GetToken(req *types.GetTokenByAuthReq) (res *types.GetTo
 		return &types.GetTokenByAuthRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
+			Ok:   false,
 		}, nil
 	}
 	return res, nil

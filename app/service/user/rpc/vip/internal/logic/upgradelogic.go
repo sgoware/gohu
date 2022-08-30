@@ -42,6 +42,7 @@ func (l *UpgradeLogic) Upgrade(in *pb.UpgradeReq) (res *pb.UpgradeRes, err error
 		res = &pb.UpgradeRes{
 			Code: http.StatusOK,
 			Msg:  "vip upgrade successfully",
+			Ok:   true,
 			Data: &pb.UpgradeRes_Data{VipLevel: userInfo.Vip + 1},
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -50,6 +51,7 @@ func (l *UpgradeLogic) Upgrade(in *pb.UpgradeReq) (res *pb.UpgradeRes, err error
 		res = &pb.UpgradeRes{
 			Code: http.StatusBadRequest,
 			Msg:  "vip level is already the highest",
+			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
