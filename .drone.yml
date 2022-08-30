@@ -117,6 +117,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc ./app/service/oauth/rpc/token/store/token_store.go
         - go build -o ./app/service/user/api/gohu-user-api ./app/service/user/api/user.go
         - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc ./app/service/user/rpc/crud/crud.go
+        - go build -o ./app/service/user/rpc/info/gohu-user-info-rpc ./app/service/user/rpc/info/info.go
         - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc ./app/service/user/rpc/vip/vip.go
         - go build -o ./app/service/question/api/gohu-question-api ./app/service/question/api/question.go
         - go build -o ./app/service/question/rpc/crud/gohu-question-crud-rpc ./app/service/question/rpc/crud/crud.go
