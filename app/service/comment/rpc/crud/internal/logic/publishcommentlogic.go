@@ -76,7 +76,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 		// 是回复评论的情况
 		count, err := commentIndexModel.WithContext(l.ctx).
 			Where(commentIndexModel.SubjectID.Eq(in.SubjectId),
-				commentIndexModel.CommentID.Eq(in.CommentId)).
+				commentIndexModel.RootID.Eq(in.RootId)).
 			Count()
 		if err != nil {
 			logger.Errorf("publish comment failed, err: mysql err, %v", err)
