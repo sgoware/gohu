@@ -27,7 +27,6 @@ func NewGetPersonalInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetPersonalInfoLogic) GetPersonalInfo(in *pb.GetPersonalInfoReq) (res *pb.GetPersonalInfoRes, err error) {
-	// todo: add your logic here and delete this line
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
