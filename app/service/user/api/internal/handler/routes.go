@@ -35,6 +35,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: ChangeNicknameHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodGet,
+					Path:    "/api/user/obj/:obj_type",
+					Handler: GetObjInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/api/user/profile",
+					Handler: GetPersonalInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/api/user/collection",
+					Handler: GetCollectionInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/api/user/notification/:message_type",
+					Handler: GetNotificationInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/api/user/subscribe/:obj_type",
+					Handler: GetSubscribeInfoHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/api/user/vip/upgrade",
 					Handler: VipUpgradeHandler(serverCtx),

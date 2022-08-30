@@ -37,6 +37,84 @@ type ChangeNicknameRes struct {
 	Ok   bool   `json:"ok"`
 }
 
+type GetObjInfoReq struct {
+	Obj_type int32 `path:"obj_type"`
+}
+
+type GetObjInfoResData struct {
+	Ids []int64 `json:"ids"`
+}
+
+type GetObjInfoRes struct {
+	Code int32             `json:"code"`
+	Msg  string            `json:"msg"`
+	Ok   bool              `json:"ok"`
+	Data GetObjInfoResData `json:"data"`
+}
+
+type GetPersonalInfoReq struct {
+}
+
+type GetPersonalInfoResData struct {
+	Username string `json:"username"`
+	Nickname string `json:"nickname"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	Vip      int32  `json:"vip"`
+}
+
+type GetPersonalInfoRes struct {
+	Code int32                  `json:"code"`
+	Msg  string                 `json:"msg"`
+	Ok   bool                   `json:"ok"`
+	Data GetPersonalInfoResData `json:"data"`
+}
+
+type GetCollectionInfoReq struct {
+}
+
+type GetCollectionInfoResData struct {
+	ObjType []int32 `json:"obj_type"`
+	ObjId   []int64 `json:"obj_id"`
+}
+
+type GetCollectionInfoRes struct {
+	Code int32                    `json:"code"`
+	Msg  string                   `json:"msg"`
+	Ok   bool                     `json:"ok"`
+	Data GetCollectionInfoResData `json:"data"`
+}
+
+type GetNotificationInfoReq struct {
+	MessageType int32 `path:"message_type"`
+}
+
+type GetNotificationInfoResData struct {
+	MessageIds []int64 `json:"message_ids"`
+}
+
+type GetNotificationInfoRes struct {
+	Code int32                      `json:"code"`
+	Msg  string                     `json:"msg"`
+	Ok   bool                       `json:"ok"`
+	Data GetNotificationInfoResData `json:"data"`
+}
+
+type GetSubscribeInfoReq struct {
+	ObjType int32 `path:"obj_type"`
+}
+
+type GetSubscribeInfoResData struct {
+	Ids []int64 `json:"ids"`
+}
+
+type GetSubscribeInfoRes struct {
+	Code int32                   `json:"code"`
+	Msg  string                  `json:"msg"`
+	Ok   bool                    `json:"ok"`
+	Data GetSubscribeInfoResData `json:"data"`
+}
+
 type VipUpgradeReq struct {
 }
 

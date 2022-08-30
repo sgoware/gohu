@@ -10,5 +10,6 @@ type Config struct {
 
 	// rpc client配置
 	CrudRpcClientConf zrpc.RpcClientConf
+	InfoRpcClientConf zrpc.RpcClientConf
 	VipRpcClientConf  zrpc.RpcClientConf
 }

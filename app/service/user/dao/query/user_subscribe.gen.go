@@ -26,9 +26,10 @@ func newUserSubscribe(db *gorm.DB) userSubscribe {
 
 	tableName := _userSubscribe.userSubscribeDo.TableName()
 	_userSubscribe.ALL = field.NewField(tableName, "*")
+	_userSubscribe.ID = field.NewInt64(tableName, "id")
 	_userSubscribe.UserID = field.NewInt64(tableName, "user_id")
-	_userSubscribe.ObjID = field.NewInt64(tableName, "obj_id")
 	_userSubscribe.ObjType = field.NewInt32(tableName, "obj_type")
+	_userSubscribe.ObjID = field.NewInt64(tableName, "obj_id")
 	_userSubscribe.CreateTime = field.NewTime(tableName, "create_time")
 	_userSubscribe.UpdateTime = field.NewTime(tableName, "update_time")
 
@@ -41,9 +42,10 @@ type userSubscribe struct {
 	userSubscribeDo userSubscribeDo
 
 	ALL        field.Field
+	ID         field.Int64
 	UserID     field.Int64
-	ObjID      field.Int64
 	ObjType    field.Int32
+	ObjID      field.Int64
 	CreateTime field.Time
 	UpdateTime field.Time
 
@@ -62,9 +64,10 @@ func (u userSubscribe) As(alias string) *userSubscribe {
 
 func (u *userSubscribe) updateTableName(table string) *userSubscribe {
 	u.ALL = field.NewField(table, "*")
+	u.ID = field.NewInt64(table, "id")
 	u.UserID = field.NewInt64(table, "user_id")
-	u.ObjID = field.NewInt64(table, "obj_id")
 	u.ObjType = field.NewInt32(table, "obj_type")
+	u.ObjID = field.NewInt64(table, "obj_id")
 	u.CreateTime = field.NewTime(table, "create_time")
 	u.UpdateTime = field.NewTime(table, "update_time")
 
@@ -91,10 +94,11 @@ func (u *userSubscribe) GetFieldByName(fieldName string) (field.OrderExpr, bool)
 }
 
 func (u *userSubscribe) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 5)
+	u.fieldMap = make(map[string]field.Expr, 6)
+	u.fieldMap["id"] = u.ID
 	u.fieldMap["user_id"] = u.UserID
-	u.fieldMap["obj_id"] = u.ObjID
 	u.fieldMap["obj_type"] = u.ObjType
+	u.fieldMap["obj_id"] = u.ObjID
 	u.fieldMap["create_time"] = u.CreateTime
 	u.fieldMap["update_time"] = u.UpdateTime
 }

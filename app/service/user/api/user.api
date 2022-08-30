@@ -1,90 +1,173 @@
 syntax = "v1"
 
 info(
-    title: "user-api"
-    desc: "user-api"
-    author: "StellarisW"
+	title: "user-api"
+	desc: "user-api"
+	author: "StellarisW"
 )
 
 type (
-    RegisterReq {
-        Username string `form:"username"`
-        Password string `form:"password"`
-    }
-    RegisterRes {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-    }
+	RegisterReq {
+		Username string `form:"username"`
+		Password string `form:"password"`
+	}
+	RegisterRes {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}
 
-    LoginReq {
-        Username string `form:"username"`
-        Password string `form:"password"`
-    }
+	LoginReq {
+		Username string `form:"username"`
+		Password string `form:"password"`
+	}
 
-    LoginResData {
-        AccessToken  string `json:"access_token"`
-        RefreshToken string `json:"refresh_token"`
-    }
-    LoginRes {
-        Code int          `json:"code"`
-        Msg  string       `json:"msg"`
-        Data LoginResData `json:"data"`
-    }
+	LoginResData {
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
+	}
+	LoginRes {
+		Code int          `json:"code"`
+		Msg  string       `json:"msg"`
+		Data LoginResData `json:"data"`
+	}
 
-    ChangeNicknameReq {
-        Nickname string `form:"nickname"`
-    }
-    ChangeNicknameRes {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-        Ok   bool   `json:"ok"`
-    }
+	ChangeNicknameReq {
+		Nickname string `form:"nickname"`
+	}
+	ChangeNicknameRes {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+	}
 
-    VipUpgradeReq {
-    }
-    VipUpgradeResData {
-        VipLevel int `json:"vip_level"`
-    }
-    VipUpgradeRes {
-        Code int               `json:"code"`
-        Msg  string            `json:"msg"`
-        Data VipUpgradeResData `json:"data"`
-    }
+	GetObjInfoReq {
+		Obj_type int32 `path:"obj_type"`
+	}
+	GetObjInfoResData {
+		Ids []int64 `json:"ids"`
+	}
+	GetObjInfoRes {
+		Code int32             `json:"code"`
+		Msg  string            `json:"msg"`
+		Ok   bool              `json:"ok"`
+		Data GetObjInfoResData `json:"data"`
+	}
 
-    VipResetReq {
-    }
-    VipResetRes {
-        Code int    `json:"code"`
-        Msg  string `json:"msg"`
-        Ok   bool   `json:"ok"`
-    }
+	GetPersonalInfoReq {
+	}
+	GetPersonalInfoResData {
+		Username string `json:"username"`
+		Nickname string `json:"nickname"`
+		Email    string `json:"email"`
+		Phone    string `json:"phone"`
+		Vip      int32  `json:"vip"`
+	}
+	GetPersonalInfoRes {
+		Code int32                  `json:"code"`
+		Msg  string                 `json:"msg"`
+		Ok   bool                   `json:"ok"`
+		Data GetPersonalInfoResData `json:"data"`
+	}
+
+	GetCollectionInfoReq {
+	}
+	GetCollectionInfoResData {
+		ObjType []int32 `json:"obj_type"`
+		ObjId   []int64 `json:"obj_id"`
+	}
+	GetCollectionInfoRes {
+		Code int32                    `json:"code"`
+		Msg  string                   `json:"msg"`
+		Ok   bool                     `json:"ok"`
+		Data GetCollectionInfoResData `json:"data"`
+	}
+
+	GetNotificationInfoReq {
+		MessageType int32 `path:"message_type"`
+	}
+	GetNotificationInfoResData {
+		MessageIds []int64 `json:"message_ids"`
+	}
+	GetNotificationInfoRes {
+		Code int32                      `json:"code"`
+		Msg  string                     `json:"msg"`
+		Ok   bool                       `json:"ok"`
+		Data GetNotificationInfoResData `json:"data"`
+	}
+
+	GetSubscribeInfoReq {
+		ObjType int32 `path:"obj_type"`
+	}
+	GetSubscribeInfoResData {
+		Ids []int64 `json:"ids"`
+	}
+	GetSubscribeInfoRes {
+		Code int32                   `json:"code"`
+		Msg  string                  `json:"msg"`
+		Ok   bool                    `json:"ok"`
+		Data GetSubscribeInfoResData `json:"data"`
+	}
+
+	VipUpgradeReq {
+	}
+	VipUpgradeResData {
+		VipLevel int `json:"vip_level"`
+	}
+	VipUpgradeRes {
+		Code int               `json:"code"`
+		Msg  string            `json:"msg"`
+		Data VipUpgradeResData `json:"data"`
+	}
+
+	VipResetReq {
+	}
+	VipResetRes {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+	}
 )
 
 //@server(
 //	middleware: AgentInfoMiddleware
 //)
 service user {
-    @doc(
-        summary: "user services"
-    )
-    @handler Register
-    post /api/user/register (RegisterReq) returns (RegisterRes)
-
-    @handler Login
-    post /api/user/login (LoginReq) returns (LoginRes)
-
+	@doc(
+		summary: "user services"
+	)
+	@handler Register
+	post /api/user/register (RegisterReq) returns (RegisterRes)
+	
+	@handler Login
+	post /api/user/login (LoginReq) returns (LoginRes)
+	
 }
 
 @server(
-    middleware: AuthMiddleware
+	middleware: AuthMiddleware
 )
 service user {
-    @handler ChangeNickname
-    post /api/user/nickname (ChangeNicknameReq) returns (ChangeNicknameRes)
-
-    @handler VipUpgrade
-    post /api/user/vip/upgrade (VipUpgradeReq) returns (VipUpgradeRes)
-
-    @handler VipReset
-    post /api/user/vip/reset (VipResetReq) returns (VipResetRes)
+	@handler ChangeNickname
+	post /api/user/nickname (ChangeNicknameReq) returns (ChangeNicknameRes)
+	
+	@handler GetObjInfo
+	get /api/user/obj/:obj_type (GetObjInfoReq) returns (GetObjInfoRes)
+	
+	@handler GetPersonalInfo
+	get /api/user/profile (GetPersonalInfoReq) returns (GetPersonalInfoRes)
+	
+	@handler GetCollectionInfo
+	get /api/user/collection (GetCollectionInfoReq) returns (GetCollectionInfoRes)
+	
+	@handler GetNotificationInfo
+	get /api/user/notification/:message_type (GetNotificationInfoReq) returns (GetNotificationInfoRes)
+	
+	@handler GetSubscribeInfo
+	get /api/user/subscribe/:obj_type (GetSubscribeInfoReq) returns (GetSubscribeInfoRes)
+	
+	@handler VipUpgrade
+	post /api/user/vip/upgrade (VipUpgradeReq) returns (VipUpgradeRes)
+	
+	@handler VipReset
+	post /api/user/vip/reset (VipResetReq) returns (VipResetRes)
 }

@@ -12,9 +12,10 @@ const TableNameUserCollect = "user_collect"
 
 // UserCollect mapped from table <user_collect>
 type UserCollect struct {
-	UserID     int64     `gorm:"column:user_id;primaryKey" json:"user_id"`                      // 用户 id
-	ObjID      int64     `gorm:"column:obj_id;not null" json:"obj_id"`                          // 对象 id
+	ID         int64     `gorm:"column:id;primaryKey" json:"id"`
+	UserID     int64     `gorm:"column:user_id;not null" json:"user_id"`                        // 用户 id
 	ObjType    int32     `gorm:"column:obj_type;not null" json:"obj_type"`                      // 对象类型 (0-默认对象 1-回答 2-文章)
+	ObjID      int64     `gorm:"column:obj_id;not null" json:"obj_id"`                          // 对象 id
 	CreateTime time.Time `gorm:"autoCreateTime;column:create_time;not null" json:"create_time"` // 创建时间
 	UpdateTime time.Time `gorm:"autoUpdateTime;column:update_time;not null" json:"update_time"` // 修改时间
 }

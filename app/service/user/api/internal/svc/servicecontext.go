@@ -7,17 +7,21 @@ import (
 	"main/app/common/middleware"
 	"main/app/service/user/api/internal/config"
 	"main/app/service/user/rpc/crud/crud"
+	"main/app/service/user/rpc/info/info"
 	"main/app/service/user/rpc/vip/vip"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
-	Config        config.Config
-	Domain        string
+	Config config.Config
+	Domain string
+
 	CrudRpcClient crud.Crud
+	InfoRpcClient info.Info
 	VipRpcClient  vip.Vip
-	Cookie        *apollo.CookieConfig
+
+	Cookie *apollo.CookieConfig
 
 	AuthMiddleware rest.Middleware
 }
@@ -39,11 +43,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		logger.Errorf("get domain failed, err: %v", err)
 	}
 	return &ServiceContext{
-		Config:        c,
-		Domain:        domain,
+		Config: c,
+		Domain: domain,
+
 		CrudRpcClient: crud.NewCrud(zrpc.MustNewClient(c.CrudRpcClientConf)),
+		InfoRpcClient: info.NewInfo(zrpc.MustNewClient(c.InfoRpcClientConf)),
 		VipRpcClient:  vip.NewVip(zrpc.MustNewClient(c.VipRpcClientConf)),
-		Cookie:        cookieConfig,
+
+		Cookie: cookieConfig,
 
 		AuthMiddleware: middleware.NewAuthMiddleware(domain, cookieConfig, rdb).Handle,
 	}
