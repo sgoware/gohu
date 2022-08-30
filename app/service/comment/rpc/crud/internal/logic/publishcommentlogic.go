@@ -128,7 +128,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 
 	err = commentContentModel.WithContext(l.ctx).
 		Create(&model.CommentContent{
-			CommentID: commentIndex.CommentID,
+			CommentID: commentIndex.ID,
 			Content:   in.Content,
 		})
 	if err != nil {

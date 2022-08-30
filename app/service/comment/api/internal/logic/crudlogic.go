@@ -43,7 +43,13 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (resp *types.CrudRes, err error) {
 
 	switch req.Action {
 	case "publish":
-		rpcReq := &crud.PublishCommentReq{}
+		rpcReq := &crud.PublishCommentReq{
+			UserDetails: "",
+			SubjectId:   0,
+			RootId:      0,
+			CommentId:   0,
+			Content:     "",
+		}
 		err = json.Unmarshal([]byte(req.Data), &rpcReq)
 		logger.Debugf("rpcReq: %v", rpcReq)
 		if err != nil {
