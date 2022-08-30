@@ -48,6 +48,6 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		cookieWriter.Set("refresh-token", res.Data.RefreshToken)
 
 		logger.Info("response: %v", res)
-		httpx.WriteJson(w, res.Code, res)
+		httpx.WriteJson(w, int(res.Code), res)
 	}
 }

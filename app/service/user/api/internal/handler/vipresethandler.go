@@ -30,6 +30,6 @@ func VipResetHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		logger.Info("response: %v", res)
-		httpx.WriteJson(w, res.Code, res)
+		httpx.WriteJson(w, int(res.Code), res)
 	}
 }
