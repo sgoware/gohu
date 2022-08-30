@@ -15,7 +15,7 @@ import (
 
 const (
 	// app下的所有命名空间
-	namespaces = "gohu.yaml,database-dsn,oauth.yaml,user.yaml,NSQ,question.yaml,comment.yaml"
+	namespaces = "gohu.yaml,database-dsn,oauth.yaml,user.yaml,NSQ,question.yaml,comment.yaml,notification.yaml"
 
 	// app default namespace
 	// 有关服务器的配置
