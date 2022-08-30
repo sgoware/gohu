@@ -6,6 +6,7 @@ package query
 
 import (
 	"context"
+	"main/app/service/comment/dao/model"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -15,8 +16,6 @@ import (
 	"gorm.io/gen/field"
 
 	"gorm.io/plugin/dbresolver"
-
-	"main/dao/model"
 )
 
 func newCommentContent(db *gorm.DB) commentContent {
