@@ -65,28 +65,13 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		return res, nil
 	}
 
-	err = answerIndexModel.WithContext(l.ctx).Create(&model.AnswerIndex{
-		QuestionID: in.QuestionId,
-		UserID:     j.Get("user_id").Int(),
-		IPLoc:      ip.GetIpLocFromApi(j.Get("last_ip").String()),
-	})
+	answerIndex, err := answerIndexModel.WithContext(l.ctx).
+		Where(answerIndexModel.QuestionID.Eq(in.QuestionId),
+			answerIndexModel.UserID.Eq(j.Get("user_id").Int()),
+			answerIndexModel.IPLoc.Eq(ip.GetIpLocFromApi(j.Get("last_ip").String()))).
+		FirstOrCreate()
 	if err != nil {
 		logger.Errorf("publish answer failed, err: %v", err)
-		res = &pb.PublishAnswerRes{
-			Code: http.StatusInternalServerError,
-			Msg:  "internal err",
-			Ok:   false,
-		}
-		logger.Debugf("send message: %v", res.String())
-		return res, nil
-	}
-
-	answerIndex, err := answerIndexModel.WithContext(l.ctx).
-		Select(answerIndexModel.ID, answerIndexModel.UserID).
-		Where(answerIndexModel.UserID.Eq(j.Get("user_id").Int())).
-		Order(answerIndexModel.UserID.Desc()).Last()
-	if err != nil {
-		logger.Errorf("publish answer failed, err: mysql err, %v", err)
 		res = &pb.PublishAnswerRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
