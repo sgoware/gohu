@@ -6,9 +6,10 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 	"main/app/common/log"
+	"main/app/common/mq/nsq"
+	commentMqProducer "main/app/service/comment/mq/producer"
 	"main/app/service/question/dao/model"
 	"main/app/service/question/rpc/crud/internal/svc"
-	"main/app/service/question/rpc/crud/mq"
 	"main/app/service/question/rpc/crud/pb"
 	"main/app/utils/net/ip"
 	"net/http"
@@ -82,7 +83,8 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	}
 
 	// 发布消息-初始化评论模块
-	err = mq.Publish(1, answerIndex.ID, "init")
+	producer, err := nsq.GetProducer()
+	err = commentMqProducer.DoCommentSubject(producer, 1, answerIndex.ID, "init")
 	if err != nil {
 		logger.Errorf("publish answer info to nsq failed, err: %v", err)
 		res = &pb.PublishAnswerRes{

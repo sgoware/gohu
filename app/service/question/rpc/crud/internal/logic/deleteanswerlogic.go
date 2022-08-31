@@ -58,7 +58,7 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 	}
 
 	// 发布消息-删除评论模块
-	err = mq.Publish(1, in.AnswerId, "delete")
+	err = mq.DoCommentSubject(1, in.AnswerId, "delete")
 	if err != nil {
 		logger.Errorf("publish answer info to nsq failed, err: %v", err)
 		res = &pb.DeleteAnswerRes{

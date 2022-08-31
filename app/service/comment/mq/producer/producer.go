@@ -1,11 +1,9 @@
-package mq
+package producer
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/nsqio/go-nsq"
-	mynsq "main/app/common/mq/nsq"
 )
 
 type AnswerSubjectMessage struct {
@@ -18,20 +16,7 @@ type AnswerSubjectData struct {
 	ObjId   int64 `json:"obj_id"`
 }
 
-var producer *nsq.Producer
-
-func InitProducer() (err error) {
-	producer, err = mynsq.NewProducer()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func Publish(objType int32, objId int64, action string) (err error) {
-	if producer == nil {
-		return errors.New("empty producer")
-	}
+func DoCommentSubject(producer *nsq.Producer, objType int32, objId int64, action string) (err error) {
 	message, err := json.Marshal(AnswerSubjectMessage{
 		Action: action,
 		Data: AnswerSubjectData{

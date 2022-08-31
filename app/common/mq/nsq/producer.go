@@ -5,7 +5,9 @@ import (
 	"main/app/common/log"
 )
 
-func NewProducer() (producer *nsq.Producer, err error) {
+var producer *nsq.Producer
+
+func NewProducer() (*nsq.Producer, error) {
 	config, err := GetConfig()
 	if err != nil {
 		return nil, err
@@ -28,10 +30,12 @@ func NewProducer() (producer *nsq.Producer, err error) {
 		return nil, err
 	}
 
-	err = producer.Publish("test", []byte("sdf"))
-	if err != nil {
-		return nil, err
-	}
+	return producer, nil
+}
 
-	return
+func GetProducer() (*nsq.Producer, error) {
+	if producer == nil {
+		return NewProducer()
+	}
+	return producer, nil
 }

@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/nsqio/go-nsq"
+	"main/app/service/comment/mq/producer"
 	"main/app/service/comment/rpc/crud/crud"
-	questionMqProduct "main/app/service/question/rpc/crud/mq"
+
+	"github.com/nsqio/go-nsq"
 )
 
 type CommentSubjectHandler struct {
@@ -14,7 +15,7 @@ type CommentSubjectHandler struct {
 }
 
 func (m *CommentSubjectHandler) HandleMessage(nsqMsg *nsq.Message) (err error) {
-	msg := &questionMqProduct.AnswerSubjectMessage{}
+	msg := &producer.AnswerSubjectMessage{}
 	err = json.Unmarshal(nsqMsg.Body, &msg)
 	if err != nil {
 		return err
