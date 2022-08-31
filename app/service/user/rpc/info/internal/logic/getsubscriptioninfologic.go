@@ -11,21 +11,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetSubscribeInfoLogic struct {
+type GetSubscriptionInfoLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetSubscribeInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSubscribeInfoLogic {
-	return &GetSubscribeInfoLogic{
+func NewGetSubscriptionInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSubscriptionInfoLogic {
+	return &GetSubscriptionInfoLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetSubscribeInfoLogic) GetSubscribeInfo(in *pb.GetSubscribeInfoReq) (res *pb.GetSubscribeInfoRes, err error) {
+func (l *GetSubscriptionInfoLogic) GetSubscriptionInfo(in *pb.GetSubscriptionInfoReq) (res *pb.GetSubscriptionInfoRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
@@ -35,7 +35,7 @@ func (l *GetSubscribeInfoLogic) GetSubscribeInfo(in *pb.GetSubscribeInfoReq) (re
 		Where(userSubscribeModel.UserID.Eq(in.UserId), userSubscribeModel.ObjType.Eq(in.ObjType)).Find()
 	if err != nil {
 		logger.Errorf("get subscribe info failed, err: mysql err, %v", err)
-		res = &pb.GetSubscribeInfoRes{
+		res = &pb.GetSubscriptionInfoRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
 			Ok:   false,
@@ -45,11 +45,11 @@ func (l *GetSubscribeInfoLogic) GetSubscribeInfo(in *pb.GetSubscribeInfoReq) (re
 		return res, nil
 	}
 
-	res = &pb.GetSubscribeInfoRes{
+	res = &pb.GetSubscriptionInfoRes{
 		Code: http.StatusOK,
 		Msg:  "get subscribe info successfully",
 		Ok:   true,
-		Data: &pb.GetSubscribeInfoRes_Data{Ids: make([]int64, 0)},
+		Data: &pb.GetSubscriptionInfoRes_Data{Ids: make([]int64, 0)},
 	}
 	for _, userSubscribe := range userSubscribes {
 		res.Data.Ids = append(res.Data.Ids, userSubscribe.ObjID)

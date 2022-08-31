@@ -25,16 +25,16 @@ type (
 	GetPersonalInfoReq          = pb.GetPersonalInfoReq
 	GetPersonalInfoRes          = pb.GetPersonalInfoRes
 	GetPersonalInfoRes_Data     = pb.GetPersonalInfoRes_Data
-	GetSubscribeInfoReq         = pb.GetSubscribeInfoReq
-	GetSubscribeInfoRes         = pb.GetSubscribeInfoRes
-	GetSubscribeInfoRes_Data    = pb.GetSubscribeInfoRes_Data
+	GetSubscriptionInfoReq      = pb.GetSubscriptionInfoReq
+	GetSubscriptionInfoRes      = pb.GetSubscriptionInfoRes
+	GetSubscriptionInfoRes_Data = pb.GetSubscriptionInfoRes_Data
 
 	Info interface {
 		GetObjInfo(ctx context.Context, in *GetObjInfoReq, opts ...grpc.CallOption) (*GetObjInfoRes, error)
 		GetPersonalInfo(ctx context.Context, in *GetPersonalInfoReq, opts ...grpc.CallOption) (*GetPersonalInfoRes, error)
 		GetCollectionInfo(ctx context.Context, in *GetCollectionInfoReq, opts ...grpc.CallOption) (*GetCollectionInfoRes, error)
 		GetNotificationInfo(ctx context.Context, in *GetNotificationInfoReq, opts ...grpc.CallOption) (*GetNotificationInfoRes, error)
-		GetSubscribeInfo(ctx context.Context, in *GetSubscribeInfoReq, opts ...grpc.CallOption) (*GetSubscribeInfoRes, error)
+		GetSubscriptionInfo(ctx context.Context, in *GetSubscriptionInfoReq, opts ...grpc.CallOption) (*GetSubscriptionInfoRes, error)
 	}
 
 	defaultInfo struct {
@@ -68,7 +68,7 @@ func (m *defaultInfo) GetNotificationInfo(ctx context.Context, in *GetNotificati
 	return client.GetNotificationInfo(ctx, in, opts...)
 }
 
-func (m *defaultInfo) GetSubscribeInfo(ctx context.Context, in *GetSubscribeInfoReq, opts ...grpc.CallOption) (*GetSubscribeInfoRes, error) {
+func (m *defaultInfo) GetSubscriptionInfo(ctx context.Context, in *GetSubscriptionInfoReq, opts ...grpc.CallOption) (*GetSubscriptionInfoRes, error) {
 	client := pb.NewInfoClient(m.cli.Conn())
-	return client.GetSubscribeInfo(ctx, in, opts...)
+	return client.GetSubscriptionInfo(ctx, in, opts...)
 }

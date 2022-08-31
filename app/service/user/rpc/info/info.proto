@@ -61,11 +61,11 @@ message GetNotificationInfoRes{
     }
 }
 
-message GetSubscribeInfoReq{
+message GetSubscriptionInfoReq{
     int64 user_id=1;
     int32 obj_type=2;
 }
-message GetSubscribeInfoRes{
+message GetSubscriptionInfoRes{
     int32 code=1;
     string msg=2;
     bool ok=3;
@@ -80,5 +80,5 @@ service Info{
     rpc GetPersonalInfo(GetPersonalInfoReq) returns(GetPersonalInfoRes);
     rpc GetCollectionInfo(GetCollectionInfoReq) returns(GetCollectionInfoRes);
     rpc GetNotificationInfo(GetNotificationInfoReq) returns(GetNotificationInfoRes);
-    rpc GetSubscribeInfo(GetSubscribeInfoReq) returns(GetSubscribeInfoRes);
+    rpc GetSubscriptionInfo(GetSubscriptionInfoReq) returns(GetSubscriptionInfoRes);
 }

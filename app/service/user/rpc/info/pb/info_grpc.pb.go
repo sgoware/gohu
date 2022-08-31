@@ -26,7 +26,7 @@ type InfoClient interface {
 	GetPersonalInfo(ctx context.Context, in *GetPersonalInfoReq, opts ...grpc.CallOption) (*GetPersonalInfoRes, error)
 	GetCollectionInfo(ctx context.Context, in *GetCollectionInfoReq, opts ...grpc.CallOption) (*GetCollectionInfoRes, error)
 	GetNotificationInfo(ctx context.Context, in *GetNotificationInfoReq, opts ...grpc.CallOption) (*GetNotificationInfoRes, error)
-	GetSubscribeInfo(ctx context.Context, in *GetSubscribeInfoReq, opts ...grpc.CallOption) (*GetSubscribeInfoRes, error)
+	GetSubscriptionInfo(ctx context.Context, in *GetSubscriptionInfoReq, opts ...grpc.CallOption) (*GetSubscriptionInfoRes, error)
 }
 
 type infoClient struct {
@@ -73,9 +73,9 @@ func (c *infoClient) GetNotificationInfo(ctx context.Context, in *GetNotificatio
 	return out, nil
 }
 
-func (c *infoClient) GetSubscribeInfo(ctx context.Context, in *GetSubscribeInfoReq, opts ...grpc.CallOption) (*GetSubscribeInfoRes, error) {
-	out := new(GetSubscribeInfoRes)
-	err := c.cc.Invoke(ctx, "/info.Info/GetSubscribeInfo", in, out, opts...)
+func (c *infoClient) GetSubscriptionInfo(ctx context.Context, in *GetSubscriptionInfoReq, opts ...grpc.CallOption) (*GetSubscriptionInfoRes, error) {
+	out := new(GetSubscriptionInfoRes)
+	err := c.cc.Invoke(ctx, "/info.Info/GetSubscriptionInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ type InfoServer interface {
 	GetPersonalInfo(context.Context, *GetPersonalInfoReq) (*GetPersonalInfoRes, error)
 	GetCollectionInfo(context.Context, *GetCollectionInfoReq) (*GetCollectionInfoRes, error)
 	GetNotificationInfo(context.Context, *GetNotificationInfoReq) (*GetNotificationInfoRes, error)
-	GetSubscribeInfo(context.Context, *GetSubscribeInfoReq) (*GetSubscribeInfoRes, error)
+	GetSubscriptionInfo(context.Context, *GetSubscriptionInfoReq) (*GetSubscriptionInfoRes, error)
 	mustEmbedUnimplementedInfoServer()
 }
 
@@ -110,8 +110,8 @@ func (UnimplementedInfoServer) GetCollectionInfo(context.Context, *GetCollection
 func (UnimplementedInfoServer) GetNotificationInfo(context.Context, *GetNotificationInfoReq) (*GetNotificationInfoRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNotificationInfo not implemented")
 }
-func (UnimplementedInfoServer) GetSubscribeInfo(context.Context, *GetSubscribeInfoReq) (*GetSubscribeInfoRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSubscribeInfo not implemented")
+func (UnimplementedInfoServer) GetSubscriptionInfo(context.Context, *GetSubscriptionInfoReq) (*GetSubscriptionInfoRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSubscriptionInfo not implemented")
 }
 func (UnimplementedInfoServer) mustEmbedUnimplementedInfoServer() {}
 
@@ -198,20 +198,20 @@ func _Info_GetNotificationInfo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Info_GetSubscribeInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSubscribeInfoReq)
+func _Info_GetSubscriptionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSubscriptionInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfoServer).GetSubscribeInfo(ctx, in)
+		return srv.(InfoServer).GetSubscriptionInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/info.Info/GetSubscribeInfo",
+		FullMethod: "/info.Info/GetSubscriptionInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfoServer).GetSubscribeInfo(ctx, req.(*GetSubscribeInfoReq))
+		return srv.(InfoServer).GetSubscriptionInfo(ctx, req.(*GetSubscriptionInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -240,8 +240,8 @@ var Info_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Info_GetNotificationInfo_Handler,
 		},
 		{
-			MethodName: "GetSubscribeInfo",
-			Handler:    _Info_GetSubscribeInfo_Handler,
+			MethodName: "GetSubscriptionInfo",
+			Handler:    _Info_GetSubscriptionInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
