@@ -31,7 +31,7 @@ func (l *GetObjInfoLogic) GetObjInfo(req *types.GetObjInfoReq) (resp *types.GetO
 	userId := j.Get("user_id").Int()
 	res, _ := l.svcCtx.InfoRpcClient.GetObjInfo(l.ctx, &info.GetObjInfoReq{
 		UserId:  userId,
-		ObjType: req.Obj_type,
+		ObjType: req.ObjType,
 	})
 	return &types.GetObjInfoRes{
 		Code: res.Code,
