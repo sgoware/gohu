@@ -31,6 +31,47 @@ message LoginRes{
     }
 }
 
+message CreateCollectionReq{
+    int64 user_id=1;
+    int32 obj_type=2;
+    int64 obj_id=3;
+}
+message CreateCollectionRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+message DeleteCollectionReq{
+    int64 collection_id=1;
+}
+message DeleteCollectionRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+message CreateSubscriptionReq{
+    int64 user_id=1;
+    int32 obj_type=2;
+    int64 obj_id=3;
+}
+message CreateSubscriptionRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+message DeleteSubscriptionReq{
+    int64 subscription_id=1;
+}
+message DeleteSubscriptionRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
+
 message ChangeNicknameReq{
     int64 id=1;
     string nickname=2;
@@ -45,5 +86,12 @@ message ChangeNicknameRes{
 service Crud{
     rpc Login(LoginReq) returns(LoginRes);
     rpc Register(RegisterReq) returns(RegisterRes);
+
+    rpc CreateCollection(CreateCollectionReq) returns(CreateCollectionRes);
+    rpc DeleteCollection(DeleteCollectionReq) returns(DeleteCollectionRes);
+
+    rpc CreateSubscription(CreateSubscriptionReq) returns(CreateSubscriptionRes);
+    rpc DeleteSubscription(DeleteSubscriptionReq) returns(DeleteSubscriptionRes);
+
     rpc ChangeNickName(ChangeNicknameReq) returns(ChangeNicknameRes);
 }

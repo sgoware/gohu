@@ -24,6 +24,10 @@ const _ = grpc.SupportPackageIsVersion7
 type CrudClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error)
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
+	CreateCollection(ctx context.Context, in *CreateCollectionReq, opts ...grpc.CallOption) (*CreateCollectionRes, error)
+	DeleteCollection(ctx context.Context, in *DeleteCollectionReq, opts ...grpc.CallOption) (*DeleteCollectionRes, error)
+	CreateSubscription(ctx context.Context, in *CreateSubscriptionReq, opts ...grpc.CallOption) (*CreateSubscriptionRes, error)
+	DeleteSubscription(ctx context.Context, in *DeleteSubscriptionReq, opts ...grpc.CallOption) (*DeleteSubscriptionRes, error)
 	ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error)
 }
 
@@ -53,6 +57,42 @@ func (c *crudClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc
 	return out, nil
 }
 
+func (c *crudClient) CreateCollection(ctx context.Context, in *CreateCollectionReq, opts ...grpc.CallOption) (*CreateCollectionRes, error) {
+	out := new(CreateCollectionRes)
+	err := c.cc.Invoke(ctx, "/crud.Crud/CreateCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *crudClient) DeleteCollection(ctx context.Context, in *DeleteCollectionReq, opts ...grpc.CallOption) (*DeleteCollectionRes, error) {
+	out := new(DeleteCollectionRes)
+	err := c.cc.Invoke(ctx, "/crud.Crud/DeleteCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *crudClient) CreateSubscription(ctx context.Context, in *CreateSubscriptionReq, opts ...grpc.CallOption) (*CreateSubscriptionRes, error) {
+	out := new(CreateSubscriptionRes)
+	err := c.cc.Invoke(ctx, "/crud.Crud/CreateSubscription", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *crudClient) DeleteSubscription(ctx context.Context, in *DeleteSubscriptionReq, opts ...grpc.CallOption) (*DeleteSubscriptionRes, error) {
+	out := new(DeleteSubscriptionRes)
+	err := c.cc.Invoke(ctx, "/crud.Crud/DeleteSubscription", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *crudClient) ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error) {
 	out := new(ChangeNicknameRes)
 	err := c.cc.Invoke(ctx, "/crud.Crud/ChangeNickName", in, out, opts...)
@@ -68,6 +108,10 @@ func (c *crudClient) ChangeNickName(ctx context.Context, in *ChangeNicknameReq, 
 type CrudServer interface {
 	Login(context.Context, *LoginReq) (*LoginRes, error)
 	Register(context.Context, *RegisterReq) (*RegisterRes, error)
+	CreateCollection(context.Context, *CreateCollectionReq) (*CreateCollectionRes, error)
+	DeleteCollection(context.Context, *DeleteCollectionReq) (*DeleteCollectionRes, error)
+	CreateSubscription(context.Context, *CreateSubscriptionReq) (*CreateSubscriptionRes, error)
+	DeleteSubscription(context.Context, *DeleteSubscriptionReq) (*DeleteSubscriptionRes, error)
 	ChangeNickName(context.Context, *ChangeNicknameReq) (*ChangeNicknameRes, error)
 	mustEmbedUnimplementedCrudServer()
 }
@@ -81,6 +125,18 @@ func (UnimplementedCrudServer) Login(context.Context, *LoginReq) (*LoginRes, err
 }
 func (UnimplementedCrudServer) Register(context.Context, *RegisterReq) (*RegisterRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedCrudServer) CreateCollection(context.Context, *CreateCollectionReq) (*CreateCollectionRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCollection not implemented")
+}
+func (UnimplementedCrudServer) DeleteCollection(context.Context, *DeleteCollectionReq) (*DeleteCollectionRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCollection not implemented")
+}
+func (UnimplementedCrudServer) CreateSubscription(context.Context, *CreateSubscriptionReq) (*CreateSubscriptionRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSubscription not implemented")
+}
+func (UnimplementedCrudServer) DeleteSubscription(context.Context, *DeleteSubscriptionReq) (*DeleteSubscriptionRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubscription not implemented")
 }
 func (UnimplementedCrudServer) ChangeNickName(context.Context, *ChangeNicknameReq) (*ChangeNicknameRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeNickName not implemented")
@@ -134,6 +190,78 @@ func _Crud_Register_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Crud_CreateCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCollectionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CrudServer).CreateCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crud.Crud/CreateCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CrudServer).CreateCollection(ctx, req.(*CreateCollectionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Crud_DeleteCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCollectionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CrudServer).DeleteCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crud.Crud/DeleteCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CrudServer).DeleteCollection(ctx, req.(*DeleteCollectionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Crud_CreateSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSubscriptionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CrudServer).CreateSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crud.Crud/CreateSubscription",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CrudServer).CreateSubscription(ctx, req.(*CreateSubscriptionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Crud_DeleteSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSubscriptionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CrudServer).DeleteSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crud.Crud/DeleteSubscription",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CrudServer).DeleteSubscription(ctx, req.(*DeleteSubscriptionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Crud_ChangeNickName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChangeNicknameReq)
 	if err := dec(in); err != nil {
@@ -166,6 +294,22 @@ var Crud_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Register",
 			Handler:    _Crud_Register_Handler,
+		},
+		{
+			MethodName: "CreateCollection",
+			Handler:    _Crud_CreateCollection_Handler,
+		},
+		{
+			MethodName: "DeleteCollection",
+			Handler:    _Crud_DeleteCollection_Handler,
+		},
+		{
+			MethodName: "CreateSubscription",
+			Handler:    _Crud_CreateSubscription_Handler,
+		},
+		{
+			MethodName: "DeleteSubscription",
+			Handler:    _Crud_DeleteSubscription_Handler,
 		},
 		{
 			MethodName: "ChangeNickName",

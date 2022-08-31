@@ -42,8 +42,46 @@ type (
 		Ok   bool   `json:"ok"`
 	}
 
+	CreateCollectionReq {
+		ObjType int32 `form:"obj_type"`
+		ObjId   int64 `form:"obj_id"`
+	}
+	CreateCollectionRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+	}
+
+	DeleteCollectionReq {
+		CollectionId int64 `path:"collection_id"`
+	}
+	DeleteCollectionRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+	}
+
+	CreateSubscriptionReq {
+		ObjType int32 `form:"obj_type"`
+		ObjId   int64 `form:"obj_id"`
+	}
+	CreateSubscriptionRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+	}
+
+	DeleteSubscriptionReq {
+		SubscriptionId int64 `path:"subscription_id"`
+	}
+	DeleteSubscriptionRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+	}
+
 	GetObjInfoReq {
-		Obj_type int32 `path:"obj_type"`
+		ObjType int32 `path:"obj_type"`
 	}
 	GetObjInfoResData {
 		Ids []int64 `json:"ids"`
@@ -153,6 +191,18 @@ service user {
 	@handler ChangeNickname
 	post /api/user/nickname (ChangeNicknameReq) returns (ChangeNicknameRes)
 	
+	@handler CreateCollection
+	post /api/user/collection (CreateCollectionReq) returns (CreateCollectionRes)
+	
+	@handler DeleteCollection
+	delete /api/user/collection/:collectionId (DeleteCollectionReq) returns (DeleteCollectionRes)
+	
+	@handler CreateSubscription
+	post /api/user/subscription (CreateSubscriptionReq) returns (CreateSubscriptionRes)
+	
+	@handler DeleteSubscription
+	delete /api/user/subscription/:subscriptionId (DeleteSubscriptionReq) returns (DeleteSubscriptionRes)
+	
 	@handler GetObjInfo
 	get /api/user/obj/:obj_type (GetObjInfoReq) returns (GetObjInfoRes)
 	
@@ -163,10 +213,10 @@ service user {
 	get /api/user/collection (GetCollectionInfoReq) returns (GetCollectionInfoRes)
 	
 	@handler GetNotificationInfo
-	get /api/user/notification/:message_type (GetNotificationInfoReq) returns (GetNotificationInfoRes)
+	get /api/user/notification/:messageType (GetNotificationInfoReq) returns (GetNotificationInfoRes)
 	
 	@handler GetSubscribeInfo
-	get /api/user/subscribe/:obj_type (GetSubscribeInfoReq) returns (GetSubscribeInfoRes)
+	get /api/user/subscription/:objType (GetSubscribeInfoReq) returns (GetSubscribeInfoRes)
 	
 	@handler VipUpgrade
 	post /api/user/vip/upgrade (VipUpgradeReq) returns (VipUpgradeRes)

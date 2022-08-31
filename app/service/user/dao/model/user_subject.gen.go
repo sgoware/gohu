@@ -21,7 +21,7 @@ type UserSubject struct {
 	LastIP     string    `gorm:"column:last_ip;not null" json:"last_ip"`                        // 最近登录 ip 地址
 	Vip        int32     `gorm:"column:vip;not null" json:"vip"`                                // vip 等级
 	State      int32     `gorm:"column:state;not null" json:"state"`                            // 状态 (0-正常 1-冻结 2-封禁)
-	CreateTime time.Time `gorm:"autuCreateTime;column:create_time;not null" json:"create_time"` // 创建时间
+	CreateTime time.Time `gorm:"autoCreateTime;column:create_time;not null" json:"create_time"` // 创建时间
 	UpdateTime time.Time `gorm:"autoUpdateTime;column:update_time;not null" json:"update_time"` // 修改时间
 }
 

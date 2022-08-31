@@ -8,19 +8,19 @@ import (
 	"time"
 )
 
-const TableNameUserCollect = "user_collect"
+const TableNameUserSubscription = "user_subscription"
 
-// UserCollect mapped from table <user_collect>
-type UserCollect struct {
-	ID         int64     `gorm:"column:id;primaryKey" json:"id"`
+// UserSubscription mapped from table <user_subscription>
+type UserSubscription struct {
+	ID         int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 主键
 	UserID     int64     `gorm:"column:user_id;not null" json:"user_id"`                        // 用户 id
-	ObjType    int32     `gorm:"column:obj_type;not null" json:"obj_type"`                      // 对象类型 (0-默认对象 1-回答 2-文章)
+	ObjType    int32     `gorm:"column:obj_type;not null" json:"obj_type"`                      // 对象类型 (0-默认对象 1-用户 2-话题 3-专栏 4-问题 5-收藏夹)
 	ObjID      int64     `gorm:"column:obj_id;not null" json:"obj_id"`                          // 对象 id
 	CreateTime time.Time `gorm:"autoCreateTime;column:create_time;not null" json:"create_time"` // 创建时间
 	UpdateTime time.Time `gorm:"autoUpdateTime;column:update_time;not null" json:"update_time"` // 修改时间
 }
 
-// TableName UserCollect's table name
-func (*UserCollect) TableName() string {
-	return TableNameUserCollect
+// TableName UserSubscription's table name
+func (*UserSubscription) TableName() string {
+	return TableNameUserSubscription
 }

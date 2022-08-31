@@ -13,43 +13,43 @@ import (
 
 func Use(db *gorm.DB) *Query {
 	return &Query{
-		db:            db,
-		UserCollect:   newUserCollect(db),
-		UserSubject:   newUserSubject(db),
-		UserSubscribe: newUserSubscribe(db),
+		db:               db,
+		UserCollection:   newUserCollection(db),
+		UserSubject:      newUserSubject(db),
+		UserSubscription: newUserSubscription(db),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	UserCollect   userCollect
-	UserSubject   userSubject
-	UserSubscribe userSubscribe
+	UserCollection   userCollection
+	UserSubject      userSubject
+	UserSubscription userSubscription
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:            db,
-		UserCollect:   q.UserCollect.clone(db),
-		UserSubject:   q.UserSubject.clone(db),
-		UserSubscribe: q.UserSubscribe.clone(db),
+		db:               db,
+		UserCollection:   q.UserCollection.clone(db),
+		UserSubject:      q.UserSubject.clone(db),
+		UserSubscription: q.UserSubscription.clone(db),
 	}
 }
 
 type queryCtx struct {
-	UserCollect   *userCollectDo
-	UserSubject   *userSubjectDo
-	UserSubscribe *userSubscribeDo
+	UserCollection   *userCollectionDo
+	UserSubject      *userSubjectDo
+	UserSubscription *userSubscriptionDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		UserCollect:   q.UserCollect.WithContext(ctx),
-		UserSubject:   q.UserSubject.WithContext(ctx),
-		UserSubscribe: q.UserSubscribe.WithContext(ctx),
+		UserCollection:   q.UserCollection.WithContext(ctx),
+		UserSubject:      q.UserSubject.WithContext(ctx),
+		UserSubscription: q.UserSubscription.WithContext(ctx),
 	}
 }
 

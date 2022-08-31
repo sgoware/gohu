@@ -272,6 +272,478 @@ func (x *LoginRes) GetData() *LoginRes_Data {
 	return nil
 }
 
+type CreateCollectionReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId  int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ObjType int32 `protobuf:"varint,2,opt,name=obj_type,json=objType,proto3" json:"obj_type,omitempty"`
+	ObjId   int64 `protobuf:"varint,3,opt,name=obj_id,json=objId,proto3" json:"obj_id,omitempty"`
+}
+
+func (x *CreateCollectionReq) Reset() {
+	*x = CreateCollectionReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_crud_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateCollectionReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCollectionReq) ProtoMessage() {}
+
+func (x *CreateCollectionReq) ProtoReflect() protoreflect.Message {
+	mi := &file_crud_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCollectionReq.ProtoReflect.Descriptor instead.
+func (*CreateCollectionReq) Descriptor() ([]byte, []int) {
+	return file_crud_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateCollectionReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CreateCollectionReq) GetObjType() int32 {
+	if x != nil {
+		return x.ObjType
+	}
+	return 0
+}
+
+func (x *CreateCollectionReq) GetObjId() int64 {
+	if x != nil {
+		return x.ObjId
+	}
+	return 0
+}
+
+type CreateCollectionRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Ok   bool   `protobuf:"varint,3,opt,name=ok,proto3" json:"ok,omitempty"`
+}
+
+func (x *CreateCollectionRes) Reset() {
+	*x = CreateCollectionRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_crud_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateCollectionRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCollectionRes) ProtoMessage() {}
+
+func (x *CreateCollectionRes) ProtoReflect() protoreflect.Message {
+	mi := &file_crud_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCollectionRes.ProtoReflect.Descriptor instead.
+func (*CreateCollectionRes) Descriptor() ([]byte, []int) {
+	return file_crud_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CreateCollectionRes) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *CreateCollectionRes) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+func (x *CreateCollectionRes) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
+type DeleteCollectionReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CollectionId int64 `protobuf:"varint,1,opt,name=collection_id,json=collectionId,proto3" json:"collection_id,omitempty"`
+}
+
+func (x *DeleteCollectionReq) Reset() {
+	*x = DeleteCollectionReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_crud_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteCollectionReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCollectionReq) ProtoMessage() {}
+
+func (x *DeleteCollectionReq) ProtoReflect() protoreflect.Message {
+	mi := &file_crud_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCollectionReq.ProtoReflect.Descriptor instead.
+func (*DeleteCollectionReq) Descriptor() ([]byte, []int) {
+	return file_crud_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *DeleteCollectionReq) GetCollectionId() int64 {
+	if x != nil {
+		return x.CollectionId
+	}
+	return 0
+}
+
+type DeleteCollectionRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Ok   bool   `protobuf:"varint,3,opt,name=ok,proto3" json:"ok,omitempty"`
+}
+
+func (x *DeleteCollectionRes) Reset() {
+	*x = DeleteCollectionRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_crud_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteCollectionRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCollectionRes) ProtoMessage() {}
+
+func (x *DeleteCollectionRes) ProtoReflect() protoreflect.Message {
+	mi := &file_crud_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCollectionRes.ProtoReflect.Descriptor instead.
+func (*DeleteCollectionRes) Descriptor() ([]byte, []int) {
+	return file_crud_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *DeleteCollectionRes) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *DeleteCollectionRes) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+func (x *DeleteCollectionRes) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
+type CreateSubscriptionReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId  int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ObjType int32 `protobuf:"varint,2,opt,name=obj_type,json=objType,proto3" json:"obj_type,omitempty"`
+	ObjId   int64 `protobuf:"varint,3,opt,name=obj_id,json=objId,proto3" json:"obj_id,omitempty"`
+}
+
+func (x *CreateSubscriptionReq) Reset() {
+	*x = CreateSubscriptionReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_crud_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateSubscriptionReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSubscriptionReq) ProtoMessage() {}
+
+func (x *CreateSubscriptionReq) ProtoReflect() protoreflect.Message {
+	mi := &file_crud_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSubscriptionReq.ProtoReflect.Descriptor instead.
+func (*CreateSubscriptionReq) Descriptor() ([]byte, []int) {
+	return file_crud_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CreateSubscriptionReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CreateSubscriptionReq) GetObjType() int32 {
+	if x != nil {
+		return x.ObjType
+	}
+	return 0
+}
+
+func (x *CreateSubscriptionReq) GetObjId() int64 {
+	if x != nil {
+		return x.ObjId
+	}
+	return 0
+}
+
+type CreateSubscriptionRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Ok   bool   `protobuf:"varint,3,opt,name=ok,proto3" json:"ok,omitempty"`
+}
+
+func (x *CreateSubscriptionRes) Reset() {
+	*x = CreateSubscriptionRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_crud_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateSubscriptionRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSubscriptionRes) ProtoMessage() {}
+
+func (x *CreateSubscriptionRes) ProtoReflect() protoreflect.Message {
+	mi := &file_crud_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSubscriptionRes.ProtoReflect.Descriptor instead.
+func (*CreateSubscriptionRes) Descriptor() ([]byte, []int) {
+	return file_crud_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CreateSubscriptionRes) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *CreateSubscriptionRes) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+func (x *CreateSubscriptionRes) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
+type DeleteSubscriptionReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SubscriptionId int64 `protobuf:"varint,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+}
+
+func (x *DeleteSubscriptionReq) Reset() {
+	*x = DeleteSubscriptionReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_crud_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteSubscriptionReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSubscriptionReq) ProtoMessage() {}
+
+func (x *DeleteSubscriptionReq) ProtoReflect() protoreflect.Message {
+	mi := &file_crud_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSubscriptionReq.ProtoReflect.Descriptor instead.
+func (*DeleteSubscriptionReq) Descriptor() ([]byte, []int) {
+	return file_crud_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DeleteSubscriptionReq) GetSubscriptionId() int64 {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return 0
+}
+
+type DeleteSubscriptionRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Ok   bool   `protobuf:"varint,3,opt,name=ok,proto3" json:"ok,omitempty"`
+}
+
+func (x *DeleteSubscriptionRes) Reset() {
+	*x = DeleteSubscriptionRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_crud_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteSubscriptionRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSubscriptionRes) ProtoMessage() {}
+
+func (x *DeleteSubscriptionRes) ProtoReflect() protoreflect.Message {
+	mi := &file_crud_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSubscriptionRes.ProtoReflect.Descriptor instead.
+func (*DeleteSubscriptionRes) Descriptor() ([]byte, []int) {
+	return file_crud_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *DeleteSubscriptionRes) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *DeleteSubscriptionRes) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+func (x *DeleteSubscriptionRes) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
 type ChangeNicknameReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -284,7 +756,7 @@ type ChangeNicknameReq struct {
 func (x *ChangeNicknameReq) Reset() {
 	*x = ChangeNicknameReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_crud_proto_msgTypes[4]
+		mi := &file_crud_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -297,7 +769,7 @@ func (x *ChangeNicknameReq) String() string {
 func (*ChangeNicknameReq) ProtoMessage() {}
 
 func (x *ChangeNicknameReq) ProtoReflect() protoreflect.Message {
-	mi := &file_crud_proto_msgTypes[4]
+	mi := &file_crud_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -310,7 +782,7 @@ func (x *ChangeNicknameReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangeNicknameReq.ProtoReflect.Descriptor instead.
 func (*ChangeNicknameReq) Descriptor() ([]byte, []int) {
-	return file_crud_proto_rawDescGZIP(), []int{4}
+	return file_crud_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ChangeNicknameReq) GetId() int64 {
@@ -340,7 +812,7 @@ type ChangeNicknameRes struct {
 func (x *ChangeNicknameRes) Reset() {
 	*x = ChangeNicknameRes{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_crud_proto_msgTypes[5]
+		mi := &file_crud_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -353,7 +825,7 @@ func (x *ChangeNicknameRes) String() string {
 func (*ChangeNicknameRes) ProtoMessage() {}
 
 func (x *ChangeNicknameRes) ProtoReflect() protoreflect.Message {
-	mi := &file_crud_proto_msgTypes[5]
+	mi := &file_crud_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -366,7 +838,7 @@ func (x *ChangeNicknameRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangeNicknameRes.ProtoReflect.Descriptor instead.
 func (*ChangeNicknameRes) Descriptor() ([]byte, []int) {
-	return file_crud_proto_rawDescGZIP(), []int{5}
+	return file_crud_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ChangeNicknameRes) GetCode() int32 {
@@ -401,7 +873,7 @@ type LoginRes_Data struct {
 func (x *LoginRes_Data) Reset() {
 	*x = LoginRes_Data{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_crud_proto_msgTypes[6]
+		mi := &file_crud_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -414,7 +886,7 @@ func (x *LoginRes_Data) String() string {
 func (*LoginRes_Data) ProtoMessage() {}
 
 func (x *LoginRes_Data) ProtoReflect() protoreflect.Message {
-	mi := &file_crud_proto_msgTypes[6]
+	mi := &file_crud_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -464,22 +936,81 @@ var file_crud_proto_rawDesc = []byte{
 	0x72, 0x75, 0x64, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x2e, 0x44, 0x61, 0x74,
 	0x61, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x1a, 0x25, 0x0a, 0x04, 0x44, 0x61, 0x74, 0x61, 0x12,
 	0x1d, 0x0a, 0x0a, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x3f,
-	0x0a, 0x11, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x4e, 0x69, 0x63, 0x6b, 0x6e, 0x61, 0x6d, 0x65,
-	0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
-	0x02, 0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x6e, 0x69, 0x63, 0x6b, 0x6e, 0x61, 0x6d, 0x65, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6e, 0x69, 0x63, 0x6b, 0x6e, 0x61, 0x6d, 0x65, 0x22,
-	0x49, 0x0a, 0x11, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x4e, 0x69, 0x63, 0x6b, 0x6e, 0x61, 0x6d,
-	0x65, 0x52, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x01, 0x28, 0x09, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x60,
+	0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x19,
+	0x0a, 0x08, 0x6f, 0x62, 0x6a, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x07, 0x6f, 0x62, 0x6a, 0x54, 0x79, 0x70, 0x65, 0x12, 0x15, 0x0a, 0x06, 0x6f, 0x62, 0x6a,
+	0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x6f, 0x62, 0x6a, 0x49, 0x64,
+	0x22, 0x4b, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6d,
+	0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x12, 0x0e, 0x0a,
+	0x02, 0x6f, 0x6b, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x22, 0x3a, 0x0a,
+	0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x71, 0x12, 0x23, 0x0a, 0x0d, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0c, 0x63, 0x6f, 0x6c,
+	0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x4b, 0x0a, 0x13, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
+	0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04,
+	0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x12, 0x0e, 0x0a, 0x02, 0x6f, 0x6b, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x22, 0x62, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12,
+	0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x62, 0x6a, 0x5f,
+	0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x6f, 0x62, 0x6a, 0x54,
+	0x79, 0x70, 0x65, 0x12, 0x15, 0x0a, 0x06, 0x6f, 0x62, 0x6a, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x05, 0x6f, 0x62, 0x6a, 0x49, 0x64, 0x22, 0x4d, 0x0a, 0x15, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x52, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6d, 0x73, 0x67, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x12, 0x0e, 0x0a, 0x02, 0x6f, 0x6b, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x22, 0x40, 0x0a, 0x15, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52,
+	0x65, 0x71, 0x12, 0x27, 0x0a, 0x0f, 0x73, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0e, 0x73, 0x75, 0x62,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x4d, 0x0a, 0x15, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6d, 0x73, 0x67, 0x18,
 	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x12, 0x0e, 0x0a, 0x02, 0x6f, 0x6b,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x32, 0xa5, 0x01, 0x0a, 0x04, 0x43,
-	0x72, 0x75, 0x64, 0x12, 0x27, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x0e, 0x2e, 0x63,
-	0x72, 0x75, 0x64, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x0e, 0x2e, 0x63,
-	0x72, 0x75, 0x64, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x30, 0x0a, 0x08,
-	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x11, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e,
-	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x11, 0x2e, 0x63, 0x72,
-	0x75, 0x64, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x12, 0x42,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x22, 0x3f, 0x0a, 0x11, 0x43, 0x68,
+	0x61, 0x6e, 0x67, 0x65, 0x4e, 0x69, 0x63, 0x6b, 0x6e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x1a, 0x0a, 0x08, 0x6e, 0x69, 0x63, 0x6b, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x6e, 0x69, 0x63, 0x6b, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x49, 0x0a, 0x11, 0x43,
+	0x68, 0x61, 0x6e, 0x67, 0x65, 0x4e, 0x69, 0x63, 0x6b, 0x6e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x73,
+	0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04,
+	0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x12, 0x0e, 0x0a, 0x02, 0x6f, 0x6b, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x32, 0xd9, 0x03, 0x0a, 0x04, 0x43, 0x72, 0x75, 0x64, 0x12,
+	0x27, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x0e, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e,
+	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x0e, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e,
+	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x30, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69,
+	0x73, 0x74, 0x65, 0x72, 0x12, 0x11, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x52, 0x65, 0x67, 0x69,
+	0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x11, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x52,
+	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x12, 0x48, 0x0a, 0x10, 0x43, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19,
+	0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c,
+	0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x63, 0x72, 0x75, 0x64,
+	0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x73, 0x12, 0x48, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f,
+	0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e,
+	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x4e,
+	0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1b, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x43, 0x72, 0x65, 0x61,
+	0x74, 0x65, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
+	0x71, 0x1a, 0x1b, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53,
+	0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x4e,
+	0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1b, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
+	0x71, 0x1a, 0x1b, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53,
+	0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x42,
 	0x0a, 0x0e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x4e, 0x69, 0x63, 0x6b, 0x4e, 0x61, 0x6d, 0x65,
 	0x12, 0x17, 0x2e, 0x63, 0x72, 0x75, 0x64, 0x2e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x4e, 0x69,
 	0x63, 0x6b, 0x6e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x63, 0x72, 0x75, 0x64,
@@ -500,29 +1031,45 @@ func file_crud_proto_rawDescGZIP() []byte {
 	return file_crud_proto_rawDescData
 }
 
-var file_crud_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_crud_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_crud_proto_goTypes = []interface{}{
-	(*RegisterReq)(nil),       // 0: crud.RegisterReq
-	(*RegisterRes)(nil),       // 1: crud.RegisterRes
-	(*LoginReq)(nil),          // 2: crud.LoginReq
-	(*LoginRes)(nil),          // 3: crud.LoginRes
-	(*ChangeNicknameReq)(nil), // 4: crud.ChangeNicknameReq
-	(*ChangeNicknameRes)(nil), // 5: crud.ChangeNicknameRes
-	(*LoginRes_Data)(nil),     // 6: crud.LoginRes.Data
+	(*RegisterReq)(nil),           // 0: crud.RegisterReq
+	(*RegisterRes)(nil),           // 1: crud.RegisterRes
+	(*LoginReq)(nil),              // 2: crud.LoginReq
+	(*LoginRes)(nil),              // 3: crud.LoginRes
+	(*CreateCollectionReq)(nil),   // 4: crud.CreateCollectionReq
+	(*CreateCollectionRes)(nil),   // 5: crud.CreateCollectionRes
+	(*DeleteCollectionReq)(nil),   // 6: crud.DeleteCollectionReq
+	(*DeleteCollectionRes)(nil),   // 7: crud.DeleteCollectionRes
+	(*CreateSubscriptionReq)(nil), // 8: crud.CreateSubscriptionReq
+	(*CreateSubscriptionRes)(nil), // 9: crud.CreateSubscriptionRes
+	(*DeleteSubscriptionReq)(nil), // 10: crud.DeleteSubscriptionReq
+	(*DeleteSubscriptionRes)(nil), // 11: crud.DeleteSubscriptionRes
+	(*ChangeNicknameReq)(nil),     // 12: crud.ChangeNicknameReq
+	(*ChangeNicknameRes)(nil),     // 13: crud.ChangeNicknameRes
+	(*LoginRes_Data)(nil),         // 14: crud.LoginRes.Data
 }
 var file_crud_proto_depIdxs = []int32{
-	6, // 0: crud.LoginRes.data:type_name -> crud.LoginRes.Data
-	2, // 1: crud.Crud.Login:input_type -> crud.LoginReq
-	0, // 2: crud.Crud.Register:input_type -> crud.RegisterReq
-	4, // 3: crud.Crud.ChangeNickName:input_type -> crud.ChangeNicknameReq
-	3, // 4: crud.Crud.Login:output_type -> crud.LoginRes
-	1, // 5: crud.Crud.Register:output_type -> crud.RegisterRes
-	5, // 6: crud.Crud.ChangeNickName:output_type -> crud.ChangeNicknameRes
-	4, // [4:7] is the sub-list for method output_type
-	1, // [1:4] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	14, // 0: crud.LoginRes.data:type_name -> crud.LoginRes.Data
+	2,  // 1: crud.Crud.Login:input_type -> crud.LoginReq
+	0,  // 2: crud.Crud.Register:input_type -> crud.RegisterReq
+	4,  // 3: crud.Crud.CreateCollection:input_type -> crud.CreateCollectionReq
+	6,  // 4: crud.Crud.DeleteCollection:input_type -> crud.DeleteCollectionReq
+	8,  // 5: crud.Crud.CreateSubscription:input_type -> crud.CreateSubscriptionReq
+	10, // 6: crud.Crud.DeleteSubscription:input_type -> crud.DeleteSubscriptionReq
+	12, // 7: crud.Crud.ChangeNickName:input_type -> crud.ChangeNicknameReq
+	3,  // 8: crud.Crud.Login:output_type -> crud.LoginRes
+	1,  // 9: crud.Crud.Register:output_type -> crud.RegisterRes
+	5,  // 10: crud.Crud.CreateCollection:output_type -> crud.CreateCollectionRes
+	7,  // 11: crud.Crud.DeleteCollection:output_type -> crud.DeleteCollectionRes
+	9,  // 12: crud.Crud.CreateSubscription:output_type -> crud.CreateSubscriptionRes
+	11, // 13: crud.Crud.DeleteSubscription:output_type -> crud.DeleteSubscriptionRes
+	13, // 14: crud.Crud.ChangeNickName:output_type -> crud.ChangeNicknameRes
+	8,  // [8:15] is the sub-list for method output_type
+	1,  // [1:8] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_crud_proto_init() }
@@ -580,7 +1127,7 @@ func file_crud_proto_init() {
 			}
 		}
 		file_crud_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ChangeNicknameReq); i {
+			switch v := v.(*CreateCollectionReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -592,7 +1139,7 @@ func file_crud_proto_init() {
 			}
 		}
 		file_crud_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ChangeNicknameRes); i {
+			switch v := v.(*CreateCollectionRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -604,6 +1151,102 @@ func file_crud_proto_init() {
 			}
 		}
 		file_crud_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteCollectionReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_crud_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteCollectionRes); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_crud_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateSubscriptionReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_crud_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateSubscriptionRes); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_crud_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteSubscriptionReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_crud_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteSubscriptionRes); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_crud_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChangeNicknameReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_crud_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChangeNicknameRes); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_crud_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*LoginRes_Data); i {
 			case 0:
 				return &v.state
@@ -622,7 +1265,7 @@ func file_crud_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_crud_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

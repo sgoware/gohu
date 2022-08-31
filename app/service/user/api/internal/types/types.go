@@ -39,8 +39,50 @@ type ChangeNicknameRes struct {
 	Ok   bool   `json:"ok"`
 }
 
+type CreateCollectionReq struct {
+	ObjType int32 `form:"obj_type"`
+	ObjId   int64 `form:"obj_id"`
+}
+
+type CreateCollectionRes struct {
+	Code int32  `json:"code"`
+	Msg  string `json:"msg"`
+	Ok   bool   `json:"ok"`
+}
+
+type DeleteCollectionReq struct {
+	CollectionId int64 `path:"collection_id"`
+}
+
+type DeleteCollectionRes struct {
+	Code int32  `json:"code"`
+	Msg  string `json:"msg"`
+	Ok   bool   `json:"ok"`
+}
+
+type CreateSubscriptionReq struct {
+	ObjType int32 `form:"obj_type"`
+	ObjId   int64 `form:"obj_id"`
+}
+
+type CreateSubscriptionRes struct {
+	Code int32  `json:"code"`
+	Msg  string `json:"msg"`
+	Ok   bool   `json:"ok"`
+}
+
+type DeleteSubscriptionReq struct {
+	SubscriptionId int64 `path:"subscription_id"`
+}
+
+type DeleteSubscriptionRes struct {
+	Code int32  `json:"code"`
+	Msg  string `json:"msg"`
+	Ok   bool   `json:"ok"`
+}
+
 type GetObjInfoReq struct {
-	Obj_type int32 `path:"obj_type"`
+	ObjType int32 `path:"obj_type"`
 }
 
 type GetObjInfoResData struct {

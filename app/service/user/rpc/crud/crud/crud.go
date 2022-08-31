@@ -13,17 +13,29 @@ import (
 )
 
 type (
-	ChangeNicknameReq = pb.ChangeNicknameReq
-	ChangeNicknameRes = pb.ChangeNicknameRes
-	LoginReq          = pb.LoginReq
-	LoginRes          = pb.LoginRes
-	LoginRes_Data     = pb.LoginRes_Data
-	RegisterReq       = pb.RegisterReq
-	RegisterRes       = pb.RegisterRes
+	ChangeNicknameReq     = pb.ChangeNicknameReq
+	ChangeNicknameRes     = pb.ChangeNicknameRes
+	CreateCollectionReq   = pb.CreateCollectionReq
+	CreateCollectionRes   = pb.CreateCollectionRes
+	CreateSubscriptionReq = pb.CreateSubscriptionReq
+	CreateSubscriptionRes = pb.CreateSubscriptionRes
+	DeleteCollectionReq   = pb.DeleteCollectionReq
+	DeleteCollectionRes   = pb.DeleteCollectionRes
+	DeleteSubscriptionReq = pb.DeleteSubscriptionReq
+	DeleteSubscriptionRes = pb.DeleteSubscriptionRes
+	LoginReq              = pb.LoginReq
+	LoginRes              = pb.LoginRes
+	LoginRes_Data         = pb.LoginRes_Data
+	RegisterReq           = pb.RegisterReq
+	RegisterRes           = pb.RegisterRes
 
 	Crud interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error)
 		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
+		CreateCollection(ctx context.Context, in *CreateCollectionReq, opts ...grpc.CallOption) (*CreateCollectionRes, error)
+		DeleteCollection(ctx context.Context, in *DeleteCollectionReq, opts ...grpc.CallOption) (*DeleteCollectionRes, error)
+		CreateSubscription(ctx context.Context, in *CreateSubscriptionReq, opts ...grpc.CallOption) (*CreateSubscriptionRes, error)
+		DeleteSubscription(ctx context.Context, in *DeleteSubscriptionReq, opts ...grpc.CallOption) (*DeleteSubscriptionRes, error)
 		ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error)
 	}
 
@@ -46,6 +58,26 @@ func (m *defaultCrud) Login(ctx context.Context, in *LoginReq, opts ...grpc.Call
 func (m *defaultCrud) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error) {
 	client := pb.NewCrudClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
+}
+
+func (m *defaultCrud) CreateCollection(ctx context.Context, in *CreateCollectionReq, opts ...grpc.CallOption) (*CreateCollectionRes, error) {
+	client := pb.NewCrudClient(m.cli.Conn())
+	return client.CreateCollection(ctx, in, opts...)
+}
+
+func (m *defaultCrud) DeleteCollection(ctx context.Context, in *DeleteCollectionReq, opts ...grpc.CallOption) (*DeleteCollectionRes, error) {
+	client := pb.NewCrudClient(m.cli.Conn())
+	return client.DeleteCollection(ctx, in, opts...)
+}
+
+func (m *defaultCrud) CreateSubscription(ctx context.Context, in *CreateSubscriptionReq, opts ...grpc.CallOption) (*CreateSubscriptionRes, error) {
+	client := pb.NewCrudClient(m.cli.Conn())
+	return client.CreateSubscription(ctx, in, opts...)
+}
+
+func (m *defaultCrud) DeleteSubscription(ctx context.Context, in *DeleteSubscriptionReq, opts ...grpc.CallOption) (*DeleteSubscriptionRes, error) {
+	client := pb.NewCrudClient(m.cli.Conn())
+	return client.DeleteSubscription(ctx, in, opts...)
 }
 
 func (m *defaultCrud) ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error) {
