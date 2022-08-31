@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"main/app/service/comment/mq/producer"
 	"main/app/service/comment/rpc/crud/crud"
 
@@ -18,7 +19,7 @@ func (m *CommentSubjectHandler) HandleMessage(nsqMsg *nsq.Message) (err error) {
 	msg := &producer.AnswerSubjectMessage{}
 	err = json.Unmarshal(nsqMsg.Body, &msg)
 	if err != nil {
-		return err
+		return fmt.Errorf("unmarshal msg failed, %v", err)
 	}
 	switch msg.Action {
 	case "init":
