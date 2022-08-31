@@ -4,7 +4,8 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"main/app/common/log"
-	"main/app/service/question/rpc/crud/mq"
+	"main/app/common/mq/nsq"
+	commentMqProducer "main/app/service/comment/mq/producer"
 	"net/http"
 
 	"main/app/service/question/rpc/crud/internal/svc"
@@ -58,7 +59,8 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 	}
 
 	// 发布消息-删除评论模块
-	err = mq.DoCommentSubject(1, in.AnswerId, "delete")
+	producer, err := nsq.GetProducer()
+	err = commentMqProducer.DoCommentSubject(producer, 1, in.AnswerId, "delete")
 	if err != nil {
 		logger.Errorf("publish answer info to nsq failed, err: %v", err)
 		res = &pb.DeleteAnswerRes{
