@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/hibiken/asynq"
 	"golang.org/x/crypto/sha3"
 	"main/app/common/log"
@@ -90,7 +91,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 			encryptedPassword := hex.EncodeToString(d[:])
 
 			// 生成默认昵称
-			defaultNickname := uuid.NewRandomString(in.Username, "username", 10)
+			defaultNickname := fmt.Sprintf("gohu_%s", uuid.NewRandomString(in.Username, "username", 10))
 
 			// 添加注册缓存
 			err = l.svcCtx.Rdb.SAdd(l.ctx,
@@ -102,8 +103,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 
 			// 将注册信息加入消息队列(写入数据库)
 			payload, err := json.Marshal(job.MsgCreateUserSubjectPayload{
-				Username:   encryptedPassword,
-				Password:   defaultNickname,
+				Username:   defaultNickname,
+				Password:   encryptedPassword,
 				CreateTime: time.Now(),
 				UpdateTime: time.Now(),
 			})
