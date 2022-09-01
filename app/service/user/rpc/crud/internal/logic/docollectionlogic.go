@@ -261,7 +261,7 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 		return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
 	}
 
-	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
+	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload, asynq.ProcessIn(1)))
 	if err != nil {
 		return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
 	}
@@ -292,7 +292,7 @@ func deleteCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.Do
 		return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
 	}
 
-	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
+	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload, asynq.ProcessIn(1)))
 	if err != nil {
 		return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
 	}

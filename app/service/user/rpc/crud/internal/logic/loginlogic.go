@@ -72,7 +72,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 			if err != nil {
 				logger.Errorf("marshal [MsgUpdateUserSubjectRecordPayload] into json failed, err: %v", err)
 			} else {
-				_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectRecordTask, payload))
+				_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectRecordTask, payload, asynq.ProcessIn(1)))
 				if err != nil {
 					logger.Errorf("create [MsgUpdateUserSubjectRecordTask] insert queue failed, err: %v", err)
 				}
