@@ -30,7 +30,7 @@ rm -rf /tmp/fd1
 
 for ((i=1;i<=THREAD;i++))
 do
-  echo >&5
+  echo >&3
 done
 
 cd /www/site/"$PROJECT_NAME" || exit
@@ -41,16 +41,16 @@ echo "start building images, remain: ""${remain_build}"
 
 for docker_name in ${docker_names[*]}
 do
-  read -r -u5
+  read -r -u3
 {
   docker_build "${docker_name}"
   remain_build=$(expr "$remain_build" - 1)
   echo "build ""${docker_name}"" complete, remain: ""${remain_build}"
-  echo >&5
+  echo >&3
 } &
 done
 
 wait
 
-exec 5<&-
-exec 5>&-
+exec 3<&-
+exec 3>&-
