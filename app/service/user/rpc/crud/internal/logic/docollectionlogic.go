@@ -121,6 +121,24 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 						logger.Debugf("send message: %v", err)
 						return res, nil
 					}
+					switch in.ObjType {
+					case 1:
+						// 关注用户
+						err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+							MessageType: 1,
+							Data:        notificationMqProducer.SubscriptionData{UserId: in.ObjId, FollowerId: in.UserId},
+						})
+						if err != nil {
+							logger.Errorf("publish notificaion to nsq failed, %v", err)
+							res = &pb.DoCollectionRes{
+								Code: http.StatusInternalServerError,
+								Msg:  "internal err",
+								Ok:   false,
+							}
+							logger.Debugf("send message: %v", err)
+							return res, nil
+						}
+					}
 					res = &pb.DoCollectionRes{
 						Code: http.StatusOK,
 						Msg:  "follow user successfully",
@@ -176,6 +194,24 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 						Ok:   false,
 					}
 					return res, nil
+				}
+				switch in.ObjType {
+				case 1:
+					// 关注用户
+					err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+						MessageType: 1,
+						Data:        notificationMqProducer.SubscriptionData{UserId: in.ObjId, FollowerId: in.UserId},
+					})
+					if err != nil {
+						logger.Errorf("publish notification info to nsq failed, %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
 				}
 				res = &pb.DoCollectionRes{
 					Code: http.StatusOK,
@@ -235,17 +271,6 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 		fmt.Sprintf("user_follower_%d", in.UserId)).Err()
 	if err != nil {
 		logger.Errorf("increase [user_follower] failed, err: %v", err)
-	}
-	producer, err := nsq.GetProducer()
-	if err != nil {
-		return fmt.Errorf("get producer failed, %v", err)
-	}
-	err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
-		MessageType: 1,
-		Data:        notificationMqProducer.SubscriptionData{UserId: in.ObjId, FollowerId: in.UserId},
-	})
-	if err != nil {
-		return fmt.Errorf("publish answer info to nsq failed, %v", err)
 	}
 	return nil
 }
