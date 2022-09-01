@@ -39,7 +39,7 @@ services:
     networks:
       - gohu_net
 
-  oauth-rpc-token--store:
+  oauth-rpc-token-store:
     build: app/service/oauth/rpc/token/store
     container_name: gohu-oauth-rpc-token-store
     restart: always
