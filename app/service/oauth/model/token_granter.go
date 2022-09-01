@@ -120,8 +120,8 @@ func (tokenGranter *AuthorizationTokenGranter) Grant(ctx context.Context,
 			LastIp:      userDetail.LastIP,
 			Vip:         userDetail.Vip,
 			State:       userDetail.State,
-			UpdateTime:  userDetail.UpdateTime.Format("2006-01-02 15:04:05 MST"),
-			CreateTime:  userDetail.CreateTime.Format("2006-01-02 15:04:05 MST"),
+			UpdateTime:  userDetail.UpdateTime.String(),
+			CreateTime:  userDetail.CreateTime.String(),
 			Authorities: nil, // TODO: 待加入权限字段
 		},
 	})
