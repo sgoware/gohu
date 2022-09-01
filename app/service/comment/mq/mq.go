@@ -37,11 +37,17 @@ func main() {
 		logger.Panicf("initialize Apollo Client failed, err: %v", err)
 	}
 
-	// 初始化微服务设置
+	// 初始化消息队列设置
 	namespace, serviceType, serviceSingleName := utils.GetServiceDetails(serviceName)
 	err = configClient.UnmarshalServiceConfig(namespace, serviceType, serviceSingleName, &c)
 	if err != nil {
 		logger.Fatalf("UnmarshalKey into service config failed, err: %v", err)
+	}
+
+	// 初始化log、trace
+	err = c.SetUp()
+	if err != nil {
+		logger.Fatalf("initialize go-zero internal service failed, err: %v")
 	}
 
 	serviceGroup := service.NewServiceGroup()
