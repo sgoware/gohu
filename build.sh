@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export PROJECT_NAME=$1
+
+export THREAD=$2
+
 docker_names=('oauth-api' 'oauth-rpc-token-enhancer' 'oauth-rpc-token-store' \
 'user-api' 'user-rpc-crud' 'user-rpc-info' 'user-rpc-vip' 'notification-api' \
 'notification-rpc-crud' 'notification-rpc-info' 'mq-asynq-scheduler' 'mq-asynq-processor' \
@@ -20,19 +24,29 @@ function docker_build() {
   return 1
 }
 
-export PROJECT_NAME=$1
+[ -e ./build/fd1 ] || mkfifo ./build/fd1
+exec 3<>./build/fd1
+rm -rf ./build/df1
 
-echo "${PROJECT_NAME}"
+for ((i=1;i<=THREAD;i++))
+do
+  echo >&5
+done
 
 cd /www/site/"$PROJECT_NAME" || exit
 
-echo "docker_images: ""${#docker_names[@]}"
+remain_build=${#docker_names[@]}
+
+echo "start building images, remain: ""${remain_build}"
 
 for docker_name in ${docker_names[*]}
 do
+  read -r -u5
 {
   docker_build "${docker_name}"
-  echo "build ""${docker_name}"" complete"
+  remain_build=${remain_build}-1
+  echo "build ""${docker_name}"" complete, remain: ""${remain_build}"
+  echo >&5
 } &
 done
 
