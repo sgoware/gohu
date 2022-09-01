@@ -11,7 +11,7 @@ WORKDIR /server
 
 # 将代码复制到容器中
 #COPY etc /server/etc
-COPY ./gohu-user-info-rpc /server/gohu-user-info-rpc
+COPY ./gohu-user-rpc-info /server/gohu-user-rpc-info
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -21,4 +21,4 @@ RUN apk update \
     && echo "Asia/Shanghai" > /etc/timezone
 
 # 启动容器时运行的命令
-CMD ["./gohu-user-info-rpc"]
+CMD ["./gohu-user-rpc-info"]

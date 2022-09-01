@@ -26,7 +26,7 @@ services:
 
   oauth-token-enhancer-rpc:
     build: app/service/oauth/rpc/token/enhancer
-    container_name: gohu-oauth-token-enhancer-rpc
+    container_name: gohu-oauth-rpc-token-enhancer
     restart: always
     ports:
       - "11111:11111"
@@ -41,7 +41,7 @@ services:
 
   oauth-token-store-rpc:
     build: app/service/oauth/rpc/token/store
-    container_name: gohu-oauth-token-store-rpc
+    container_name: gohu-oauth-rpc-token-store
     restart: always
     ports:
       - "11112:11112"
@@ -71,7 +71,7 @@ services:
 
   user-crud-rpc:
     build: app/service/user/rpc/crud
-    container_name: gohu-user-curd-rpc
+    container_name: gohu-user-rpc-curd
     restart: always
     ports:
       - "11121:11121"
@@ -86,7 +86,7 @@ services:
 
   user-info-rpc:
     build: app/service/user/rpc/info
-    container_name: gohu-user-info-rpc
+    container_name: gohu-user-rpc-info
     restart: always
     ports:
       - "11122:11122"
@@ -101,7 +101,7 @@ services:
 
   user-vip-rpc:
     build: app/service/user/rpc/vip
-    container_name: gohu-user-vip-rpc
+    container_name: gohu-user-rpc-vip
     restart: always
     ports:
       - "11123:11123"
@@ -224,7 +224,7 @@ services:
 
   notification-crud-rpc:
     build: app/service/notification/rpc/crud
-    container_name: gohu-notification-crud-rpc
+    container_name: gohu-notification-rpc-crud
     restart: always
     ports:
       - "11151:11151"
@@ -239,7 +239,7 @@ services:
 
   notification-info-rpc:
     build: app/service/notification/rpc/info
-    container_name: gohu-notification-info-rpc
+    container_name: gohu-notification-rpc-info
     restart: always
     ports:
       - "11152:11152"

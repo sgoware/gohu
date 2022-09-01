@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker_names=('oauth-api' 'oauth-crud-rpc')
+docker_names=('oauth-api' 'oauth-crud-rpc' 'token-enhancer')
 
 function docker_build() {
   if [ "$1" -ef "" ]; then
