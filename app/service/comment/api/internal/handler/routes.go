@@ -19,6 +19,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/api/comment/crud",
 					Handler: CrudHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/api/comment/subject/:subjectId",
+					Handler: GetCommentSubjectHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/api/comment/subject/:subjectIdid/index/:indexId",
+					Handler: GetCommentSubjectIndexHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/api/comment/index/:indexId",
+					Handler: GetCommentIndexHandler(serverCtx),
+				},
 			}...,
 		),
 	)

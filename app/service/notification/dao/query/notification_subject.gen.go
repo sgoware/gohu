@@ -29,11 +29,6 @@ func newNotificationSubject(db *gorm.DB) notificationSubject {
 	_notificationSubject.ID = field.NewInt64(tableName, "id")
 	_notificationSubject.UserID = field.NewInt64(tableName, "user_id")
 	_notificationSubject.MessageType = field.NewInt32(tableName, "message_type")
-	_notificationSubject.Title = field.NewString(tableName, "title")
-	_notificationSubject.Content = field.NewString(tableName, "content")
-	_notificationSubject.URL = field.NewString(tableName, "url")
-	_notificationSubject.Meta = field.NewString(tableName, "meta")
-	_notificationSubject.Attrs = field.NewInt32(tableName, "attrs")
 	_notificationSubject.CreateTime = field.NewTime(tableName, "create_time")
 	_notificationSubject.UpdateTime = field.NewTime(tableName, "update_time")
 
@@ -49,11 +44,6 @@ type notificationSubject struct {
 	ID          field.Int64
 	UserID      field.Int64
 	MessageType field.Int32
-	Title       field.String
-	Content     field.String
-	URL         field.String
-	Meta        field.String
-	Attrs       field.Int32
 	CreateTime  field.Time
 	UpdateTime  field.Time
 
@@ -75,11 +65,6 @@ func (n *notificationSubject) updateTableName(table string) *notificationSubject
 	n.ID = field.NewInt64(table, "id")
 	n.UserID = field.NewInt64(table, "user_id")
 	n.MessageType = field.NewInt32(table, "message_type")
-	n.Title = field.NewString(table, "title")
-	n.Content = field.NewString(table, "content")
-	n.URL = field.NewString(table, "url")
-	n.Meta = field.NewString(table, "meta")
-	n.Attrs = field.NewInt32(table, "attrs")
 	n.CreateTime = field.NewTime(table, "create_time")
 	n.UpdateTime = field.NewTime(table, "update_time")
 
@@ -106,15 +91,10 @@ func (n *notificationSubject) GetFieldByName(fieldName string) (field.OrderExpr,
 }
 
 func (n *notificationSubject) fillFieldMap() {
-	n.fieldMap = make(map[string]field.Expr, 10)
+	n.fieldMap = make(map[string]field.Expr, 5)
 	n.fieldMap["id"] = n.ID
 	n.fieldMap["user_id"] = n.UserID
 	n.fieldMap["message_type"] = n.MessageType
-	n.fieldMap["title"] = n.Title
-	n.fieldMap["content"] = n.Content
-	n.fieldMap["url"] = n.URL
-	n.fieldMap["meta"] = n.Meta
-	n.fieldMap["attrs"] = n.Attrs
 	n.fieldMap["create_time"] = n.CreateTime
 	n.fieldMap["update_time"] = n.UpdateTime
 }
