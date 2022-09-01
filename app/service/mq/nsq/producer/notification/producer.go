@@ -1,4 +1,4 @@
-package producer
+package notification
 
 import (
 	"encoding/json"

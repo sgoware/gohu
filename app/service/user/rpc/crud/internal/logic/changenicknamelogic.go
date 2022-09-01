@@ -2,8 +2,11 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/hibiken/asynq"
 	"gorm.io/gorm"
 	"main/app/common/log"
+	"main/app/service/mq/asynq/processor/job"
 	"net/http"
 
 	"main/app/service/user/rpc/crud/internal/svc"
@@ -27,6 +30,7 @@ func NewChangeNickNameLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 }
 
 func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.ChangeNicknameRes, err error) {
+	// 这里不做缓存处理, 因为改名字频率设置为1个月一次
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
@@ -46,17 +50,28 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 		}
 	case gorm.ErrRecordNotFound:
 		{
-			_, err := userSubjectModel.WithContext(l.ctx).
-				Where(userSubjectModel.ID.Eq(in.Id)).
-				Update(userSubjectModel.Nickname, in.Nickname)
+			payload, err := json.Marshal(job.MsgUpdateUserSubjectRecordPayload{
+				Nickname: in.Nickname,
+			})
 			if err != nil {
-				logger.Errorf("change nickname failed, err: %v", err)
+				logger.Errorf("marshal [MsgUpdateUserSubjectRecordPayload] into json failed, err: %v", err)
 				res = &pb.ChangeNicknameRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
 					Ok:   false,
 				}
-				logger.Debugf("send message: %v", res.String())
+				logger.Debugf("send message: %v", err)
+				return res, nil
+			}
+			_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectRecordTask, payload))
+			if err != nil {
+				logger.Errorf("create [MsgUpdateUserSubjectRecordTask] insert queue failed, err: %v", err)
+				res = &pb.ChangeNicknameRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", err)
 				return res, nil
 			}
 			res = &pb.ChangeNicknameRes{

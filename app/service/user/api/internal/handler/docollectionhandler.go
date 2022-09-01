@@ -10,9 +10,9 @@ import (
 	"main/app/service/user/api/internal/types"
 )
 
-func DeleteCollectionHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func DoCollectionHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.DeleteCollectionReq
+		var req types.DoCollectionReq
 		logger := log.GetSugaredLogger()
 
 		if err := httpx.Parse(r, &req); err != nil {
@@ -22,9 +22,9 @@ func DeleteCollectionHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 		logger.Debugf("recv args: %v", req)
 
-		l := logic.NewDeleteCollectionLogic(r.Context(), svcCtx)
+		l := logic.NewDoCollectionLogic(r.Context(), svcCtx)
 
-		res, err := l.DeleteCollection(&req)
+		res, err := l.DoCollection(&req)
 		if err != nil {
 			logger.Errorf("Process logic failed, err: %v", err)
 		}

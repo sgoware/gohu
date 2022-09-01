@@ -39,23 +39,13 @@ type ChangeNicknameRes struct {
 	Ok   bool   `json:"ok"`
 }
 
-type CreateCollectionReq struct {
+type DoCollectionReq struct {
 	CollectionType int32 `json:"collection_type"`
 	ObjType        int32 `form:"obj_type"`
 	ObjId          int64 `form:"obj_id"`
 }
 
-type CreateCollectionRes struct {
-	Code int32  `json:"code"`
-	Msg  string `json:"msg"`
-	Ok   bool   `json:"ok"`
-}
-
-type DeleteCollectionReq struct {
-	CollectionId int64 `path:"collection_id"`
-}
-
-type DeleteCollectionRes struct {
+type DoCollectionRes struct {
 	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Ok   bool   `json:"ok"`

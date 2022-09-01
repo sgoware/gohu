@@ -37,12 +37,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodPost,
 					Path:    "/api/user/collection",
-					Handler: CreateCollectionHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodDelete,
-					Path:    "/api/user/collection/:collectionId",
-					Handler: DeleteCollectionHandler(serverCtx),
+					Handler: DoCollectionHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

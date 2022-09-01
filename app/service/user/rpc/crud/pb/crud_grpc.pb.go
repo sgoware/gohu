@@ -24,8 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CrudClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error)
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
-	CreateCollection(ctx context.Context, in *CreateCollectionReq, opts ...grpc.CallOption) (*CreateCollectionRes, error)
-	DeleteCollection(ctx context.Context, in *DeleteCollectionReq, opts ...grpc.CallOption) (*DeleteCollectionRes, error)
+	DoCollection(ctx context.Context, in *DoCollectionReq, opts ...grpc.CallOption) (*DoCollectionRes, error)
 	ChangeNickName(ctx context.Context, in *ChangeNicknameReq, opts ...grpc.CallOption) (*ChangeNicknameRes, error)
 	ChangeFollower(ctx context.Context, in *ChangeFollowerReq, opts ...grpc.CallOption) (*ChangeFollowerRes, error)
 }
@@ -56,18 +55,9 @@ func (c *crudClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc
 	return out, nil
 }
 
-func (c *crudClient) CreateCollection(ctx context.Context, in *CreateCollectionReq, opts ...grpc.CallOption) (*CreateCollectionRes, error) {
-	out := new(CreateCollectionRes)
-	err := c.cc.Invoke(ctx, "/crud.Crud/CreateCollection", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *crudClient) DeleteCollection(ctx context.Context, in *DeleteCollectionReq, opts ...grpc.CallOption) (*DeleteCollectionRes, error) {
-	out := new(DeleteCollectionRes)
-	err := c.cc.Invoke(ctx, "/crud.Crud/DeleteCollection", in, out, opts...)
+func (c *crudClient) DoCollection(ctx context.Context, in *DoCollectionReq, opts ...grpc.CallOption) (*DoCollectionRes, error) {
+	out := new(DoCollectionRes)
+	err := c.cc.Invoke(ctx, "/crud.Crud/DoCollection", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +88,7 @@ func (c *crudClient) ChangeFollower(ctx context.Context, in *ChangeFollowerReq, 
 type CrudServer interface {
 	Login(context.Context, *LoginReq) (*LoginRes, error)
 	Register(context.Context, *RegisterReq) (*RegisterRes, error)
-	CreateCollection(context.Context, *CreateCollectionReq) (*CreateCollectionRes, error)
-	DeleteCollection(context.Context, *DeleteCollectionReq) (*DeleteCollectionRes, error)
+	DoCollection(context.Context, *DoCollectionReq) (*DoCollectionRes, error)
 	ChangeNickName(context.Context, *ChangeNicknameReq) (*ChangeNicknameRes, error)
 	ChangeFollower(context.Context, *ChangeFollowerReq) (*ChangeFollowerRes, error)
 	mustEmbedUnimplementedCrudServer()
@@ -115,11 +104,8 @@ func (UnimplementedCrudServer) Login(context.Context, *LoginReq) (*LoginRes, err
 func (UnimplementedCrudServer) Register(context.Context, *RegisterReq) (*RegisterRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedCrudServer) CreateCollection(context.Context, *CreateCollectionReq) (*CreateCollectionRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateCollection not implemented")
-}
-func (UnimplementedCrudServer) DeleteCollection(context.Context, *DeleteCollectionReq) (*DeleteCollectionRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteCollection not implemented")
+func (UnimplementedCrudServer) DoCollection(context.Context, *DoCollectionReq) (*DoCollectionRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DoCollection not implemented")
 }
 func (UnimplementedCrudServer) ChangeNickName(context.Context, *ChangeNicknameReq) (*ChangeNicknameRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeNickName not implemented")
@@ -176,38 +162,20 @@ func _Crud_Register_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Crud_CreateCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateCollectionReq)
+func _Crud_DoCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DoCollectionReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CrudServer).CreateCollection(ctx, in)
+		return srv.(CrudServer).DoCollection(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/crud.Crud/CreateCollection",
+		FullMethod: "/crud.Crud/DoCollection",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CrudServer).CreateCollection(ctx, req.(*CreateCollectionReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Crud_DeleteCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCollectionReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CrudServer).DeleteCollection(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/crud.Crud/DeleteCollection",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CrudServer).DeleteCollection(ctx, req.(*DeleteCollectionReq))
+		return srv.(CrudServer).DoCollection(ctx, req.(*DoCollectionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -264,12 +232,8 @@ var Crud_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Crud_Register_Handler,
 		},
 		{
-			MethodName: "CreateCollection",
-			Handler:    _Crud_CreateCollection_Handler,
-		},
-		{
-			MethodName: "DeleteCollection",
-			Handler:    _Crud_DeleteCollection_Handler,
+			MethodName: "DoCollection",
+			Handler:    _Crud_DoCollection_Handler,
 		},
 		{
 			MethodName: "ChangeNickName",

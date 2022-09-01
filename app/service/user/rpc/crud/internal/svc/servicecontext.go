@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/hibiken/asynq"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/user/dao/query"
@@ -11,9 +12,12 @@ import (
 )
 
 type ServiceContext struct {
-	Config    config.Config
+	Config config.Config
+
 	UserModel *query.Query
 	Rdb       *redis.Client
+
+	AsynqClient *asynq.Client
 
 	ClientId     string
 	ClientSecret string
@@ -40,9 +44,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		logger.Fatalf("get client secret failed, err: %v", err)
 	}
 	return &ServiceContext{
-		Config:       c,
-		UserModel:    query.Use(db),
-		Rdb:          rdb,
+		Config: c,
+
+		UserModel: query.Use(db),
+		Rdb:       rdb,
+
+		AsynqClient: asynq.NewClient(c.AsynqClientConf),
+
 		ClientId:     clientId,
 		ClientSecret: clientSecret,
 	}

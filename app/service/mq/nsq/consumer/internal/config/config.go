@@ -9,7 +9,7 @@ import (
 type Config struct {
 	service.ServiceConf
 
-	NsqConsumerConf nsq.ConsumerConf
+	PublishNotificationConsumerConf nsq.ConsumerConf
 
-	CrudRpcClientConf zrpc.RpcClientConf
+	UserCrudRpcClientConf zrpc.RpcClientConf
 }

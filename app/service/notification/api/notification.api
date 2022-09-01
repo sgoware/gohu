@@ -16,6 +16,12 @@ type (
 		Ok   bool   `json:"ok"`
 		Data string `json:"data"`
 	}
+
+	GetUserNotificationIdsReq{
+	}
+	GetUserNotificationIdsRes{
+
+	}
 )
 
 service notification {

@@ -1,12 +1,12 @@
-package nsq
+package user
 
 import (
 	"fmt"
 	"github.com/zeromicro/go-zero/core/service"
 	apollo "main/app/common/config"
 	"main/app/common/mq/nsq"
-	"main/app/service/notification/mq/internal/config"
-	"main/app/service/notification/mq/internal/svc"
+	"main/app/service/mq/nsq/consumer/internal/config"
+	"main/app/service/mq/nsq/consumer/internal/svc"
 )
 
 func NewService(c config.Config, svcContext *svc.ServiceContext) ([]service.Service, error) {
@@ -14,20 +14,20 @@ func NewService(c config.Config, svcContext *svc.ServiceContext) ([]service.Serv
 	if err != nil {
 		return nil, fmt.Errorf("get domain failed, %v", err)
 	}
-
-	nsqConsumerService, err := nsq.NewConsumerService(
-		c.NsqConsumerConf.Topic,
-		c.NsqConsumerConf.Channel,
+	publishNotificationConsumerService, err := nsq.NewConsumerService(
+		c.PublishNotificationConsumerConf.Topic,
+		c.PublishNotificationConsumerConf.Channel,
 		&PublishNotificationHandler{
 			Domain:        domain,
-			CrudRpcClient: svcContext.CrudRpcClient,
+			CrudRpcClient: svcContext.NotificationCrudRpcClient,
 		},
 	)
+
 	if err != nil {
 		return nil, err
 	}
 
 	return []service.Service{
-		nsqConsumerService,
+		publishNotificationConsumerService,
 	}, nil
 }

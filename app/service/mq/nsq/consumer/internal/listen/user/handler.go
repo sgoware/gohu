@@ -1,4 +1,4 @@
-package nsq
+package user
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/nsqio/go-nsq"
 	"github.com/spf13/cast"
 	"github.com/tidwall/gjson"
-	notificationMqProducer "main/app/service/notification/mq/producer"
+	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
 	"main/app/service/notification/rpc/crud/crud"
 )
 

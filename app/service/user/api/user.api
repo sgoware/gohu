@@ -42,21 +42,12 @@ type (
 		Ok   bool   `json:"ok"`
 	}
 
-	CreateCollectionReq {
+	DoCollectionReq {
 		CollectionType int32 `json:"collection_type"`
 		ObjType        int32 `form:"obj_type"`
 		ObjId          int64 `form:"obj_id"`
 	}
-	CreateCollectionRes {
-		Code int32  `json:"code"`
-		Msg  string `json:"msg"`
-		Ok   bool   `json:"ok"`
-	}
-
-	DeleteCollectionReq {
-		CollectionId int64 `path:"collection_id"`
-	}
-	DeleteCollectionRes {
+	DoCollectionRes {
 		Code int32  `json:"code"`
 		Msg  string `json:"msg"`
 		Ok   bool   `json:"ok"`
@@ -162,11 +153,8 @@ service user {
 	@handler ChangeNickname
 	post /api/user/nickname (ChangeNicknameReq) returns (ChangeNicknameRes)
 	
-	@handler CreateCollection
-	post /api/user/collection (CreateCollectionReq) returns (CreateCollectionRes)
-	
-	@handler DeleteCollection
-	delete /api/user/collection/:collectionId (DeleteCollectionReq) returns (DeleteCollectionRes)
+	@handler DoCollection
+	post /api/user/collection (DoCollectionReq) returns (DoCollectionRes)
 	
 	@handler GetObjInfo
 	get /api/user/obj/:obj_type (GetObjInfoReq) returns (GetObjInfoRes)

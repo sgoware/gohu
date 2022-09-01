@@ -1,18 +1,15 @@
-package main
+package consumer
 
 import (
-	apollo "main/app/common/config"
-	"main/app/common/log"
-	"main/app/service/user/mq/config"
-	"main/app/service/user/mq/listen"
-	"main/app/utils"
-
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
-	_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
+	apollo "main/app/common/config"
+	"main/app/common/log"
+	"main/app/service/mq/nsq/consumer/internal/config"
+	"main/app/service/mq/nsq/consumer/internal/listen"
 )
 
-const serviceName = "user.mq"
+const mqName = "mq.nsq.consumer"
 
 var c config.Config
 
@@ -28,7 +25,7 @@ func main() {
 	if err != nil {
 		logger.Fatalf("get log writer failed")
 	}
-	logx.MustSetup(log.GetLogXConfig(utils.GetServiceFullName(serviceName), "info"))
+	logx.MustSetup(log.GetLogXConfig("mq-nsq-consumer", "info"))
 	logx.SetWriter(logWriter)
 
 	// 初始化配置管理器
@@ -38,8 +35,7 @@ func main() {
 	}
 
 	// 初始化消息队列设置
-	namespace, serviceType, serviceSingleName := utils.GetServiceDetails(serviceName)
-	err = configClient.UnmarshalServiceConfig(namespace, serviceType, serviceSingleName, &c)
+	err = configClient.UnmarshalKey("mq", "nsq.consumer", &c)
 	if err != nil {
 		logger.Fatalf("UnmarshalKey into service config failed, err: %v", err)
 	}
@@ -52,12 +48,14 @@ func main() {
 
 	serviceGroup := service.NewServiceGroup()
 	defer serviceGroup.Stop()
-	mqs, err := listen.Mqs(c)
+
+	consumerServices, err := listen.NewServices(c)
 	if err != nil {
-		logger.Fatalf("listen services failed, err: %v", err)
+		logger.Fatalf("initialize nsq consumer services failed, err: %v")
 	}
-	for _, mq := range mqs {
-		serviceGroup.Add(mq)
+
+	for _, consumerService := range consumerServices {
+		serviceGroup.Add(consumerService)
 	}
 
 	serviceGroup.Start()

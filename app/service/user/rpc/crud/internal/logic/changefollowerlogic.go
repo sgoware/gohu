@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"main/app/common/log"
 	"net/http"
 
@@ -28,6 +29,10 @@ func NewChangeFollowerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 func (l *ChangeFollowerLogic) ChangeFollower(in *pb.ChangeFollowerReq) (res *pb.ChangeFollowerRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
+
+	l.svcCtx.Rdb.SAdd(l.ctx,
+		"user_follower",
+		fmt.Sprintf("%d:%d", in.UserId))
 
 	userSubjectModel := l.svcCtx.UserModel.UserSubject
 

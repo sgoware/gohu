@@ -32,14 +32,9 @@ func (s *CrudServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.Regi
 	return l.Register(in)
 }
 
-func (s *CrudServer) CreateCollection(ctx context.Context, in *pb.CreateCollectionReq) (*pb.CreateCollectionRes, error) {
-	l := logic.NewCreateCollectionLogic(ctx, s.svcCtx)
-	return l.CreateCollection(in)
-}
-
-func (s *CrudServer) DeleteCollection(ctx context.Context, in *pb.DeleteCollectionReq) (*pb.DeleteCollectionRes, error) {
-	l := logic.NewDeleteCollectionLogic(ctx, s.svcCtx)
-	return l.DeleteCollection(in)
+func (s *CrudServer) DoCollection(ctx context.Context, in *pb.DoCollectionReq) (*pb.DoCollectionRes, error) {
+	l := logic.NewDoCollectionLogic(ctx, s.svcCtx)
+	return l.DoCollection(in)
 }
 
 func (s *CrudServer) ChangeNickName(ctx context.Context, in *pb.ChangeNicknameReq) (*pb.ChangeNicknameRes, error) {

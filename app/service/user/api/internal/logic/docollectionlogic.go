@@ -12,30 +12,30 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CreateCollectionLogic struct {
+type DoCollectionLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCreateCollectionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateCollectionLogic {
-	return &CreateCollectionLogic{
+func NewDoCollectionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DoCollectionLogic {
+	return &DoCollectionLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CreateCollectionLogic) CreateCollection(req *types.CreateCollectionReq) (resp *types.CreateCollectionRes, err error) {
+func (l *DoCollectionLogic) DoCollection(req *types.DoCollectionReq) (resp *types.DoCollectionRes, err error) {
 	j := gjson.Parse(cast.ToString(l.ctx.Value("user_details")))
 	userId := j.Get("user_id").Int()
-	res, _ := l.svcCtx.CrudRpcClient.CreateCollection(l.ctx, &crud.CreateCollectionReq{
+	res, _ := l.svcCtx.CrudRpcClient.DoCollection(l.ctx, &crud.DoCollectionReq{
 		UserId:      userId,
 		CollectType: req.CollectionType,
 		ObjType:     req.ObjType,
 		ObjId:       req.ObjId,
 	})
-	return &types.CreateCollectionRes{
+	return &types.DoCollectionRes{
 		Code: res.Code,
 		Msg:  res.Msg,
 		Ok:   res.Ok,

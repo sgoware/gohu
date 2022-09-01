@@ -54,7 +54,6 @@ services:
     networks:
       - gohu_net
 
-
   user-api:
     build: app/service/user/api
     container_name: gohu-user-api
@@ -70,27 +69,12 @@ services:
     networks:
       - gohu_net
 
-  user-mq:
-    build: app/service/user/mq
-    container_name: gohu-user-mq
-    restart: always
-    ports:
-      - "11121:11121"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
-
   user-crud-rpc:
     build: app/service/user/rpc/crud
     container_name: gohu-user-curd-rpc
     restart: always
     ports:
-      - "11122:11122"
+      - "11121:11121"
     environment:
       - TZ=Asia/Shanghai
       - APOLLO_APP_ID=${APOLLO_APP_ID}
@@ -105,7 +89,7 @@ services:
     container_name: gohu-user-info-rpc
     restart: always
     ports:
-      - "11123:11123"
+      - "11122:11122"
     environment:
       - TZ=Asia/Shanghai
       - APOLLO_APP_ID=${APOLLO_APP_ID}
@@ -120,7 +104,7 @@ services:
     container_name: gohu-user-vip-rpc
     restart: always
     ports:
-      - "11124:11124"
+      - "11123:11123"
     environment:
       - TZ=Asia/Shanghai
       - APOLLO_APP_ID=${APOLLO_APP_ID}
@@ -131,126 +115,96 @@ services:
       - gohu_net
 
 
-  question-api:
-    build: app/service/question/api
-    container_name: gohu-question-api
-    restart: always
-    ports:
-      - "11130:11130"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
-
-  question-mq:
-    build: app/service/question/mq
-    container_name: gohu-question-mq
-    restart: always
-    ports:
-      - "11131:11132"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
-
-  question-crud-rpc:
-    build: app/service/question/rpc/crud
-    container_name: gohu-question-crud-rpc
-    restart: always
-    ports:
-      - "11132:11132"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
-
-  question-info-rpc:
-    build: app/service/question/rpc/info
-    container_name: gohu-question-info-rpc
-    restart: always
-    ports:
-      - "11133:11133"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
+#  question-api:
+#    build: app/service/question/api
+#    container_name: gohu-question-api
+#    restart: always
+#    ports:
+#      - "11130:11130"
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - APOLLO_APP_ID=${APOLLO_APP_ID}
+#      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+#      - APOLLO_IP=${APOLLO_IP}
+#      - APOLLO_SECRET=${APOLLO_SECRET}
+#    networks:
+#      - gohu_net
+#
+#  question-crud-rpc:
+#    build: app/service/question/rpc/crud
+#    container_name: gohu-question-crud-rpc
+#    restart: always
+#    ports:
+#      - "11132:11132"
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - APOLLO_APP_ID=${APOLLO_APP_ID}
+#      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+#      - APOLLO_IP=${APOLLO_IP}
+#      - APOLLO_SECRET=${APOLLO_SECRET}
+#    networks:
+#      - gohu_net
+#
+#  question-info-rpc:
+#    build: app/service/question/rpc/info
+#    container_name: gohu-question-info-rpc
+#    restart: always
+#    ports:
+#      - "11133:11133"
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - APOLLO_APP_ID=${APOLLO_APP_ID}
+#      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+#      - APOLLO_IP=${APOLLO_IP}
+#      - APOLLO_SECRET=${APOLLO_SECRET}
+#    networks:
+#      - gohu_net
 
 
-  comment-api:
-    build: app/service/comment/api
-    container_name: gohu-comment-api
-    restart: always
-    ports:
-      - "11140:11140"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
-
-  comment-mq:
-    build: app/service/comment/mq
-    container_name: gohu-comment-mq
-    restart: always
-    ports:
-      - "11141:11141"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
-
-  comment-crud-rpc:
-    build: app/service/comment/rpc/crud
-    container_name: gohu-comment-crud-rpc
-    restart: always
-    ports:
-      - "11142:11142"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
-
-  comment-info-rpc:
-    build: app/service/comment/rpc/info
-    container_name: gohu-comment-info-rpc
-    restart: always
-    ports:
-      - "11143:11143"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
+#  comment-api:
+#    build: app/service/comment/api
+#    container_name: gohu-comment-api
+#    restart: always
+#    ports:
+#      - "11140:11140"
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - APOLLO_APP_ID=${APOLLO_APP_ID}
+#      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+#      - APOLLO_IP=${APOLLO_IP}
+#      - APOLLO_SECRET=${APOLLO_SECRET}
+#    networks:
+#      - gohu_net
+#
+#  comment-crud-rpc:
+#    build: app/service/comment/rpc/crud
+#    container_name: gohu-comment-crud-rpc
+#    restart: always
+#    ports:
+#      - "11142:11142"
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - APOLLO_APP_ID=${APOLLO_APP_ID}
+#      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+#      - APOLLO_IP=${APOLLO_IP}
+#      - APOLLO_SECRET=${APOLLO_SECRET}
+#    networks:
+#      - gohu_net
+#
+#  comment-info-rpc:
+#    build: app/service/comment/rpc/info
+#    container_name: gohu-comment-info-rpc
+#    restart: always
+#    ports:
+#      - "11143:11143"
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - APOLLO_APP_ID=${APOLLO_APP_ID}
+#      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+#      - APOLLO_IP=${APOLLO_IP}
+#      - APOLLO_SECRET=${APOLLO_SECRET}
+#    networks:
+#      - gohu_net
 
 
   notification-api:
@@ -268,27 +222,12 @@ services:
     networks:
       - gohu_net
 
-  notification-mq:
-    build: app/service/notification/mq
-    container_name: gohu-notification-mq
-    restart: always
-    ports:
-      - "11151:11151"
-    environment:
-      - TZ=Asia/Shanghai
-      - APOLLO_APP_ID=${APOLLO_APP_ID}
-      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
-      - APOLLO_IP=${APOLLO_IP}
-      - APOLLO_SECRET=${APOLLO_SECRET}
-    networks:
-      - gohu_net
-
   notification-crud-rpc:
     build: app/service/notification/rpc/crud
     container_name: gohu-notification-crud-rpc
     restart: always
     ports:
-      - "11152:11152"
+      - "11151:11151"
     environment:
       - TZ=Asia/Shanghai
       - APOLLO_APP_ID=${APOLLO_APP_ID}
@@ -303,7 +242,7 @@ services:
     container_name: gohu-notification-info-rpc
     restart: always
     ports:
-      - "11153:11153"
+      - "11152:11152"
     environment:
       - TZ=Asia/Shanghai
       - APOLLO_APP_ID=${APOLLO_APP_ID}
@@ -313,6 +252,51 @@ services:
     networks:
       - gohu_net
 
+
+  mq-asynq-scheduler:
+    build: app/service/mq/asynq/scheduler
+    container_name: gohu-mq-asynq-scheduler
+    restart: always
+    ports:
+      - "11161:11161"
+    environment:
+      - TZ=Asia/Shanghai
+      - APOLLO_APP_ID=${APOLLO_APP_ID}
+      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+      - APOLLO_IP=${APOLLO_IP}
+      - APOLLO_SECRET=${APOLLO_SECRET}
+    networks:
+      - gohu_net
+
+  mq-asynq-processor:
+    build: app/service/mq/asynq/processor
+    container_name: gohu-mq-asynq-processor
+    restart: always
+    ports:
+      - "11162:11162"
+    environment:
+      - TZ=Asia/Shanghai
+      - APOLLO_APP_ID=${APOLLO_APP_ID}
+      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+      - APOLLO_IP=${APOLLO_IP}
+      - APOLLO_SECRET=${APOLLO_SECRET}
+    networks:
+      - gohu_net
+
+  mq-nsq-consumer:
+    build: app/service/mq/nsq/consumer
+    container_name: gohu-mq-nsq-consumer
+    restart: always
+    ports:
+      - "11163:11163"
+    environment:
+      - TZ=Asia/Shanghai
+      - APOLLO_APP_ID=${APOLLO_APP_ID}
+      - APOLLO_CLUSTER_NAME=${APOLLO_CLUSTER_NAME}
+      - APOLLO_IP=${APOLLO_IP}
+      - APOLLO_SECRET=${APOLLO_SECRET}
+    networks:
+      - gohu_net
 
 
 networks:

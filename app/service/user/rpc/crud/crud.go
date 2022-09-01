@@ -53,7 +53,7 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 
-	// 初始化mq生产者
+	// 初始化nsq生产者
 	_, err = nsq.NewProducer()
 	if err != nil {
 		logger.Fatalf("initialize nsq producer failed, err: %v", err)
