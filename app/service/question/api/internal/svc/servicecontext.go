@@ -44,6 +44,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AuthMiddleware: middleware.NewAuthMiddleware(domain, cookieConfig, rdb).Handle,
 
 		CrudRpcClient: crud.NewCrud(zrpc.MustNewClient(c.CrudRpcClientConf)),
-		InfoRpcClient: info.NewInfo(zrpc.MustNewClient(c.InfoRpcClientCOnf)),
+		InfoRpcClient: info.NewInfo(zrpc.MustNewClient(c.InfoRpcClientConf)),
 	}
 }

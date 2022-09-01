@@ -8,6 +8,5 @@ import (
 type Config struct {
 	rest.RestConf
 
-	CrudRpcClientConf zrpc.RpcClientConf
 	InfoRpcClientConf zrpc.RpcClientConf
 }

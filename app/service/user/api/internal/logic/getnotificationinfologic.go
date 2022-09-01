@@ -38,7 +38,7 @@ func (l *GetNotificationInfoLogic) GetNotificationInfo(req *types.GetNotificatio
 		Msg:  res.Msg,
 		Ok:   res.Ok,
 		Data: types.GetNotificationInfoResData{
-			MessageIds: res.Data.MessageId,
+			NotificationIds: res.Data.NotificationIds,
 		},
 	}, nil
 }

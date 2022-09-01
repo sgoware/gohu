@@ -128,8 +128,10 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/comment/mq/gohu-comment-mq ./app/service/comment/mq/mq.go
         - go build -o ./app/service/comment/rpc/crud/gohu-comment-crud-rpc ./app/service/comment/rpc/crud/crud.go
         - go build -o ./app/service/comment/rpc/info/gohu-comment-info-rpc ./app/service/comment/rpc/info/info.go
+        - go build -o ./app/service/notification/api/gohu-notification-api ./app/service/notification/api/notification.go
         - go build -o ./app/service/notification/mq/gohu-notification-mq ./app/service/notification/mq/mq.go
         - go build -o ./app/service/notification/rpc/crud/gohu-notification-crud-rpc ./app/service/notification/rpc/crud/crud.go
+        - go build -o ./app/service/notification/rpc/info/gohu-notification-info-rpc ./app/service/notification/rpc/info/info.go
         - echo '----------complete----------'
         - echo '----------export envs----------'
         - export APOLLO_APP_ID=$APOLLO_APP_ID
@@ -138,6 +140,6 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - export APOLLO_SECRET=$APOLLO_SECRET
         - echo '----------complete----------'
         - echo '----------docker compose----------'
-        - docker-compose down --rmi all
-        - docker-compose up -d
+        - docker-compose -f ./manifest/deploy/docker/docker-compose.yml down --rmi all
+        - docker-compose -f ./manifest/deploy/docker/docker-compose.yml up -d
         - echo '----------complete----------'

@@ -58,7 +58,7 @@ message GetNotificationInfoRes{
     bool ok=3;
     Data data=4;
     message Data{
-        repeated int64 message_id=1;
+        repeated int64 notification_ids=1;
     }
 }
 

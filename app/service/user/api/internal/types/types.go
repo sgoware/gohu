@@ -116,7 +116,7 @@ type GetNotificationInfoReq struct {
 }
 
 type GetNotificationInfoResData struct {
-	MessageIds []int64 `json:"message_ids"`
+	NotificationIds []int64 `json:"notification_ids"`
 }
 
 type GetNotificationInfoRes struct {

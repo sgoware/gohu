@@ -1,0 +1,39 @@
+syntax = "proto3";
+package info;
+option go_package = "./pb";
+
+message NotificationSubject{
+    int64 id=1;
+    int64 user_id=2;
+    int32 message_type=3;
+    string create_time=4;
+    string update_time=5;
+}
+
+message NotificationContent{
+    int64 subject_id=1;
+    string title=2;
+    string content=3;
+    string url=4;
+    int32 attrs=5;
+    string create_time=6;
+    string update_time=7;
+}
+
+message GetNotificationReq{
+    int64 notification_id=1;
+}
+message GetNotificationRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+    Data data=4;
+    message Data{
+        NotificationSubject notification_subject=1;
+        NotificationContent notification_content=2;
+    }
+}
+
+service Info{
+    rpc GetNotification(GetNotificationReq) returns(GetNotificationRes);
+}

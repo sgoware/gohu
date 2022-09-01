@@ -82,8 +82,8 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 				time.Second*86400)
 		}
 	} else {
-		questionSubject := &pb.QuestionSubject{}
-		err = proto.Unmarshal(questionSubjectBytes, questionSubject)
+		questionSubjectProto := &pb.QuestionSubject{}
+		err = proto.Unmarshal(questionSubjectBytes, questionSubjectProto)
 		if err != nil {
 			logger.Errorf("unmarshal proto failed, err: %v", err)
 			res = &pb.GetQuestionRes{
@@ -94,7 +94,7 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
 		}
-		resData.QuestionSubject = questionSubject
+		resData.QuestionSubject = questionSubjectProto
 	}
 
 	questionContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
@@ -138,8 +138,8 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 				time.Second*86400)
 		}
 	} else {
-		questionContent := &pb.QuestionContent{}
-		err = proto.Unmarshal(questionContentBytes, questionContent)
+		questionContentProto := &pb.QuestionContent{}
+		err = proto.Unmarshal(questionContentBytes, questionContentProto)
 		if err != nil {
 			logger.Errorf("unmarshal proto failed, err: %v", err)
 			res = &pb.GetQuestionRes{
@@ -150,7 +150,7 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
 		}
-		resData.QuestionContent = questionContent
+		resData.QuestionContent = questionContentProto
 	}
 
 	res = &pb.GetQuestionRes{
