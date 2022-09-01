@@ -24,7 +24,7 @@ services:
     networks:
       - gohu_net
 
-  oauth-token-enhancer-rpc:
+  oauth-token-rpc-enhancer:
     build: app/service/oauth/rpc/token/enhancer
     container_name: gohu-oauth-rpc-token-enhancer
     restart: always
@@ -39,7 +39,7 @@ services:
     networks:
       - gohu_net
 
-  oauth-token-store-rpc:
+  oauth-token-rpc-store:
     build: app/service/oauth/rpc/token/store
     container_name: gohu-oauth-rpc-token-store
     restart: always
@@ -69,7 +69,7 @@ services:
     networks:
       - gohu_net
 
-  user-crud-rpc:
+  user-rpc-crud:
     build: app/service/user/rpc/crud
     container_name: gohu-user-rpc-curd
     restart: always
@@ -84,7 +84,7 @@ services:
     networks:
       - gohu_net
 
-  user-info-rpc:
+  user-rpc-info:
     build: app/service/user/rpc/info
     container_name: gohu-user-rpc-info
     restart: always
@@ -99,7 +99,7 @@ services:
     networks:
       - gohu_net
 
-  user-vip-rpc:
+  user-rpc-vip:
     build: app/service/user/rpc/vip
     container_name: gohu-user-rpc-vip
     restart: always
@@ -130,7 +130,7 @@ services:
 #    networks:
 #      - gohu_net
 #
-#  question-crud-rpc:
+#  question-rpc-curd:
 #    build: app/service/question/rpc/crud
 #    container_name: gohu-question-crud-rpc
 #    restart: always
@@ -145,7 +145,7 @@ services:
 #    networks:
 #      - gohu_net
 #
-#  question-info-rpc:
+#  question-rpc-info:
 #    build: app/service/question/rpc/info
 #    container_name: gohu-question-info-rpc
 #    restart: always
@@ -176,7 +176,7 @@ services:
 #    networks:
 #      - gohu_net
 #
-#  comment-crud-rpc:
+#  comment-rpc-crud:
 #    build: app/service/comment/rpc/crud
 #    container_name: gohu-comment-crud-rpc
 #    restart: always
@@ -191,7 +191,7 @@ services:
 #    networks:
 #      - gohu_net
 #
-#  comment-info-rpc:
+#  comment-rpc-info:
 #    build: app/service/comment/rpc/info
 #    container_name: gohu-comment-info-rpc
 #    restart: always
@@ -222,7 +222,7 @@ services:
     networks:
       - gohu_net
 
-  notification-crud-rpc:
+  notification-rpc-crud:
     build: app/service/notification/rpc/crud
     container_name: gohu-notification-rpc-crud
     restart: always
@@ -237,7 +237,7 @@ services:
     networks:
       - gohu_net
 
-  notification-info-rpc:
+  notification-rpc-info:
     build: app/service/notification/rpc/info
     container_name: gohu-notification-rpc-info
     restart: always
