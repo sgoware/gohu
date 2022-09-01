@@ -143,7 +143,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - docker-compose down --rmi all
         - echo '----------build docker image----------'
         - chmod 775 ./build.sh
-        - ./build.sh $PROJECT_NAME 10
+        - ./build.sh $PROJECT_NAME 15
         - echo '----------complete----------'
         - docker-compose up -d
         - echo '----------complete----------'
