@@ -132,10 +132,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/mq/asynq/processor/gohu-mq-asynq-processor ./app/service/mq/asynq/processor/processor.go
         - go build -o ./app/service/mq/nsq/consumer/gohu-mq-nsq-consumer ./app/service/mq/nsq/consumer/consumer.go
         - echo '----------complete----------'
-        - echo '----------build docker image----------'
-        - chmod 775 ./build.sh
-        - ./build.sh $PROJECT_NAME 10
-        - echo '----------complete----------'
+
         - echo '----------export envs----------'
         - export APOLLO_APP_ID=$APOLLO_APP_ID
         - export APOLLO_CLUSTER_NAME=$APOLLO_CLUSTER_NAME
@@ -144,5 +141,9 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - echo '----------complete----------'
         - echo '----------docker compose----------'
         - docker-compose down
+        - echo '----------build docker image----------'
+        - chmod 775 ./build.sh
+        - ./build.sh $PROJECT_NAME 10
+        - echo '----------complete----------'
         - docker-compose up -d
         - echo '----------complete----------'
