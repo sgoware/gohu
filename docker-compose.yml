@@ -24,7 +24,7 @@ services:
     networks:
       - gohu_net
 
-  oauth-token-rpc-enhancer:
+  oauth-rpc-token--enhancer:
     build: app/service/oauth/rpc/token/enhancer
     container_name: gohu-oauth-rpc-token-enhancer
     restart: always
@@ -39,7 +39,7 @@ services:
     networks:
       - gohu_net
 
-  oauth-token-rpc-store:
+  oauth-rpc-token--store:
     build: app/service/oauth/rpc/token/store
     container_name: gohu-oauth-rpc-token-store
     restart: always
