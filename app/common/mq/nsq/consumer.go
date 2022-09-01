@@ -20,7 +20,7 @@ type ConsumerService struct {
 func (m *ConsumerService) Start() {
 	err := m.consumer.ConnectToNSQLookupds(MustGetNSQLookupAddrs())
 	if err != nil {
-		m.logger.Errorf("start nsq consumer service failed, err: %v", err)
+		m.logger.Fatalf("start nsq consumer service failed, err: %v", err)
 	}
 	signal.Notify(m.channel, syscall.SIGINT)
 	<-m.channel
