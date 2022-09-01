@@ -20,6 +20,8 @@ function docker_build() {
   return 1
 }
 
+export PROJECT_NAME=$1
+
 cd /www/site/"$PROJECT_NAME" || exit
 
 echo "docker_images: ""${#docker_names[@]}"
