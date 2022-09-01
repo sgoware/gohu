@@ -67,7 +67,7 @@ func (l *UpgradeLogic) Upgrade(in *pb.UpgradeReq) (res *pb.UpgradeRes, err error
 			return res, nil
 		}
 
-		_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload, asynq.ProcessIn(1)))
+		_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
 		if err != nil {
 			logger.Errorf("create MsgUpdateUserSubjectCacheTask] insert queue failed, err: %v", err)
 			res = &pb.UpgradeRes{

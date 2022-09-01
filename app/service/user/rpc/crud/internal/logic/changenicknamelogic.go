@@ -63,7 +63,7 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 				logger.Debugf("send message: %v", err)
 				return res, nil
 			}
-			_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectRecordTask, payload, asynq.ProcessIn(1)))
+			_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectRecordTask, payload))
 			if err != nil {
 				logger.Errorf("create [MsgUpdateUserSubjectRecordTask] insert queue failed, err: %v", err)
 				res = &pb.ChangeNicknameRes{
