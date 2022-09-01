@@ -44,7 +44,7 @@ do
   read -r -u3
 {
   docker_build "${docker_name}"
-  remain_build=$(expr "$remain_build" - 1)
+  remain_build=let remain_build+=1
   echo "build ""${docker_name}"" complete, remain: ""${remain_build}"
   echo >&3
 } &

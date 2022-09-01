@@ -140,7 +140,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - export APOLLO_SECRET=$APOLLO_SECRET
         - echo '----------complete----------'
         - echo '----------docker compose----------'
-        - docker-compose down
+        - docker-compose down --rmi all
         - echo '----------build docker image----------'
         - chmod 775 ./build.sh
         - ./build.sh $PROJECT_NAME 10
