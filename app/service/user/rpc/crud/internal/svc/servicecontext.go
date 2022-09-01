@@ -1,13 +1,13 @@
 package svc
 
 import (
-	"github.com/hibiken/asynq"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/user/dao/query"
 	"main/app/service/user/rpc/crud/internal/config"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/hibiken/asynq"
 	_ "github.com/spf13/viper/remote"
 )
 
