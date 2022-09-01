@@ -16,6 +16,37 @@ type (
 		Msg  string `json:"msg"`
 		Ok   bool   `json:"ok"`
 	}
+
+	GetCommentSubjectReq {
+		SubjectId int64 `path:"subject_id"`
+	}
+	GetCommentSubjectRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+		Data string `json:"data"`
+	}
+
+	GetCommentIndexReq {
+		IndexId int64 `path:"index_id"`
+	}
+	GetCommentIndexRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+		Data string `json:"data"`
+	}
+
+	GetCommenSubjectIndexReq {
+		SubjectId int64 `path:"subject_id"`
+		IndexId   int64 `path:"index_id"`
+	}
+	GetCommenSubjectIndexRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+		Data string `json:"data"`
+	}
 )
 
 @server(
@@ -25,4 +56,13 @@ service comment {
 	@handler Crud
 	post /api/comment/crud (CrudReq) returns (CrudRes)
 	
+	@handler GetCommentSubject
+	get /api/comment/subject/:subjectId (GetCommentSubjectReq) returns (GetCommentSubjectRes)
+	
+	@handler GetCommentIndex
+	get /api/comment/index/:indexId (GetCommentIndexReq) returns (GetCommentIndexRes)
+
+	// 使用redis sortedset
+	@handler GetCommentSubjectIndex
+	get /api/comment/subject/:subjectIdid/index/:indexId (GetCommenSubjectIndexReq) returns (GetCommenSubjectIndexRes)
 }

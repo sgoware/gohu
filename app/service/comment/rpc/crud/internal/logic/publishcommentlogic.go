@@ -5,9 +5,11 @@ import (
 	"github.com/tidwall/gjson"
 	"github.com/zeromicro/go-zero/core/logx"
 	"main/app/common/log"
+	"main/app/common/mq/nsq"
 	"main/app/service/comment/dao/model"
 	"main/app/service/comment/rpc/crud/internal/svc"
 	"main/app/service/comment/rpc/crud/pb"
+	notificationMqProducer "main/app/service/notification/mq/producer"
 	"main/app/utils/net/ip"
 	"net/http"
 )
@@ -31,6 +33,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 	logger.Debugf("recv message: %v", in.String())
 
 	j := gjson.Parse(in.UserDetails)
+	userId := j.Get("user_id").Int()
 
 	commentIndexModel := l.svcCtx.CommentModel.CommentIndex
 	commentContentModel := l.svcCtx.CommentModel.CommentContent
@@ -56,7 +59,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 
 		commentIndex, err = commentIndexModel.WithContext(l.ctx).
 			Where(commentIndexModel.SubjectID.Eq(in.SubjectId),
-				commentIndexModel.UserID.Eq(j.Get("user_id").Int()),
+				commentIndexModel.UserID.Eq(userId),
 				commentIndexModel.IPLoc.Eq(ip.GetIpLocFromApi(j.Get("last_ip").String())),
 				commentIndexModel.CommentFloor.Eq(int32(count+1))).
 			FirstOrCreate()
@@ -69,6 +72,21 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 			}
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
+		}
+
+		// 发布通知
+		producer, err := nsq.GetProducer()
+		if err != nil {
+			logger.Errorf("get producer failed, err: %v", err)
+		} else {
+			err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+				MessageType: 3,
+				Data: notificationMqProducer.CommentData{
+					UserId:    userId,
+					SubjectId: in.SubjectId,
+					CommentId: 0,
+				},
+			})
 		}
 	} else {
 		// 是回复评论的情况
@@ -104,6 +122,21 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 			}
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
+		}
+
+		// 发布通知
+		producer, err := nsq.GetProducer()
+		if err != nil {
+			logger.Errorf("get producer failed, err: %v", err)
+		} else {
+			err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+				MessageType: 3,
+				Data: notificationMqProducer.CommentData{
+					UserId:    userId,
+					SubjectId: in.SubjectId,
+					CommentId: in.CommentId,
+				},
+			})
 		}
 	}
 

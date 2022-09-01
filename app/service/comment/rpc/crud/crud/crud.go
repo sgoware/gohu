@@ -21,14 +21,11 @@ type (
 	InitSubjectRes    = pb.InitSubjectRes
 	PublishCommentReq = pb.PublishCommentReq
 	PublishCommentRes = pb.PublishCommentRes
-	UpdateCommentReq  = pb.UpdateCommentReq
-	UpdateCommentRes  = pb.UpdateCommentRes
 
 	Crud interface {
 		InitSubject(ctx context.Context, in *InitSubjectReq, opts ...grpc.CallOption) (*InitSubjectRes, error)
 		DeleteSubject(ctx context.Context, in *DeleteSubjectReq, opts ...grpc.CallOption) (*DeleteSubjectRes, error)
 		PublishComment(ctx context.Context, in *PublishCommentReq, opts ...grpc.CallOption) (*PublishCommentRes, error)
-		UpdateComment(ctx context.Context, in *UpdateCommentReq, opts ...grpc.CallOption) (*UpdateCommentRes, error)
 		DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentRes, error)
 	}
 
@@ -56,11 +53,6 @@ func (m *defaultCrud) DeleteSubject(ctx context.Context, in *DeleteSubjectReq, o
 func (m *defaultCrud) PublishComment(ctx context.Context, in *PublishCommentReq, opts ...grpc.CallOption) (*PublishCommentRes, error) {
 	client := pb.NewCrudClient(m.cli.Conn())
 	return client.PublishComment(ctx, in, opts...)
-}
-
-func (m *defaultCrud) UpdateComment(ctx context.Context, in *UpdateCommentReq, opts ...grpc.CallOption) (*UpdateCommentRes, error) {
-	client := pb.NewCrudClient(m.cli.Conn())
-	return client.UpdateComment(ctx, in, opts...)
 }
 
 func (m *defaultCrud) DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentRes, error) {

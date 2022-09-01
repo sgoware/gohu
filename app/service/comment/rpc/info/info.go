@@ -4,13 +4,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	apollo "main/app/common/config"
 	"main/app/common/log"
-	"main/app/common/mq/nsq"
+	"main/app/service/comment/rpc/info/internal/config"
+	"main/app/service/comment/rpc/info/internal/server"
+	"main/app/service/comment/rpc/info/internal/svc"
+	"main/app/service/comment/rpc/info/pb"
 	"main/app/utils"
-
-	"main/app/service/comment/rpc/crud/internal/config"
-	"main/app/service/comment/rpc/crud/internal/server"
-	"main/app/service/comment/rpc/crud/internal/svc"
-	"main/app/service/comment/rpc/crud/pb"
 
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -19,18 +17,24 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const serviceName = "comment.rpc.crud"
+const serviceName = "comment.rpc.info"
 
 var c config.Config
 
 func main() {
 	// 初始化日志管理器
-	_ = log.InitLogger()
-	lowWriter, _ := log.GetZapWriter()
-	logx.MustSetup(log.GetLogXConfig(utils.GetServiceFullName(serviceName), "info"))
-	logx.SetWriter(lowWriter)
-
+	err := log.InitLogger()
+	if err != nil {
+		panic("initialize logger failed")
+	}
 	logger := log.GetSugaredLogger()
+
+	logWriter, err := log.GetZapWriter()
+	if err != nil {
+		logger.Fatalf("get log writer failed")
+	}
+	logx.MustSetup(log.GetLogXConfig(utils.GetServiceFullName(serviceName), "info"))
+	logx.SetWriter(logWriter)
 
 	// 初始化配置管理器
 	configClient, err := apollo.NewConfigClient()
@@ -47,15 +51,9 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 
-	// 初始化mq生产者
-	_, err = nsq.NewProducer()
-	if err != nil {
-		logger.Fatalf("initialize nsq producer failed, err: %v", err)
-	}
-
 	// 启动微服务服务器
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		pb.RegisterCrudServer(grpcServer, server.NewCrudServer(ctx))
+		pb.RegisterInfoServer(grpcServer, server.NewInfoServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

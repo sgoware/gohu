@@ -36,16 +36,6 @@ message PublishCommentRes{
     bool ok=3;
 }
 
-message UpdateCommentReq{
-    int64 comment_id=1;
-    string content=7;
-}
-message UpdateCommentRes{
-    int32 code=1;
-    string msg=2;
-    bool ok=3;
-}
-
 message DeleteCommentReq{
     int64 comment_id=1;
 }
@@ -61,6 +51,5 @@ service Crud{
     rpc DeleteSubject(DeleteSubjectReq) returns(DeleteSubjectRes);
 
     rpc PublishComment(PublishCommentReq) returns(PublishCommentRes);
-    rpc UpdateComment(UpdateCommentReq) returns(UpdateCommentRes);
     rpc DeleteComment(DeleteCommentReq) returns(DeleteCommentRes);
 }

@@ -37,11 +37,6 @@ func (s *CrudServer) PublishComment(ctx context.Context, in *pb.PublishCommentRe
 	return l.PublishComment(in)
 }
 
-func (s *CrudServer) UpdateComment(ctx context.Context, in *pb.UpdateCommentReq) (*pb.UpdateCommentRes, error) {
-	l := logic.NewUpdateCommentLogic(ctx, s.svcCtx)
-	return l.UpdateComment(in)
-}
-
 func (s *CrudServer) DeleteComment(ctx context.Context, in *pb.DeleteCommentReq) (*pb.DeleteCommentRes, error) {
 	l := logic.NewDeleteCommentLogic(ctx, s.svcCtx)
 	return l.DeleteComment(in)

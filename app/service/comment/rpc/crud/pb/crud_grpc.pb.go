@@ -25,7 +25,6 @@ type CrudClient interface {
 	InitSubject(ctx context.Context, in *InitSubjectReq, opts ...grpc.CallOption) (*InitSubjectRes, error)
 	DeleteSubject(ctx context.Context, in *DeleteSubjectReq, opts ...grpc.CallOption) (*DeleteSubjectRes, error)
 	PublishComment(ctx context.Context, in *PublishCommentReq, opts ...grpc.CallOption) (*PublishCommentRes, error)
-	UpdateComment(ctx context.Context, in *UpdateCommentReq, opts ...grpc.CallOption) (*UpdateCommentRes, error)
 	DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentRes, error)
 }
 
@@ -64,15 +63,6 @@ func (c *crudClient) PublishComment(ctx context.Context, in *PublishCommentReq, 
 	return out, nil
 }
 
-func (c *crudClient) UpdateComment(ctx context.Context, in *UpdateCommentReq, opts ...grpc.CallOption) (*UpdateCommentRes, error) {
-	out := new(UpdateCommentRes)
-	err := c.cc.Invoke(ctx, "/crud.Crud/UpdateComment", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *crudClient) DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentRes, error) {
 	out := new(DeleteCommentRes)
 	err := c.cc.Invoke(ctx, "/crud.Crud/DeleteComment", in, out, opts...)
@@ -89,7 +79,6 @@ type CrudServer interface {
 	InitSubject(context.Context, *InitSubjectReq) (*InitSubjectRes, error)
 	DeleteSubject(context.Context, *DeleteSubjectReq) (*DeleteSubjectRes, error)
 	PublishComment(context.Context, *PublishCommentReq) (*PublishCommentRes, error)
-	UpdateComment(context.Context, *UpdateCommentReq) (*UpdateCommentRes, error)
 	DeleteComment(context.Context, *DeleteCommentReq) (*DeleteCommentRes, error)
 	mustEmbedUnimplementedCrudServer()
 }
@@ -106,9 +95,6 @@ func (UnimplementedCrudServer) DeleteSubject(context.Context, *DeleteSubjectReq)
 }
 func (UnimplementedCrudServer) PublishComment(context.Context, *PublishCommentReq) (*PublishCommentRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublishComment not implemented")
-}
-func (UnimplementedCrudServer) UpdateComment(context.Context, *UpdateCommentReq) (*UpdateCommentRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateComment not implemented")
 }
 func (UnimplementedCrudServer) DeleteComment(context.Context, *DeleteCommentReq) (*DeleteCommentRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
@@ -180,24 +166,6 @@ func _Crud_PublishComment_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Crud_UpdateComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateCommentReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CrudServer).UpdateComment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/crud.Crud/UpdateComment",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CrudServer).UpdateComment(ctx, req.(*UpdateCommentReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Crud_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteCommentReq)
 	if err := dec(in); err != nil {
@@ -234,10 +202,6 @@ var Crud_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PublishComment",
 			Handler:    _Crud_PublishComment_Handler,
-		},
-		{
-			MethodName: "UpdateComment",
-			Handler:    _Crud_UpdateComment_Handler,
 		},
 		{
 			MethodName: "DeleteComment",

@@ -1,0 +1,87 @@
+syntax = "proto3";
+package info;
+option go_package = "./pb";
+
+message CommentSubject{
+    int64 id=1;
+    int32 obj_type=2;
+    int64 obj_id=3;
+    int32 count=4;
+    int32 root_count=5;
+    int32 state=6;
+    int32 attrs=7;
+    string create_time=8;
+    string update_time=9;
+}
+
+message CommentIndex{
+    int64 id=1;
+    int64 subject_id=2;
+    int64 user_id=3;
+    string ip_loc=4;
+    int64 root_id=5;
+    int32 comment_floor=6;
+    int64 comment_id=7;
+    int32 reply_floor=8;
+    int32 approve_count=9;
+    int32 state=10;
+    int32 attrs=11;
+    string create_time=12;
+    string update_time=13;
+}
+
+message CommentContent{
+    int64 comment_id=1;
+    string content=2;
+    string meta=3;
+    string create_time=4;
+    string update_time=5;
+}
+
+
+message GetCommentSubjectReq{
+    int64 subject_id=1;
+}
+message GetCommentSubjectRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+    Data data=4;
+    message Data{
+        CommentSubject comment_subject=1;
+    }
+}
+
+message GetCommentIndexReq{
+    int64 index_id=1;
+}
+message GetCommentIndexRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+    Data data=4;
+    message Data{
+        CommentIndex comment_index=1;
+    }
+}
+
+message GetCommentSubjectIndexReq{
+    int64 subject_id=1;
+    int64 index_id=2;
+}
+message GetCommentSubjectIndexRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+    Data data=4;
+    message Data{
+        CommentIndex comment_index=1;
+    }
+}
+
+
+service Info{
+    rpc GetCommentSubject(GetCommentSubjectReq) returns(GetCommentSubjectRes);
+    rpc GetCommentIndex(GetCommentIndexReq) returns(GetCommentIndexRes);
+    rpc GetCommentSubjectIndex(GetCommentSubjectIndexReq) returns(GetCommentSubjectIndexRes);
+}

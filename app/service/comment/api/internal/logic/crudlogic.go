@@ -71,28 +71,6 @@ func (l *CrudLogic) Crud(req *types.CrudReq) (resp *types.CrudRes, err error) {
 		}
 		return res, nil
 
-	case "update":
-		rpcReq := &crud.UpdateCommentReq{}
-		err = json.Unmarshal([]byte(req.Data), &rpcReq)
-		logger.Debugf("rpcReq: %v", rpcReq)
-		if err != nil {
-			logger.Errorf("unmarshal data failed, err: %v", err)
-			res = &types.CrudRes{
-				Code: http.StatusInternalServerError,
-				Msg:  "internal err",
-				Ok:   false,
-			}
-			return res, err
-		}
-
-		rpcRes, _ := l.svcCtx.CrudRpcClient.UpdateComment(l.ctx, rpcReq)
-		res = &types.CrudRes{
-			Code: rpcRes.Code,
-			Msg:  rpcRes.Msg,
-			Ok:   rpcRes.Ok,
-		}
-		return res, nil
-
 	case "delete":
 		rpcReq := &crud.DeleteCommentReq{}
 		err = json.Unmarshal([]byte(req.Data), &rpcReq)
