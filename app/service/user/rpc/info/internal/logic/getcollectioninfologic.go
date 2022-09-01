@@ -2,8 +2,11 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"github.com/spf13/cast"
 	"main/app/common/log"
 	"net/http"
+	"strings"
 
 	"main/app/service/user/rpc/info/internal/svc"
 	"main/app/service/user/rpc/info/pb"
@@ -28,6 +31,30 @@ func NewGetCollectionInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) (res *pb.GetCollectionInfoRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
+
+	userCollectionsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
+		fmt.Sprintf("user_collect_%d_%d", in.UserId, in.CollectionType)).Result()
+	if err == nil {
+		objTypes := make([]int32, 0)
+		objIds := make([]int64, 0)
+		for _, userCollectionCache := range userCollectionsCache {
+			output := strings.Split(userCollectionCache, ":")
+			objTypes = append(objTypes, cast.ToInt32(output[0]))
+			objIds = append(objIds, cast.ToInt64(output[1]))
+		}
+		res = &pb.GetCollectionInfoRes{
+			Code: http.StatusOK,
+			Msg:  "get collections successfully",
+			Ok:   true,
+			Data: &pb.GetCollectionInfoRes_Data{
+				ObjType: objTypes,
+				ObjId:   objIds,
+			},
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+	logger.Errorf("get [user_collect] cache failed, err: %v", err)
 
 	userCollectModel := l.svcCtx.UserModel.UserCollection
 
