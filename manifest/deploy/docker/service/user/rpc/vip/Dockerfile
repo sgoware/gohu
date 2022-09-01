@@ -11,7 +11,8 @@ ENV GO111MODULE=on \
 WORKDIR /server
 
 # 将代码复制到容器中
-COPY ./gohu-oauth-api /server/gohu-oauth-api
+#COPY etc /server/etc
+COPY ../../../../../../../app/service/user/rpc/vip/gohu-user-vip-rpc /server/gohu-user-vip-rpc
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -21,4 +22,4 @@ RUN apk update \
     && echo "Asia/Shanghai" > /etc/timezone
 
 # 启动容器时运行的命令
-CMD ["./gohu-oauth-api"]
+CMD ["./gohu-user-vip-rpc"]

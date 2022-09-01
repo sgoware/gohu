@@ -11,7 +11,7 @@ WORKDIR /server
 
 # 将代码复制到容器中
 #COPY etc /server/etc
-COPY ./gohu-comment-api /server/gohu-comment-api
+COPY ../../../../../../../app/service/user/rpc/crud/gohu-user-crud-rpc /server/gohu-user-crud-rpc
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -21,4 +21,4 @@ RUN apk update \
     && echo "Asia/Shanghai" > /etc/timezone
 
 # 启动容器时运行的命令
-CMD ["./gohu-comment-api"]
+CMD ["./gohu-user-crud-rpc"]

@@ -7,11 +7,11 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64 \
 	GOPROXY="https://goproxy.cn,direct"
-
 WORKDIR /server
 
 # 将代码复制到容器中
-COPY ./gohu-oauth-token-store-rpc /server/gohu-oauth-token-store-rpc
+#COPY etc /server/etc
+COPY ../../../../../../app/service/comment/api/gohu-comment-api /server/gohu-comment-api
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -21,4 +21,4 @@ RUN apk update \
     && echo "Asia/Shanghai" > /etc/timezone
 
 # 启动容器时运行的命令
-CMD ["./gohu-oauth-token-store-rpc"]
+CMD ["./gohu-comment-api"]

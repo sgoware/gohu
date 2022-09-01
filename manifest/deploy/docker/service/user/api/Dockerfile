@@ -7,11 +7,12 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64 \
 	GOPROXY="https://goproxy.cn,direct"
+
 WORKDIR /server
 
 # 将代码复制到容器中
 #COPY etc /server/etc
-COPY ./gohu-question-crud-rpc /server/gohu-question-crud-rpc
+COPY ../../../../app/service/user/api/gohu-user-api /server/gohu-user-api
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -21,4 +22,4 @@ RUN apk update \
     && echo "Asia/Shanghai" > /etc/timezone
 
 # 启动容器时运行的命令
-CMD ["./gohu-question-crud-rpc"]
+CMD ["./gohu-user-api"]
