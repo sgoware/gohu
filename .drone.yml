@@ -116,20 +116,16 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/oauth/rpc/token/enhancer/gohu-oauth-token-enhancer-rpc ./app/service/oauth/rpc/token/enhancer/token_enhancer.go
         - go build -o ./app/service/oauth/rpc/token/store/gohu-oauth-token-store-rpc ./app/service/oauth/rpc/token/store/token_store.go
         - go build -o ./app/service/user/api/gohu-user-api ./app/service/user/api/user.go
-        - go build -o ./app/service/user/mq/gohu-user-mq ./app/service/user/mq/mq.go
         - go build -o ./app/service/user/rpc/crud/gohu-user-crud-rpc ./app/service/user/rpc/crud/crud.go
         - go build -o ./app/service/user/rpc/info/gohu-user-info-rpc ./app/service/user/rpc/info/info.go
         - go build -o ./app/service/user/rpc/vip/gohu-user-vip-rpc ./app/service/user/rpc/vip/vip.go
 #        - go build -o ./app/service/question/api/gohu-question-api ./app/service/question/api/question.go
-#        - go build -o ./app/service/question/mq/gohu-question-mq ./app/service/question/mq/mq.go
 #        - go build -o ./app/service/question/rpc/crud/gohu-question-crud-rpc ./app/service/question/rpc/crud/crud.go
 #        - go build -o ./app/service/question/rpc/info/gohu-question-info-rpc ./app/service/question/rpc/info/info.go
 #        - go build -o ./app/service/comment/api/gohu-comment-api ./app/service/comment/api/comment.go
-#        - go build -o ./app/service/comment/mq/gohu-comment-mq ./app/service/comment/mq/mq.go
 #        - go build -o ./app/service/comment/rpc/crud/gohu-comment-crud-rpc ./app/service/comment/rpc/crud/crud.go
 #        - go build -o ./app/service/comment/rpc/info/gohu-comment-info-rpc ./app/service/comment/rpc/info/info.go
         - go build -o ./app/service/notification/api/gohu-notification-api ./app/service/notification/api/notification.go
-        - go build -o ./app/service/notification/mq/gohu-notification-mq ./app/service/notification/mq/mq.go
         - go build -o ./app/service/notification/rpc/crud/gohu-notification-crud-rpc ./app/service/notification/rpc/crud/crud.go
         - go build -o ./app/service/notification/rpc/info/gohu-notification-info-rpc ./app/service/notification/rpc/info/info.go
         - echo '----------complete----------'
