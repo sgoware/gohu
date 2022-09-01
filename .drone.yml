@@ -96,7 +96,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
       username: root # 远程连接账号
       key:
         from_secret: ssh_password # 从Secret中读取SSH密码
-      command_timeout: 5m # 远程执行命令超时时间
+      command_timeout: 10m # 远程执行命令超时时间
       envs:
         - PROJECT_NAME
         - DOMAIN
