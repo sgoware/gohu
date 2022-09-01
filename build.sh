@@ -1,8 +1,9 @@
 #!/bin/bash
 
-docker_names=('oauth-api' 'oauth-crud-rpc' 'token-enhancer' 'user-api' 'user-rpc-crud' \
-'user-rpc-info' 'user-rpc-vip' 'notification-api'  'notification-rpc-crud' \
-'notification-rpc-info' 'mq-asynq-scheduler' 'mq-asynq-processor' 'ma-nsq-consumer')
+docker_names=('oauth-api' 'oauth-rpc-crud' 'oauth-rpc-token-enhancer' 'oauth-rpc-token-store' \
+'user-api' 'user-rpc-crud' 'user-rpc-info' 'user-rpc-vip' 'notification-api' \
+'notification-rpc-crud' 'notification-rpc-info' 'mq-asynq-scheduler' 'mq-asynq-processor' \
+'ma-nsq-consumer')
 
 function docker_build() {
   if [ "$1" -ef "" ]; then
@@ -10,17 +11,18 @@ function docker_build() {
   fi
 
   array=$(echo "$1" | tr '-' '\n')
-  path='./service'
+  path='./app/service'
   for var in $array
   do
     path="${path}""/""${var}"
   done
-
-  docker build -t "$PROJECT_NAME""_""$1" path
+  docker build -t "$PROJECT_NAME""_""$1" "${path}"
   return 1
 }
 
 export PROJECT_NAME=$1
+
+echo PROJECT_NAME
 
 cd /www/site/"$PROJECT_NAME" || exit
 
