@@ -24,9 +24,9 @@ function docker_build() {
   return 1
 }
 
-[ -e ./build/fd1 ] || mkfifo ./build/fd1
-exec 3<>./build/fd1
-rm -rf ./build/df1
+[ -e /tmp/fd1 ] || mkfifo /tmp/fd1
+exec 3<>/tmp/fd1
+rm -rf /tmp/fd1
 
 for ((i=1;i<=THREAD;i++))
 do
@@ -44,10 +44,13 @@ do
   read -r -u5
 {
   docker_build "${docker_name}"
-  remain_build=${remain_build}-1
+  remain_build=$(expr "$remain_build" - 1)
   echo "build ""${docker_name}"" complete, remain: ""${remain_build}"
   echo >&5
 } &
 done
 
 wait
+
+exec 5<&-
+exec 5>&-
