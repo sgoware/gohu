@@ -60,6 +60,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 				Msg:  "user already exist",
 				Ok:   false,
 			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
 		}
 	} else {
 		logger.Errorf("get [user_register] cache member failed, err: %v", err)
