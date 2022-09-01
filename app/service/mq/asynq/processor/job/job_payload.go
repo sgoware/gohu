@@ -4,6 +4,7 @@ import "time"
 
 type MsgCreateUserSubjectPayload struct {
 	Username   string    `json:"username"`
+	Nickname   string    `json:"nickname"`
 	Password   string    `json:"password"`
 	CreateTime time.Time `json:"create_time"`
 	UpdateTime time.Time `json:"update_time"`

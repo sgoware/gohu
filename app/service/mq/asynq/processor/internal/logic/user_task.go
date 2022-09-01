@@ -74,6 +74,7 @@ func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asy
 
 	userSubject, err := userSubjectModel.WithContext(ctx).
 		Where(userSubjectModel.Username.Eq(payload.Username),
+			userSubjectModel.Nickname.Eq(payload.Nickname),
 			userSubjectModel.Password.Eq(payload.Password),
 			userSubjectModel.CreateTime.Eq(payload.CreateTime),
 			userSubjectModel.UpdateTime.Eq(payload.UpdateTime)).

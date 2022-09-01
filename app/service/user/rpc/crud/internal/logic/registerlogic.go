@@ -103,7 +103,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 
 			// 将注册信息加入消息队列(写入数据库)
 			payload, err := json.Marshal(job.MsgCreateUserSubjectPayload{
-				Username:   defaultNickname,
+				Username:   in.Username,
+				Nickname:   defaultNickname,
 				Password:   encryptedPassword,
 				CreateTime: time.Now(),
 				UpdateTime: time.Now(),
