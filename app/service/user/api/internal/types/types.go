@@ -40,7 +40,7 @@ type ChangeNicknameRes struct {
 }
 
 type DoCollectionReq struct {
-	CollectionType int32 `json:"collection_type"`
+	CollectionType int32 `path:"collection_type"`
 	ObjType        int32 `form:"obj_type"`
 	ObjId          int64 `form:"obj_id"`
 }

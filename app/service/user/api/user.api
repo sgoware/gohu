@@ -43,7 +43,7 @@ type (
 	}
 
 	DoCollectionReq {
-		CollectionType int32 `json:"collection_type"`
+		CollectionType int32 `path:"collection_type"`
 		ObjType        int32 `form:"obj_type"`
 		ObjId          int64 `form:"obj_id"`
 	}
@@ -154,7 +154,7 @@ service user {
 	post /api/user/nickname (ChangeNicknameReq) returns (ChangeNicknameRes)
 	
 	@handler DoCollection
-	post /api/user/collection (DoCollectionReq) returns (DoCollectionRes)
+	post /api/user/collection/:collectionType (DoCollectionReq) returns (DoCollectionRes)
 	
 	@handler GetObjInfo
 	get /api/user/obj/:obj_type (GetObjInfoReq) returns (GetObjInfoRes)
