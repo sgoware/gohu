@@ -28,6 +28,7 @@ func newUserCollection(db *gorm.DB) userCollection {
 	_userCollection.ALL = field.NewField(tableName, "*")
 	_userCollection.ID = field.NewInt64(tableName, "id")
 	_userCollection.UserID = field.NewInt64(tableName, "user_id")
+	_userCollection.CollectType = field.NewInt32(tableName, "collect_type")
 	_userCollection.ObjType = field.NewInt32(tableName, "obj_type")
 	_userCollection.ObjID = field.NewInt64(tableName, "obj_id")
 	_userCollection.CreateTime = field.NewTime(tableName, "create_time")
@@ -41,13 +42,14 @@ func newUserCollection(db *gorm.DB) userCollection {
 type userCollection struct {
 	userCollectionDo userCollectionDo
 
-	ALL        field.Field
-	ID         field.Int64
-	UserID     field.Int64
-	ObjType    field.Int32
-	ObjID      field.Int64
-	CreateTime field.Time
-	UpdateTime field.Time
+	ALL         field.Field
+	ID          field.Int64
+	UserID      field.Int64
+	CollectType field.Int32
+	ObjType     field.Int32
+	ObjID       field.Int64
+	CreateTime  field.Time
+	UpdateTime  field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -66,6 +68,7 @@ func (u *userCollection) updateTableName(table string) *userCollection {
 	u.ALL = field.NewField(table, "*")
 	u.ID = field.NewInt64(table, "id")
 	u.UserID = field.NewInt64(table, "user_id")
+	u.CollectType = field.NewInt32(table, "collect_type")
 	u.ObjType = field.NewInt32(table, "obj_type")
 	u.ObjID = field.NewInt64(table, "obj_id")
 	u.CreateTime = field.NewTime(table, "create_time")
@@ -94,9 +97,10 @@ func (u *userCollection) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (u *userCollection) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 6)
+	u.fieldMap = make(map[string]field.Expr, 7)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["user_id"] = u.UserID
+	u.fieldMap["collect_type"] = u.CollectType
 	u.fieldMap["obj_type"] = u.ObjType
 	u.fieldMap["obj_id"] = u.ObjID
 	u.fieldMap["create_time"] = u.CreateTime

@@ -4,6 +4,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	apollo "main/app/common/config"
 	"main/app/common/log"
+	"main/app/common/mq/nsq"
 	"main/app/utils"
 
 	"main/app/service/user/rpc/crud/internal/config"
@@ -51,6 +52,12 @@ func main() {
 	}
 
 	ctx := svc.NewServiceContext(c)
+
+	// 初始化mq生产者
+	_, err = nsq.NewProducer()
+	if err != nil {
+		logger.Fatalf("initialize nsq producer failed, err: %v", err)
+	}
 
 	// 启动微服务服务器
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

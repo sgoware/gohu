@@ -45,23 +45,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: DeleteCollectionHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
-					Path:    "/api/user/subscription",
-					Handler: CreateSubscriptionHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodDelete,
-					Path:    "/api/user/subscription/:subscriptionId",
-					Handler: DeleteSubscriptionHandler(serverCtx),
-				},
-				{
 					Method:  http.MethodGet,
 					Path:    "/api/user/obj/:obj_type",
 					Handler: GetObjInfoHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/api/user/profile",
+					Path:    "/api/user/profile/:userId",
 					Handler: GetPersonalInfoHandler(serverCtx),
 				},
 				{
@@ -73,11 +63,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/api/user/notification/:messageType",
 					Handler: GetNotificationInfoHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/api/user/subscription/:objType",
-					Handler: GetSubscribeInfoHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

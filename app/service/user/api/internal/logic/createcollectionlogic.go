@@ -30,9 +30,10 @@ func (l *CreateCollectionLogic) CreateCollection(req *types.CreateCollectionReq)
 	j := gjson.Parse(cast.ToString(l.ctx.Value("user_details")))
 	userId := j.Get("user_id").Int()
 	res, _ := l.svcCtx.CrudRpcClient.CreateCollection(l.ctx, &crud.CreateCollectionReq{
-		UserId:  userId,
-		ObjType: req.ObjType,
-		ObjId:   req.ObjId,
+		UserId:      userId,
+		CollectType: req.CollectionType,
+		ObjType:     req.ObjType,
+		ObjId:       req.ObjId,
 	})
 	return &types.CreateCollectionRes{
 		Code: res.Code,

@@ -34,6 +34,7 @@ func newUserSubject(db *gorm.DB) userSubject {
 	_userSubject.Phone = field.NewString(tableName, "phone")
 	_userSubject.LastIP = field.NewString(tableName, "last_ip")
 	_userSubject.Vip = field.NewInt32(tableName, "vip")
+	_userSubject.Follower = field.NewInt32(tableName, "follower")
 	_userSubject.State = field.NewInt32(tableName, "state")
 	_userSubject.CreateTime = field.NewTime(tableName, "create_time")
 	_userSubject.UpdateTime = field.NewTime(tableName, "update_time")
@@ -55,6 +56,7 @@ type userSubject struct {
 	Phone      field.String
 	LastIP     field.String
 	Vip        field.Int32
+	Follower   field.Int32
 	State      field.Int32
 	CreateTime field.Time
 	UpdateTime field.Time
@@ -82,6 +84,7 @@ func (u *userSubject) updateTableName(table string) *userSubject {
 	u.Phone = field.NewString(table, "phone")
 	u.LastIP = field.NewString(table, "last_ip")
 	u.Vip = field.NewInt32(table, "vip")
+	u.Follower = field.NewInt32(table, "follower")
 	u.State = field.NewInt32(table, "state")
 	u.CreateTime = field.NewTime(table, "create_time")
 	u.UpdateTime = field.NewTime(table, "update_time")
@@ -109,7 +112,7 @@ func (u *userSubject) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *userSubject) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 11)
+	u.fieldMap = make(map[string]field.Expr, 12)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["username"] = u.Username
 	u.fieldMap["password"] = u.Password
@@ -118,6 +121,7 @@ func (u *userSubject) fillFieldMap() {
 	u.fieldMap["phone"] = u.Phone
 	u.fieldMap["last_ip"] = u.LastIP
 	u.fieldMap["vip"] = u.Vip
+	u.fieldMap["follower"] = u.Follower
 	u.fieldMap["state"] = u.State
 	u.fieldMap["create_time"] = u.CreateTime
 	u.fieldMap["update_time"] = u.UpdateTime

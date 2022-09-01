@@ -41,8 +41,3 @@ func (s *InfoServer) GetNotificationInfo(ctx context.Context, in *pb.GetNotifica
 	l := logic.NewGetNotificationInfoLogic(ctx, s.svcCtx)
 	return l.GetNotificationInfo(in)
 }
-
-func (s *InfoServer) GetSubscriptionInfo(ctx context.Context, in *pb.GetSubscriptionInfoReq) (*pb.GetSubscriptionInfoRes, error) {
-	l := logic.NewGetSubscriptionInfoLogic(ctx, s.svcCtx)
-	return l.GetSubscriptionInfo(in)
-}

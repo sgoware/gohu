@@ -29,10 +29,10 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	userCollectModel := l.svcCtx.UserModel.UserCollect
+	userCollectModel := l.svcCtx.UserModel.UserCollection
 
 	userCollections, err := userCollectModel.WithContext(l.ctx).
-		Where(userCollectModel.UserID.Eq(in.UserId)).Find()
+		Where(userCollectModel.UserID.Eq(in.UserId), userCollectModel.CollectType.Eq(in.CollectionType)).Find()
 	if err != nil {
 		logger.Debugf("get collections failed, err: mysql err, %v", err)
 		res = &pb.GetCollectionInfoRes{

@@ -2,8 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/spf13/cast"
-	"github.com/tidwall/gjson"
 	"main/app/common/log"
 	"main/app/service/user/rpc/info/info"
 	"main/app/utils/mapping"
@@ -32,10 +30,8 @@ func NewGetPersonalInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 func (l *GetPersonalInfoLogic) GetPersonalInfo(req *types.GetPersonalInfoReq) (resp *types.GetPersonalInfoRes, err error) {
 	logger := log.GetSugaredLogger()
 
-	j := gjson.Parse(cast.ToString(l.ctx.Value("user_details")))
-	userId := j.Get("user_id").Int()
 	res, _ := l.svcCtx.InfoRpcClient.GetPersonalInfo(l.ctx, &info.GetPersonalInfoReq{
-		UserId: userId,
+		UserId: req.UserId,
 	})
 	data := types.GetPersonalInfoResData{}
 	err = mapping.Struct2Struct(res.Data, &data)

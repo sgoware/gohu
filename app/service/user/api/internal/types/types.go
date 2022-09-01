@@ -40,8 +40,9 @@ type ChangeNicknameRes struct {
 }
 
 type CreateCollectionReq struct {
-	ObjType int32 `form:"obj_type"`
-	ObjId   int64 `form:"obj_id"`
+	CollectionType int32 `json:"collection_type"`
+	ObjType        int32 `form:"obj_type"`
+	ObjId          int64 `form:"obj_id"`
 }
 
 type CreateCollectionRes struct {
@@ -55,27 +56,6 @@ type DeleteCollectionReq struct {
 }
 
 type DeleteCollectionRes struct {
-	Code int32  `json:"code"`
-	Msg  string `json:"msg"`
-	Ok   bool   `json:"ok"`
-}
-
-type CreateSubscriptionReq struct {
-	ObjType int32 `form:"obj_type"`
-	ObjId   int64 `form:"obj_id"`
-}
-
-type CreateSubscriptionRes struct {
-	Code int32  `json:"code"`
-	Msg  string `json:"msg"`
-	Ok   bool   `json:"ok"`
-}
-
-type DeleteSubscriptionReq struct {
-	SubscriptionId int64 `path:"subscription_id"`
-}
-
-type DeleteSubscriptionRes struct {
 	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Ok   bool   `json:"ok"`
@@ -97,6 +77,7 @@ type GetObjInfoRes struct {
 }
 
 type GetPersonalInfoReq struct {
+	UserId int64 `path:"user_id"`
 }
 
 type GetPersonalInfoResData struct {
@@ -115,6 +96,7 @@ type GetPersonalInfoRes struct {
 }
 
 type GetCollectionInfoReq struct {
+	CollectionType int32 `json:"collection_type"`
 }
 
 type GetCollectionInfoResData struct {
@@ -142,21 +124,6 @@ type GetNotificationInfoRes struct {
 	Msg  string                     `json:"msg"`
 	Ok   bool                       `json:"ok"`
 	Data GetNotificationInfoResData `json:"data"`
-}
-
-type GetSubscribeInfoReq struct {
-	ObjType int32 `path:"obj_type"`
-}
-
-type GetSubscribeInfoResData struct {
-	Ids []int64 `json:"ids"`
-}
-
-type GetSubscribeInfoRes struct {
-	Code int32                   `json:"code"`
-	Msg  string                  `json:"msg"`
-	Ok   bool                    `json:"ok"`
-	Data GetSubscribeInfoResData `json:"data"`
 }
 
 type VipUpgradeReq struct {

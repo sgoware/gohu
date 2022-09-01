@@ -31,10 +31,13 @@ message LoginRes{
     }
 }
 
+
 message CreateCollectionReq{
     int64 user_id=1;
-    int32 obj_type=2;
-    int64 obj_id=3;
+    int32 action=2;
+    int32 collect_type=3;
+    int32 obj_type=4;
+    int64 obj_id=5;
 }
 message CreateCollectionRes{
     int32 code=1;
@@ -46,26 +49,6 @@ message DeleteCollectionReq{
     int64 collection_id=1;
 }
 message DeleteCollectionRes{
-    int32 code=1;
-    string msg=2;
-    bool ok=3;
-}
-
-message CreateSubscriptionReq{
-    int64 user_id=1;
-    int32 obj_type=2;
-    int64 obj_id=3;
-}
-message CreateSubscriptionRes{
-    int32 code=1;
-    string msg=2;
-    bool ok=3;
-}
-
-message DeleteSubscriptionReq{
-    int64 subscription_id=1;
-}
-message DeleteSubscriptionRes{
     int32 code=1;
     string msg=2;
     bool ok=3;
@@ -83,6 +66,16 @@ message ChangeNicknameRes{
     bool ok=3;
 }
 
+message ChangeFollowerReq{
+    int64 user_id=1;
+    int32 action=2;
+}
+message ChangeFollowerRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
+
 service Crud{
     rpc Login(LoginReq) returns(LoginRes);
     rpc Register(RegisterReq) returns(RegisterRes);
@@ -90,8 +83,6 @@ service Crud{
     rpc CreateCollection(CreateCollectionReq) returns(CreateCollectionRes);
     rpc DeleteCollection(DeleteCollectionReq) returns(DeleteCollectionRes);
 
-    rpc CreateSubscription(CreateSubscriptionReq) returns(CreateSubscriptionRes);
-    rpc DeleteSubscription(DeleteSubscriptionReq) returns(DeleteSubscriptionRes);
-
     rpc ChangeNickName(ChangeNicknameReq) returns(ChangeNicknameRes);
+    rpc ChangeFollower(ChangeFollowerReq) returns(ChangeFollowerRes);
 }

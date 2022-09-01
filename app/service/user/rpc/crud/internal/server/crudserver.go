@@ -42,17 +42,12 @@ func (s *CrudServer) DeleteCollection(ctx context.Context, in *pb.DeleteCollecti
 	return l.DeleteCollection(in)
 }
 
-func (s *CrudServer) CreateSubscription(ctx context.Context, in *pb.CreateSubscriptionReq) (*pb.CreateSubscriptionRes, error) {
-	l := logic.NewCreateSubscriptionLogic(ctx, s.svcCtx)
-	return l.CreateSubscription(in)
-}
-
-func (s *CrudServer) DeleteSubscription(ctx context.Context, in *pb.DeleteSubscriptionReq) (*pb.DeleteSubscriptionRes, error) {
-	l := logic.NewDeleteSubscriptionLogic(ctx, s.svcCtx)
-	return l.DeleteSubscription(in)
-}
-
 func (s *CrudServer) ChangeNickName(ctx context.Context, in *pb.ChangeNicknameReq) (*pb.ChangeNicknameRes, error) {
 	l := logic.NewChangeNickNameLogic(ctx, s.svcCtx)
 	return l.ChangeNickName(in)
+}
+
+func (s *CrudServer) ChangeFollower(ctx context.Context, in *pb.ChangeFollowerReq) (*pb.ChangeFollowerRes, error) {
+	l := logic.NewChangeFollowerLogic(ctx, s.svcCtx)
+	return l.ChangeFollower(in)
 }

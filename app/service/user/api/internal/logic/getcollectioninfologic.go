@@ -30,7 +30,8 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(req *types.GetCollectionInfoR
 	j := gjson.Parse(cast.ToString(l.ctx.Value("user_details")))
 	userId := j.Get("user_id").Int()
 	res, _ := l.svcCtx.InfoRpcClient.GetCollectionInfo(l.ctx, &info.GetCollectionInfoReq{
-		UserId: userId,
+		UserId:         userId,
+		CollectionType: req.CollectionType,
 	})
 	return &types.GetCollectionInfoRes{
 		Code: res.Code,
