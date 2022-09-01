@@ -1,9 +1,9 @@
 #!/bin/bash
 
-docker_names=('oauth-api' 'oauth-rpc-crud' 'oauth-rpc-token-enhancer' 'oauth-rpc-token-store' \
+docker_names=('oauth-api' 'oauth-rpc-token-enhancer' 'oauth-rpc-token-store' \
 'user-api' 'user-rpc-crud' 'user-rpc-info' 'user-rpc-vip' 'notification-api' \
 'notification-rpc-crud' 'notification-rpc-info' 'mq-asynq-scheduler' 'mq-asynq-processor' \
-'ma-nsq-consumer')
+'mq-nsq-consumer')
 
 function docker_build() {
   if [ "$1" -ef "" ]; then
@@ -22,7 +22,7 @@ function docker_build() {
 
 export PROJECT_NAME=$1
 
-echo PROJECT_NAME
+echo "${PROJECT_NAME}"
 
 cd /www/site/"$PROJECT_NAME" || exit
 
@@ -32,6 +32,7 @@ for docker_name in ${docker_names[*]}
 do
 {
   docker_build "${docker_name}"
+  echo "build ""${docker_name}"" complete"
 } &
 done
 
