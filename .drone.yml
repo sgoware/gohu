@@ -129,7 +129,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/notification/rpc/crud/gohu-notification-crud-rpc ./app/service/notification/rpc/crud/crud.go
         - go build -o ./app/service/notification/rpc/info/gohu-notification-info-rpc ./app/service/notification/rpc/info/info.go
         - go build -o ./app/service/mq/asynq/scheduler/gohu-mq-asynq-scheduler ./app/service/mq/asynq/scheduler/scheduler.go
-        - go build -o ./app/service/mq/asynq/scheduler/gohu-mq-asynq-processor ./app/service/mq/asynq/processor/processor.go
+        - go build -o ./app/service/mq/asynq/processor/gohu-mq-asynq-processor ./app/service/mq/asynq/processor/processor.go
         - go build -o ./app/service/mq/nsq/consumer/gohu-mq-nsq-consumer ./app/service/mq/nsq/consumer/consumer.go
         - echo '----------complete----------'
         - echo '----------export envs----------'
