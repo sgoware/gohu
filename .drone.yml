@@ -140,6 +140,6 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - export APOLLO_SECRET=$APOLLO_SECRET
         - echo '----------complete----------'
         - echo '----------docker compose----------'
-        - docker-compose -f ./manifest/deploy/docker/docker-compose.yml -p gohu down --rmi all
-        - docker-compose -f ./manifest/deploy/docker/docker-compose.yml -p gohu up -d
+        - docker-compose down --rmi all
+        - docker-compose up -d
         - echo '----------complete----------'
