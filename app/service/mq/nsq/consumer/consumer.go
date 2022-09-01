@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// 初始化消息队列设置
-	err = configClient.UnmarshalKey("mq", "nsq.consumer", &c)
+	err = configClient.UnmarshalKey("mq.yaml", "nsq.consumer", &c)
 	if err != nil {
 		logger.Fatalf("UnmarshalKey into service config failed, err: %v", err)
 	}

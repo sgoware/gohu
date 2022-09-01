@@ -37,7 +37,7 @@ func main() {
 	}
 
 	// 初始化消息队列设置
-	err = configClient.UnmarshalKey("mq", "asynq.scheduler", &c)
+	err = configClient.UnmarshalKey("mq.yaml", "asynq.scheduler", &c)
 	if err != nil {
 		logger.Fatalf("UnmarshalKey into service config failed, err: %v", err)
 	}
