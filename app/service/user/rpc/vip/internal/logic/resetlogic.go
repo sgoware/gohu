@@ -2,11 +2,13 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/hibiken/asynq"
 	"main/app/common/log"
-	"net/http"
-
+	"main/app/service/mq/asynq/processor/job"
 	"main/app/service/user/rpc/vip/internal/svc"
 	"main/app/service/user/rpc/vip/pb"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -36,11 +38,40 @@ func (l *ResetLogic) Reset(in *pb.ResetReq) (res *pb.ResetRes, err error) {
 		Update(userSubjectModel.Vip, 0)
 	if err != nil {
 		logger.Errorf("reset vip failed, err: %v", err)
-		return &pb.ResetRes{
+		res = &pb.ResetRes{
 			Code: http.StatusOK,
 			Msg:  "internal err",
 			Ok:   false,
-		}, nil
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
+
+	payload, err := json.Marshal(job.MsgUpdateUserSubjectCachePayload{
+		Id:  in.Id,
+		Vip: 0,
+	})
+	if err != nil {
+		logger.Errorf("marshal [MsgUpdateUserSubjectCachePayload] to json failed, err: %v", err)
+		res = &pb.ResetRes{
+			Code: http.StatusOK,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
+
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectCacheTask, payload))
+	if err != nil {
+		logger.Errorf("create [MsgUpdateUserSubjectCacheTask] insert queue failed, err: %v", err)
+		res = &pb.ResetRes{
+			Code: http.StatusOK,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
 	}
 
 	res = &pb.ResetRes{

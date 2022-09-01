@@ -225,9 +225,9 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 		return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
 	}
 
-	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectRecordCacheTask, payload))
+	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
 	if err != nil {
-		return fmt.Errorf("create [MsgAddUserSubjectRecordCacheTask] insert queue failed, %v", err)
+		return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
 	}
 
 	// 关注者计数器+1, 队列调度器定时更新数据库
@@ -267,9 +267,9 @@ func deleteCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.Do
 		return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
 	}
 
-	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectRecordCacheTask, payload))
+	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
 	if err != nil {
-		return fmt.Errorf("create [MsgAddUserSubjectRecordCacheTask] insert queue failed, %v", err)
+		return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
 	}
 
 	// 关注者计数器-1, 队列调度器定时更新数据库

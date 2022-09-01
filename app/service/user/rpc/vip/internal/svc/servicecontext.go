@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/hibiken/asynq"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/user/dao/query"
@@ -11,6 +12,8 @@ type ServiceContext struct {
 	Config config.Config
 
 	UserModel *query.Query
+
+	AsynqClient *asynq.Client
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -22,7 +25,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 
 	return &ServiceContext{
-		Config:    c,
+		Config: c,
+
 		UserModel: query.Use(db),
+
+		AsynqClient: asynq.NewClient(c.AsynqClientConf),
 	}
 }
