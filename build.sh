@@ -1,6 +1,8 @@
 #!/bin/bash
 
-docker_names=('oauth-api' 'oauth-crud-rpc' 'token-enhancer')
+docker_names=('oauth-api' 'oauth-crud-rpc' 'token-enhancer' 'user-api' 'user-rpc-crud' \
+'user-rpc-info' 'user-rpc-vip' 'notification-api'  'notification-rpc-crud' \
+'notification-rpc-info' 'mq-asynq-scheduler' 'mq-asynq-processor' 'ma-nsq-consumer')
 
 function docker_build() {
   if [ "$1" -ef "" ]; then
@@ -30,5 +32,3 @@ do
 done
 
 wait
-
-echo "complete"
