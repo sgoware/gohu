@@ -30,6 +30,7 @@ type CrudClient interface {
 	UpdateAnswer(ctx context.Context, in *UpdateAnswerReq, opts ...grpc.CallOption) (*UpdateAnswerRes, error)
 	HideAnswer(ctx context.Context, in *HideAnswerReq, opts ...grpc.CallOption) (*HideAnswerRes, error)
 	DeleteAnswer(ctx context.Context, in *DeleteAnswerReq, opts ...grpc.CallOption) (*DeleteAnswerRes, error)
+	ChangeAttr(ctx context.Context, in *ChangeAttrReq, opts ...grpc.CallOption) (*ChangeAttrRes, error)
 }
 
 type crudClient struct {
@@ -112,6 +113,15 @@ func (c *crudClient) DeleteAnswer(ctx context.Context, in *DeleteAnswerReq, opts
 	return out, nil
 }
 
+func (c *crudClient) ChangeAttr(ctx context.Context, in *ChangeAttrReq, opts ...grpc.CallOption) (*ChangeAttrRes, error) {
+	out := new(ChangeAttrRes)
+	err := c.cc.Invoke(ctx, "/crud.Crud/ChangeAttr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CrudServer is the server API for Crud service.
 // All implementations must embed UnimplementedCrudServer
 // for forward compatibility
@@ -124,6 +134,7 @@ type CrudServer interface {
 	UpdateAnswer(context.Context, *UpdateAnswerReq) (*UpdateAnswerRes, error)
 	HideAnswer(context.Context, *HideAnswerReq) (*HideAnswerRes, error)
 	DeleteAnswer(context.Context, *DeleteAnswerReq) (*DeleteAnswerRes, error)
+	ChangeAttr(context.Context, *ChangeAttrReq) (*ChangeAttrRes, error)
 	mustEmbedUnimplementedCrudServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedCrudServer) HideAnswer(context.Context, *HideAnswerReq) (*Hid
 }
 func (UnimplementedCrudServer) DeleteAnswer(context.Context, *DeleteAnswerReq) (*DeleteAnswerRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAnswer not implemented")
+}
+func (UnimplementedCrudServer) ChangeAttr(context.Context, *ChangeAttrReq) (*ChangeAttrRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeAttr not implemented")
 }
 func (UnimplementedCrudServer) mustEmbedUnimplementedCrudServer() {}
 
@@ -312,6 +326,24 @@ func _Crud_DeleteAnswer_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Crud_ChangeAttr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeAttrReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CrudServer).ChangeAttr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crud.Crud/ChangeAttr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CrudServer).ChangeAttr(ctx, req.(*ChangeAttrReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Crud_ServiceDesc is the grpc.ServiceDesc for Crud service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +382,10 @@ var Crud_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAnswer",
 			Handler:    _Crud_DeleteAnswer_Handler,
+		},
+		{
+			MethodName: "ChangeAttr",
+			Handler:    _Crud_ChangeAttr_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

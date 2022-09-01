@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	ChangeAttrReq      = pb.ChangeAttrReq
+	ChangeAttrRes      = pb.ChangeAttrRes
 	DeleteAnswerReq    = pb.DeleteAnswerReq
 	DeleteAnswerRes    = pb.DeleteAnswerRes
 	DeleteQuestionReq  = pb.DeleteQuestionReq
@@ -39,6 +41,7 @@ type (
 		UpdateAnswer(ctx context.Context, in *UpdateAnswerReq, opts ...grpc.CallOption) (*UpdateAnswerRes, error)
 		HideAnswer(ctx context.Context, in *HideAnswerReq, opts ...grpc.CallOption) (*HideAnswerRes, error)
 		DeleteAnswer(ctx context.Context, in *DeleteAnswerReq, opts ...grpc.CallOption) (*DeleteAnswerRes, error)
+		ChangeAttr(ctx context.Context, in *ChangeAttrReq, opts ...grpc.CallOption) (*ChangeAttrRes, error)
 	}
 
 	defaultCrud struct {
@@ -90,4 +93,9 @@ func (m *defaultCrud) HideAnswer(ctx context.Context, in *HideAnswerReq, opts ..
 func (m *defaultCrud) DeleteAnswer(ctx context.Context, in *DeleteAnswerReq, opts ...grpc.CallOption) (*DeleteAnswerRes, error) {
 	client := pb.NewCrudClient(m.cli.Conn())
 	return client.DeleteAnswer(ctx, in, opts...)
+}
+
+func (m *defaultCrud) ChangeAttr(ctx context.Context, in *ChangeAttrReq, opts ...grpc.CallOption) (*ChangeAttrRes, error) {
+	client := pb.NewCrudClient(m.cli.Conn())
+	return client.ChangeAttr(ctx, in, opts...)
 }

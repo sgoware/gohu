@@ -2,12 +2,15 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"google.golang.org/protobuf/proto"
 	"main/app/common/log"
-	"main/app/service/question/dao/model"
+	modelpb "main/app/service/question/dao/pb"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
 	"main/app/utils/net/ip"
 	"net/http"
+	"time"
 
 	"github.com/tidwall/gjson"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -54,10 +57,40 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		return res, nil
 	}
 
-	err = questionContentModel.WithContext(l.ctx).Create(&model.QuestionContent{
-		QuestionID: questionSubject.ID,
-		Content:    in.Content,
-	})
+	questionSubjectProto := &modelpb.QuestionSubject{
+		Id:          questionSubject.ID,
+		UserId:      questionSubject.UserID,
+		IpLoc:       questionSubject.IPLoc,
+		Title:       questionSubject.Title,
+		Topic:       questionSubject.Topic,
+		Tag:         questionSubject.Tag,
+		SubCount:    questionSubject.SubCount,
+		AnswerCount: questionSubject.AnswerCount,
+		ViewCount:   questionSubject.ViewCount,
+		State:       questionSubject.State,
+		CreateTime:  questionSubject.CreateTime.String(),
+		UpdateTime:  questionSubject.UpdateTime.String(),
+	}
+	bytes, err := proto.Marshal(questionSubjectProto)
+	if err != nil {
+		logger.Errorf("marshal proto failed, err: %v", err)
+		res = &pb.PublishQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+	l.svcCtx.Rdb.Set(l.ctx,
+		fmt.Sprintf("questionSubject_%d", questionSubject.ID),
+		bytes,
+		time.Second*86400)
+
+	questionContent, err := questionContentModel.WithContext(l.ctx).
+		Where(questionContentModel.QuestionID.Eq(questionSubject.ID),
+			questionContentModel.Content.Eq(in.Content)).
+		FirstOrCreate()
 	if err != nil {
 		logger.Errorf("publish question failed, err: %v", err)
 		res = &pb.PublishQuestionRes{
@@ -68,6 +101,29 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
 	}
+
+	questionContentProto := &modelpb.QuestionContent{
+		QuestionId: questionContent.QuestionID,
+		Content:    questionContent.Content,
+		Meta:       questionContent.Meta,
+		CreateTime: questionContent.CreateTime.String(),
+		UpdateTime: questionContent.UpdateTime.String(),
+	}
+	bytes, err = proto.Marshal(questionContentProto)
+	if err != nil {
+		logger.Errorf("marshal proto failed, err: %v", err)
+		res = &pb.PublishQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+	l.svcCtx.Rdb.Set(l.ctx,
+		fmt.Sprintf("questionContent_%d", questionContent.QuestionID),
+		bytes,
+		time.Second*86400)
 
 	res = &pb.PublishQuestionRes{
 		Code: http.StatusOK,

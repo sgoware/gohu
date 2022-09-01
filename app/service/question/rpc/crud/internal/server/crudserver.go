@@ -61,3 +61,8 @@ func (s *CrudServer) DeleteAnswer(ctx context.Context, in *pb.DeleteAnswerReq) (
 	l := logic.NewDeleteAnswerLogic(ctx, s.svcCtx)
 	return l.DeleteAnswer(in)
 }
+
+func (s *CrudServer) ChangeAttr(ctx context.Context, in *pb.ChangeAttrReq) (*pb.ChangeAttrRes, error) {
+	l := logic.NewChangeAttrLogic(ctx, s.svcCtx)
+	return l.ChangeAttr(in)
+}

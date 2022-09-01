@@ -17,6 +17,26 @@ type (
 		Msg  string `json:"msg"`
 		Ok   bool   `json:"ok"`
 	}
+
+	GetQuestionReq {
+		Id int64 `path:"question_id"`
+	}
+	GetQuestionRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+		Data string `json:"data"`
+	}
+
+	GetAnswerReq {
+		Id int64 `path:"id"`
+	}
+	GetAnswerRes {
+		Code int32  `json:"code"`
+		Msg  string `json:"msg"`
+		Ok   bool   `json:"ok"`
+		Data string `json:"data"`
+	}
 )
 
 @server(
@@ -25,5 +45,12 @@ type (
 service question {
 	@handler Crud
 	post /api/question/crud (CrudReq) returns (CrudRes)
+}
+
+service question{
+	@handler GetQuestion
+	get /api/question/question/:questionId (GetQuestionReq) returns (GetQuestionRes)
 	
+	@handler GetAnswer
+	get /api/question/answer/:answerId (GetAnswerReq) returns (GetAnswerRes)
 }

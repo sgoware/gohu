@@ -1,0 +1,48 @@
+syntax = "proto3";
+package question;
+option go_package = "./pb";
+
+message QuestionSubject{
+    int64 id=1;
+    int64 user_id=2;
+    string ip_loc=3;
+    string title=4;
+    string topic=5;
+    string tag=6;
+    int32 sub_count=7;
+    int32 answer_count=8;
+    int64 view_count=9;
+    int32 state=10;
+    string create_time=11;
+    string update_time=12;
+}
+
+message QuestionContent{
+    int64 question_id=1;
+    string content=2;
+    string meta=3;
+    string create_time=4;
+    string update_time=5;
+}
+
+message AnswerIndex{
+    int64 id=1;
+    int64 question_id=2;
+    int64 user_id=3;
+    string ip_loc=4;
+    int32 approve_count=5;
+    int32 like_count=6;
+    int32 collect_count=7;
+    int32 state=8;
+    int32 attrs=9;
+    string create_time=10;
+    string update_time=11;
+}
+
+message AnswerContent{
+    int64 answer_id=1;
+    string content=2;
+    string meta=3;
+    string create_time=4;
+    string update_time=5;
+}

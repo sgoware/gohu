@@ -101,7 +101,18 @@ message DeleteAnswerRes{
     bool ok=3;
 }
 
+message ChangeAttrReq{
+    int32 obj_type=1;
+    int64 obj_id=2;
+    int32 attr_type=3;
+    int32 action=4;
+}
 
+message ChangeAttrRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+}
 
 service Crud{
     rpc PublishQuestion(PublishQuestionReq) returns(PublishQuestionRes);
@@ -113,4 +124,6 @@ service Crud{
     rpc UpdateAnswer(UpdateAnswerReq) returns(UpdateAnswerRes);
     rpc HideAnswer(HideAnswerReq) returns(HideAnswerRes);
     rpc DeleteAnswer(DeleteAnswerReq) returns(DeleteAnswerRes);
+
+    rpc ChangeAttr(ChangeAttrReq) returns(ChangeAttrRes);
 }
