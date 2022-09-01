@@ -133,8 +133,8 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/mq/nsq/consumer/gohu-mq-nsq-consumer ./app/service/mq/nsq/consumer/consumer.go
         - echo '----------complete----------'
         - echo '----------build docker image----------'
-        - chmod 775 ./build.sh $PROJECT_NAME
-        - ./build.sh
+        - chmod 775 ./build.sh
+        - ./build.sh $PROJECT_NAME
         - echo '----------complete----------'
         - echo '----------export envs----------'
         - export APOLLO_APP_ID=$APOLLO_APP_ID
