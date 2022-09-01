@@ -29,7 +29,12 @@ message GetPersonalInfoRes{
         string nickname=2;
         string email=3;
         string phone=4;
-        int32 vip=5;
+        string last_ip=5;
+        int32 vip=6;
+        int32 follower=7;
+        int32 state=8;
+        string create_time=9;
+        string update_time=10;
     }
 }
 

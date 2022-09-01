@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 	"main/app/common/log"
 	"net/http"
@@ -29,6 +31,26 @@ func NewGetPersonalInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 func (l *GetPersonalInfoLogic) GetPersonalInfo(in *pb.GetPersonalInfoReq) (res *pb.GetPersonalInfoRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
+
+	userSubjectBytes, err := l.svcCtx.Rdb.Get(l.ctx,
+		fmt.Sprintf("user_subject_%d", in.UserId)).Bytes()
+	if err == nil {
+		rpcResData := &pb.GetPersonalInfoRes_Data{}
+		err = proto.Unmarshal(userSubjectBytes, rpcResData)
+		if err != nil {
+			logger.Errorf("unmarshal [rpcResData] failed, err: %v", err)
+		} else {
+			res = &pb.GetPersonalInfoRes{
+				Code: http.StatusOK,
+				Msg:  "get personal info successfully",
+				Ok:   true,
+				Data: rpcResData,
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+	}
+	logger.Errorf("get [user_subject] cache failed, err: %v", err)
 
 	userSubjectModel := l.svcCtx.UserModel.UserSubject
 
