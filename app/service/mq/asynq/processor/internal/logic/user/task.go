@@ -265,7 +265,6 @@ func (l *MsgUpdateUserSubjectCacheHandler) ProcessTask(ctx context.Context, task
 		fmt.Sprintf("user_subject_%d", payload.Id)).Bytes()
 	switch err {
 	case redis.Nil:
-		return fmt.Errorf("cache is nil, need full payload")
 
 	case nil:
 		err = proto.Unmarshal(userSubjectBytes, userSubjectProto)
