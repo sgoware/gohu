@@ -12,6 +12,7 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/nsqio/go-nsq v1.1.0
 	github.com/reiver/go-telnet v0.0.0-20180421082511-9ff0b2ab096e
+	github.com/shopspring/decimal v1.3.1
 	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.12.0
