@@ -54,8 +54,8 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			UserId:      data.UserId,
 			MessageType: 1,
 			Title:       fmt.Sprintf("用户 %s 关注了你", j.Get("data.nickname").String()),
-			Content:     "",                                                      // 空
-			Url:         fmt.Sprintf("%s/profile/%d", m.Domain, data.FollowerId), // 用户主页
+			Content:     "",                                                              // 空
+			Url:         fmt.Sprintf("https://%s/profile/%d", m.Domain, data.FollowerId), // 用户主页
 		})
 		if !rpcRes.Ok {
 			return fmt.Errorf("publish notification failed, %v", rpcRes.Msg)
@@ -116,7 +116,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 				MessageType: 2,
 				Title:       title,
 				Content:     "",
-				Url: fmt.Sprintf("%s/question/%s/answer/%s",
+				Url: fmt.Sprintf("https://%s/question/%s/answer/%s",
 					m.Domain,
 					questionJson.Get("data.question_subject.id").String(),
 					answerJson.Get("data.answer_index.id").String()),
@@ -186,7 +186,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 					MessageType: 3,
 					Title:       fmt.Sprintf("用户 %s 评论了你的回答 %s", userNickName, questionTitle),
 					Content:     "",
-					Url:         fmt.Sprintf("%s/question/%d/answer/%d", m.Domain, questionId, objId),
+					Url:         fmt.Sprintf("https://%s/question/%d/answer/%d", m.Domain, questionId, objId),
 				})
 				if !rpcRes.Ok {
 					return fmt.Errorf("publish comment notification failed, %v", rpcRes.Msg)
