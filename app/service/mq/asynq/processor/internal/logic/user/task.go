@@ -43,6 +43,16 @@ type ScheduleUpdateUserSubjectRecordHandler struct {
 	UserModel *query.Query
 }
 
+type MsgUpdateUserCollectCacheHandler struct {
+	Rdb       *redis.Client
+	UserModel *query.Query
+}
+
+type ScheduleUpdateUserCollectRecordHandler struct {
+	Rdb       *redis.Client
+	UserModel *query.Query
+}
+
 func NewCreateUserSubjectRecordHandler(c config.Config) *MsgCreateUserSubjectHandler {
 	logger := log.GetSugaredLogger()
 
@@ -125,6 +135,44 @@ func NewScheduleUpdateUserSubjectRecordHandler(c config.Config) *ScheduleUpdateU
 
 	return &ScheduleUpdateUserSubjectRecordHandler{
 		Rdb: rdb,
+	}
+}
+
+func NewMsgUpdateUserCollectCacheHandler(c config.Config) *MsgUpdateUserCollectCacheHandler {
+	logger := log.GetSugaredLogger()
+	rdb, err := apollo.GetRedisClient("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize redis failed, err: %v", err)
+	}
+
+	userDB, err := apollo.GetMysqlDB("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize user mysql failed, err: %v", err)
+	}
+
+	return &MsgUpdateUserCollectCacheHandler{
+		Rdb: rdb,
+
+		UserModel: query.Use(userDB),
+	}
+}
+
+func NewScheduleUpdateUserCollectRecordHandler(c config.Config) *ScheduleUpdateUserCollectRecordHandler {
+	logger := log.GetSugaredLogger()
+	rdb, err := apollo.GetRedisClient("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize redis failed, err: %v", err)
+	}
+
+	userDB, err := apollo.GetMysqlDB("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize user mysql failed, err: %v", err)
+	}
+
+	return &ScheduleUpdateUserCollectRecordHandler{
+		Rdb: rdb,
+
+		UserModel: query.Use(userDB),
 	}
 }
 
@@ -217,19 +265,7 @@ func (l *MsgUpdateUserSubjectCacheHandler) ProcessTask(ctx context.Context, task
 		fmt.Sprintf("user_subject_%d", payload.Id)).Bytes()
 	switch err {
 	case redis.Nil:
-		// 没有缓存, 查找数据库更新缓存
-		userModelSubject := l.UserModel.UserSubject
-		userSubject, err := userModelSubject.WithContext(ctx).
-			Where(userModelSubject.ID.Eq(payload.Id)).
-			First()
-		if err != nil {
-			return fmt.Errorf("query [user_subject] record failed, err: %v", err)
-		}
-		userSubjectProto = &pb.UserSubject{}
-		err = structx.SyncWithNoZero(*userSubject, userSubjectProto)
-		if err != nil {
-			return fmt.Errorf("sync struct [userSubjectProto] failed, err: %v", err)
-		}
+		return fmt.Errorf("cache is nil, need full payload")
 
 	case nil:
 		err = proto.Unmarshal(userSubjectBytes, userSubjectProto)
@@ -338,5 +374,9 @@ func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context
 		}
 	}
 
+	return nil
+}
+
+func (l *MsgUpdateUserCollectCacheHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
 	return nil
 }
