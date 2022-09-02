@@ -33,27 +33,37 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	userCollectionsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
 		fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType)).Result()
 	if err == nil {
-		objIds := make([]int64, 0)
-		for _, userCollectionCache := range userCollectionsCache {
-			objIds = append(objIds, cast.ToInt64(userCollectionCache))
+		if len(userCollectionsCache) > 1 {
+			objIds := make([]int64, 0)
+			for _, userCollectionCache := range userCollectionsCache {
+				if userCollectionCache != "0" {
+					objIds = append(objIds, cast.ToInt64(userCollectionCache))
+				}
+			}
+			res = &pb.GetCollectionInfoRes{
+				Code: http.StatusOK,
+				Msg:  "get collections successfully",
+				Ok:   true,
+				Data: &pb.GetCollectionInfoRes_Data{
+					ObjId: objIds,
+				},
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
 		}
-		res = &pb.GetCollectionInfoRes{
-			Code: http.StatusOK,
-			Msg:  "get collections successfully",
-			Ok:   true,
-			Data: &pb.GetCollectionInfoRes_Data{
-				ObjId: objIds,
-			},
-		}
-		logger.Debugf("send message: %v", res.String())
-		return res, nil
 	}
 	logger.Errorf("get [user_collect] cache failed, err: %v", err)
+
+	l.svcCtx.Rdb.SAdd(l.ctx,
+		fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType),
+		0)
 
 	userCollectModel := l.svcCtx.UserModel.UserCollection
 
 	userCollections, err := userCollectModel.WithContext(l.ctx).
-		Where(userCollectModel.UserID.Eq(in.UserId), userCollectModel.CollectType.Eq(in.CollectionType)).Find()
+		Where(userCollectModel.UserID.Eq(in.UserId),
+			userCollectModel.CollectType.Eq(in.CollectionType),
+			userCollectModel.ObjType.Eq(in.ObjType)).Find()
 	if err != nil {
 		logger.Debugf("get collections failed, err: mysql err, %v", err)
 		res = &pb.GetCollectionInfoRes{
@@ -76,7 +86,7 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	for _, userCollection := range userCollections {
 		res.Data.ObjId = append(res.Data.ObjId, userCollection.ObjID)
 		l.svcCtx.Rdb.SAdd(l.ctx,
-			fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, userCollection.ObjType),
+			fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType),
 			userCollection.ObjID)
 	}
 	logger.Debugf("send message: %v", res.String())
