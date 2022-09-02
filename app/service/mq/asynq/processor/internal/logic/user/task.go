@@ -35,7 +35,8 @@ type MsgUpdateUserSubjectCacheHandler struct {
 }
 
 type MsgAddUserSubjectCacheHandler struct {
-	Rdb *redis.Client
+	Rdb       *redis.Client
+	UserModel *query.Query
 }
 
 type ScheduleUpdateUserSubjectRecordHandler struct {
@@ -120,8 +121,15 @@ func NewMsgAddUserSubjectCacheHandler(c config.Config) *MsgAddUserSubjectCacheHa
 		logger.Fatalf("initialize redis failed, err: %v", err)
 	}
 
+	userDB, err := apollo.GetMysqlDB("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize user mysql failed, err: %v", err)
+	}
+
 	return &MsgAddUserSubjectCacheHandler{
 		Rdb: rdb,
+
+		UserModel: query.Use(userDB),
 	}
 }
 
@@ -305,19 +313,40 @@ func (l *MsgAddUserSubjectCacheHandler) ProcessTask(ctx context.Context, task *a
 		return fmt.Errorf("unmarshal MsgAddUserSubjectCachePayload failed, err: %v", err)
 	}
 
+	userSubjectProto := &pb.UserSubject{}
+
 	// TODO: 待使用分布式锁, 防止脏读
 	userSubjectBytes, err := l.Rdb.Get(ctx,
 		fmt.Sprintf("user_subject_%d", payload.Id)).Bytes()
-	if err != nil {
+	switch err {
+	case redis.Nil:
+		userSubjectModel := l.UserModel.UserSubject
+
+		userSubject, err := userSubjectModel.WithContext(ctx).
+			Select(userSubjectModel.ID, userSubjectModel.Vip, userSubjectModel.Follower).
+			Where(userSubjectModel.ID.Eq(payload.Id)).
+			First()
+		if err != nil {
+			return fmt.Errorf("query [user_subject] record failed, err: %v", err)
+		}
+
+		err = structx.SyncWithNoZero(*userSubject, userSubjectProto)
+		if err != nil {
+			return fmt.Errorf("sync struct [pb.UserSubject] failead, err: %v", err)
+		}
+
+	case nil:
+		err = proto.Unmarshal(userSubjectBytes, userSubjectProto)
+		if err != nil {
+			return fmt.Errorf("unmarshal [userSubjectProto] failed, err: %v", err)
+		}
+
+	default:
 		return fmt.Errorf("get [user_subject] cache failed, err: %v", err)
 	}
-
-	userSubjectProto := &pb.UserSubject{}
-
-	err = proto.Unmarshal(userSubjectBytes, userSubjectProto)
 	if err != nil {
-		return fmt.Errorf("unmarshal [userSubjectProto] failed, err: %v", err)
 	}
+
 	if payload.Vip != 0 {
 		userSubjectProto.Vip = userSubjectProto.Vip + payload.Vip
 	}

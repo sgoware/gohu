@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"github.com/spf13/cast"
 	"gorm.io/gorm"
 	"main/app/common/log"
 	"net/http"
@@ -33,6 +35,25 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 	switch in.ObjType {
 	case 0:
 		// 问题
+		questionIds := make([]int64, 0)
+
+		questionIdsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
+			fmt.Sprintf("question_%d", in.UserId)).Result()
+		if err == nil {
+			// 获取到缓存
+			for _, questionIdCache := range questionIdsCache {
+				questionIds = append(questionIds, cast.ToInt64(questionIdCache))
+			}
+			res = &pb.GetObjInfoRes{
+				Code: http.StatusOK,
+				Msg:  "get question ids successfully",
+				Ok:   true,
+				Data: &pb.GetObjInfoRes_Data{Ids: questionIds},
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+
 		questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 
 		questionSubjects, err := questionSubjectModel.WithContext(l.ctx).
