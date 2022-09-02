@@ -7,14 +7,36 @@ info(
 )
 
 type (
+	NotificationSubject {
+		Id          int64  `json:"id"`
+		UserId      int64  `json:"user_id"`
+		MessageType int32  `json:"message_type"`
+		CreateTime  string `json:"create_time"`
+		UpdateTime  string `json:"update_time"`
+	}
+	NotificationContent {
+		SubjectId  int64  `json:"subject_id"`
+		Title      string `json:"title"`
+		Content    string `json:"content"`
+		Url        string `json:"url"`
+		Meta       string `json:"meta"`
+		Attrs      int32  `json:"attrs"`
+		CreateTime string `json:"create_time"`
+		UpdateTime string `json:"update_time"`
+	}
+
 	GetNotificationReq {
 		NotificationId int64 `path:"notification_id"`
 	}
+	GetNotificationResData {
+		NotificationSubject NotificationSubject `json:"notification_subject"`
+		NotificationContent NotificationContent `json:"notification_content"`
+	}
 	GetNotificationRes {
-		Code int32  `json:"code"`
-		Msg  string `json:"msg"`
-		Ok   bool   `json:"ok"`
-		Data string `json:"data"`
+		Code int32                  `json:"code"`
+		Msg  string                 `json:"msg"`
+		Ok   bool                   `json:"ok"`
+		Data GetNotificationResData `json:"data"`
 	}
 )
 

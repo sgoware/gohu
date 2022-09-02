@@ -30,6 +30,24 @@ func (l *GetNotificationLogic) GetNotification(req *types.GetNotificationReq) (r
 		Code: res.Code,
 		Msg:  res.Msg,
 		Ok:   res.Ok,
-		Data: res.Data.String(),
+		Data: types.GetNotificationResData{
+			NotificationSubject: types.NotificationSubject{
+				Id:          res.Data.NotificationSubject.Id,
+				UserId:      res.Data.NotificationSubject.UserId,
+				MessageType: res.Data.NotificationSubject.MessageType,
+				CreateTime:  res.Data.NotificationSubject.CreateTime,
+				UpdateTime:  res.Data.NotificationSubject.UpdateTime,
+			},
+			NotificationContent: types.NotificationContent{
+				SubjectId:  res.Data.NotificationContent.SubjectId,
+				Title:      res.Data.NotificationContent.Title,
+				Content:    res.Data.NotificationContent.Content,
+				Url:        res.Data.NotificationContent.Url,
+				Meta:       res.Data.NotificationContent.Meta,
+				Attrs:      res.Data.NotificationContent.Attrs,
+				CreateTime: res.Data.NotificationContent.CreateTime,
+				UpdateTime: res.Data.NotificationContent.UpdateTime,
+			},
+		},
 	}, nil
 }

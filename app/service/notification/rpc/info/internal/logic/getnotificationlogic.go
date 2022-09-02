@@ -110,6 +110,7 @@ func (l *GetNotificationLogic) GetNotification(in *pb.GetNotificationReq) (res *
 			Title:      notificationContent.Title,
 			Content:    notificationContent.Content,
 			Url:        notificationContent.URL,
+			Meta:       notificationContent.Meta,
 			Attrs:      notificationContent.Attrs,
 			CreateTime: notificationContent.CreateTime.String(),
 			UpdateTime: notificationContent.UpdateTime.String(),
