@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"google.golang.org/protobuf/proto"
 	"main/app/common/log"
+	"main/app/service/notification/dao/model"
 	"main/app/service/notification/rpc/crud/internal/svc"
 	"main/app/service/notification/rpc/crud/pb"
 	modelpb "main/app/service/question/dao/pb"
@@ -35,10 +36,11 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 	notificationSubjectModel := l.svcCtx.NotificationModel.NotificationSubject
 	notificationContentModel := l.svcCtx.NotificationModel.NotificationContent
 
-	notificationSubject, err := notificationSubjectModel.WithContext(l.ctx).
-		Where(notificationSubjectModel.UserID.Eq(in.UserId),
-			notificationSubjectModel.MessageType.Eq(in.MessageType)).
-		FirstOrCreate()
+	err = notificationSubjectModel.WithContext(l.ctx).
+		Create(&model.NotificationSubject{
+			UserID:      in.UserId,
+			MessageType: in.MessageType,
+		})
 	if err != nil {
 		logger.Errorf("publish notification failed, err: mysql err, %v", err)
 		res = &pb.PublishNotificationRes{
@@ -49,6 +51,11 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
 	}
+
+	notificationSubject, err := notificationSubjectModel.WithContext(l.ctx).
+		Where(notificationSubjectModel.UserID.Eq(in.UserId),
+			notificationSubjectModel.MessageType.Eq(in.MessageType)).
+		First()
 
 	notificationSubjectProto := &modelpb.NotificationSubject{
 		Id:          notificationSubject.ID,
