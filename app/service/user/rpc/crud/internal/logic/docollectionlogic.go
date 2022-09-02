@@ -9,7 +9,6 @@ import (
 	"main/app/common/mq/nsq"
 	"main/app/service/mq/asynq/processor/job"
 	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
-	questionMqProducer "main/app/service/question/mq/producer"
 	"main/app/service/user/rpc/crud/internal/svc"
 	"main/app/service/user/rpc/crud/pb"
 	"net/http"
@@ -73,12 +72,6 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 
 		case 3:
 			// 收藏
-			err = questionMqProducer.DoCollect(producer, questionMqProducer.CollectMessage{
-				ObjType:  2,
-				ObjId:    in.ObjId,
-				AttrType: 2,
-				Action:   0,
-			})
 
 		case 4:
 			// 关注
