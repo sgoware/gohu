@@ -23,7 +23,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 func newAsynqServer(c config.Config) *asynq.Server {
 	logger := log.GetSugaredLogger()
 	return asynq.NewServer(
-		asynq.RedisClientOpt{Addr: c.Redis.Host, Password: c.Redis.Pass},
+		c.RedisConf,
 		asynq.Config{
 			Logger:      logger,
 			LogLevel:    asynq.DebugLevel,

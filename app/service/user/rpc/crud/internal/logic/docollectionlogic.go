@@ -103,7 +103,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 		case 4:
 			// 关注
 			ok, err := l.svcCtx.Rdb.SIsMember(l.ctx,
-				fmt.Sprintf("user_collect_%d_%d", in.UserId, 0),
+				fmt.Sprintf("user_collect_%d_%d", in.UserId, 4),
 				fmt.Sprintf("%d:%d", in.ObjType, in.ObjId)).Result()
 			if err != nil {
 				logger.Errorf("get [user_collect] cache member failed, err: %v", err)
@@ -138,6 +138,9 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 							logger.Debugf("send message: %v", err)
 							return res, nil
 						}
+					case 4:
+						// 关注问题
+						// TODO:
 					}
 					res = &pb.DoCollectionRes{
 						Code: http.StatusOK,
@@ -245,8 +248,6 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 }
 
 func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
-	logger := log.GetSugaredLogger()
-
 	// 更新 user_collect 缓存
 	err = svcCtx.Rdb.SAdd(ctx,
 		fmt.Sprintf("user_collect_%d_%d", in.UserId, in.CollectType),
@@ -266,11 +267,22 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 		return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
 	}
 
-	// 关注者计数器+1, 队列调度器定时更新数据库
-	err = svcCtx.Rdb.Incr(ctx,
-		fmt.Sprintf("user_follower_%d", in.UserId)).Err()
-	if err != nil {
-		logger.Errorf("increase [user_follower] failed, err: %v", err)
+	switch in.CollectType {
+	case 1:
+		// 关注用户
+
+		// 关注者计数器+1, 队列调度器定时更新数据库
+		err = svcCtx.Rdb.SAdd(ctx,
+			"user_follower",
+			in.ObjId).Err()
+		if err != nil {
+			return fmt.Errorf("add [user_follower] member failed, err: %v", err)
+		}
+		err = svcCtx.Rdb.Incr(ctx,
+			fmt.Sprintf("user_follower_%d", in.UserId)).Err()
+		if err != nil {
+			return fmt.Errorf("increase [user_follower] failed, err: %v", err)
+		}
 	}
 	return nil
 }

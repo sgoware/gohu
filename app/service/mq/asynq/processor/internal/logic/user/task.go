@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
+	"github.com/spf13/cast"
 	"google.golang.org/protobuf/proto"
 	apollo "main/app/common/config"
 	"main/app/common/log"
@@ -280,6 +281,41 @@ func (l *MsgAddUserSubjectCacheHandler) ProcessTask(ctx context.Context, task *a
 }
 
 func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
+	var payload job.ScheduleUpdateUserSubjectRecordPayload
+	if err = json.Unmarshal(task.Payload(), &payload); err != nil {
+		return fmt.Errorf("unmarshal [ScheduleUpdateUserSubjectRecordPayload] failed, err: %v", err)
+	}
+
+	members, err := l.Rdb.SMembers(ctx,
+		"user_follower").Result()
+	if err != nil {
+		return fmt.Errorf("get [user_follower] member failed, err: %v", err)
+	}
+
+	userSubjectModel := l.UserModel.UserSubject
+
+	for _, member := range members {
+		followerCount, err := l.Rdb.Get(ctx,
+			fmt.Sprintf("user_follower_%s", member)).Int()
+		if err != nil {
+			return fmt.Errorf("get [user_follower] cnt failed, err: %v", err)
+		}
+		userSubject, err := userSubjectModel.WithContext(ctx).
+			Select(userSubjectModel.ID, userSubjectModel.Follower).
+			Where(userSubjectModel.ID.Eq(cast.ToInt64(member))).
+			First()
+		if err != nil {
+			return fmt.Errorf("get [user_subject] record failed, err: %v", err)
+		}
+
+		_, err = userSubjectModel.WithContext(ctx).
+			Select(userSubjectModel.ID, userSubjectModel.Follower).
+			Where(userSubjectModel.ID.Eq(cast.ToInt64(member))).
+			Update(userSubjectModel.Follower, int(userSubject.Follower)+followerCount)
+		if err != nil {
+			return fmt.Errorf("update [user_subject] record failed, err: %v", err)
+		}
+	}
 
 	return nil
 }
