@@ -152,11 +152,9 @@ func (l *MsgCrudQuestionContentHandler) ProcessTask(ctx context.Context, task *a
 
 	switch payload.Action {
 	case 1:
-		questionContentId := l.IdGenerator.NewLong()
-
 		err = questionContentModel.WithContext(ctx).
 			Create(&model.QuestionContent{
-				QuestionID: questionContentId,
+				QuestionID: payload.QuestionId,
 				Content:    payload.Content,
 				Meta:       payload.Meta,
 				CreateTime: nowTime,
