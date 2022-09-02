@@ -42,8 +42,6 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 	userId := j.Get("user_id").Int()
 
 	questionSubjectId := l.svcCtx.IdGenerator.NewLong()
-	logger.Debugf("%v", questionSubjectId)
-	logger.Debugf("%v", l.svcCtx.IdGenerator)
 
 	nowTime := time.Now()
 

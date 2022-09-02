@@ -2,10 +2,11 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/hibiken/asynq"
 	"gorm.io/gorm"
 	"main/app/common/log"
-	"main/app/common/mq/nsq"
-	commentMqProducer "main/app/service/comment/mq/producer"
+	"main/app/service/mq/asynq/processor/job"
 	"net/http"
 
 	"main/app/service/question/rpc/crud/internal/svc"
@@ -58,16 +59,30 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 		return res, nil
 	}
 
-	// 发布消息-删除评论模块
-	producer, err := nsq.GetProducer()
-	err = commentMqProducer.DoCommentSubject(producer, 1, in.AnswerId, "delete")
+	payload, err := json.Marshal(&job.MsgCrudCommentSubjectPayload{
+		Action: 3,
+		Id:     in.AnswerId,
+	})
 	if err != nil {
-		logger.Errorf("publish answer info to nsq failed, err: %v", err)
+		logger.Errorf("marshal [MsgCrudCommentSubjectPayload] failed, err: %v", err)
 		res = &pb.DeleteAnswerRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
 			Ok:   false,
 		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
+
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgCrudCommentSubjectTask, payload))
+	if err != nil {
+		logger.Errorf("create [MsgCrudCommentSubjectTask] insert queue failed, err: %v", err)
+		res = &pb.DeleteAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
 		return res, nil
 	}
 

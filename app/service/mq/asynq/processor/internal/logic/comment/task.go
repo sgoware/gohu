@@ -11,8 +11,8 @@ import (
 	"main/app/common/log"
 	"main/app/service/comment/dao/model"
 	"main/app/service/comment/dao/query"
+	"main/app/service/mq/asynq/processor/internal/config"
 	"main/app/service/mq/asynq/processor/job"
-	"main/app/service/question/mq/config"
 	"main/app/utils/structx"
 	"time"
 )

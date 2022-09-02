@@ -2,6 +2,7 @@ package svc
 
 import (
 	"github.com/go-redis/redis/v8"
+	"github.com/hibiken/asynq"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/comment/dao/query"
@@ -13,6 +14,8 @@ type ServiceContext struct {
 
 	CommentModel *query.Query
 	Rdb          *redis.Client
+
+	AsynqClient *asynq.Client
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -33,5 +36,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		CommentModel: query.Use(db),
 		Rdb:          rdb,
+
+		AsynqClient: asynq.NewClient(c.AsynqClientConf),
 	}
 }

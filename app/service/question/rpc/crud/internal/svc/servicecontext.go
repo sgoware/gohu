@@ -2,6 +2,7 @@ package svc
 
 import (
 	"github.com/go-redis/redis/v8"
+	"github.com/hibiken/asynq"
 	"github.com/yitter/idgenerator-go/idgen"
 	apollo "main/app/common/config"
 	"main/app/common/log"
@@ -14,6 +15,8 @@ type ServiceContext struct {
 
 	QuestionModel *query.Query
 	Rdb           *redis.Client
+
+	AsynqClient *asynq.Client
 
 	IdGenerator *idgen.DefaultIdGenerator
 }
@@ -41,6 +44,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		QuestionModel: query.Use(db),
 		Rdb:           rdb,
+
+		AsynqClient: asynq.NewClient(c.AsynqClientConf),
 
 		IdGenerator: idGenerator,
 	}

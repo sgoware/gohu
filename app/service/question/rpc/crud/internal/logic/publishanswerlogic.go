@@ -2,14 +2,16 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/hibiken/asynq"
 	"github.com/tidwall/gjson"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 	"main/app/common/log"
 	"main/app/common/mq/nsq"
-	commentMqProducer "main/app/service/comment/mq/producer"
+	"main/app/service/mq/asynq/processor/job"
 	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
 	"main/app/service/question/dao/model"
 	modelpb "main/app/service/question/dao/pb"
@@ -120,10 +122,16 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		answerIndexBytes,
 		time.Second*86400)
 
-	// 发布消息-初始化评论模块 TODO: 使用asynq
-	producer, err := nsq.GetProducer()
+	payload, err := json.Marshal(&job.MsgCrudCommentSubjectPayload{
+		Action:     1,
+		Id:         userId,
+		ObjType:    1,
+		ObjId:      answerIndexId,
+		CreateTime: nowTime,
+		UpdateTime: nowTime,
+	})
 	if err != nil {
-		logger.Errorf("get producer failed, err: %v", err)
+		logger.Errorf("marshal [MsgCrudCommentSubjectPayload] failed, err: %v", err)
 		res = &pb.PublishAnswerRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
@@ -132,9 +140,10 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		logger.Debugf("send message: %v", err)
 		return res, nil
 	}
-	err = commentMqProducer.DoCommentSubject(producer, 1, answerIndexId, "init")
+
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgCrudCommentSubjectTask, payload))
 	if err != nil {
-		logger.Errorf("publish answer info to nsq failed, err: %v", err)
+		logger.Errorf("create [MsgCrudCommentSubjectTask] insert queue failed, err: %v", err)
 		res = &pb.PublishAnswerRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
@@ -183,6 +192,18 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		fmt.Sprintf("answer_content_%d", answerIndexId),
 		answerContentBytes,
 		time.Second*86400)
+
+	producer, err := nsq.GetProducer()
+	if err != nil {
+		logger.Errorf("get producer failed, err: %v", err)
+		res = &pb.PublishAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
 
 	err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
 		MessageType: 5,
