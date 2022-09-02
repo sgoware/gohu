@@ -285,7 +285,7 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 				return fmt.Errorf("add [user_follower] member failed, err: %v", err)
 			}
 			err = svcCtx.Rdb.Incr(ctx,
-				fmt.Sprintf("user_follower_%d", in.UserId)).Err()
+				fmt.Sprintf("user_follower_%d", in.ObjId)).Err()
 			if err != nil {
 				return fmt.Errorf("increase [user_follower] failed, err: %v", err)
 			}
