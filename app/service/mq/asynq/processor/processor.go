@@ -37,9 +37,15 @@ func main() {
 	}
 
 	// 初始化消息队列设置
-	err = configClient.UnmarshalKey("mq.yaml", "asynq.scheduler", &c)
+	err = configClient.UnmarshalKey("mq.yaml", "asynq.processor", &c)
 	if err != nil {
 		logger.Fatalf("UnmarshalKey into service config failed, err: %v", err)
+	}
+
+	// 初始化log、trace
+	err = c.SetUp()
+	if err != nil {
+		logger.Fatalf("initialize go-zero internal service failed, err: %v")
 	}
 
 	svcContext := svc.NewServiceContext(c)
