@@ -201,6 +201,8 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 				switch in.ObjType {
 				case 1:
 					// 关注用户
+
+					// 通知用户被关注了
 					err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
 						MessageType: 1,
 						Data:        notificationMqProducer.SubscriptionData{UserId: in.ObjId, FollowerId: in.UserId},
@@ -215,6 +217,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 						logger.Debugf("send message: %v", err)
 						return res, nil
 					}
+					//
 				}
 				res = &pb.DoCollectionRes{
 					Code: http.StatusOK,
