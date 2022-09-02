@@ -259,20 +259,20 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 		return fmt.Errorf("add [user_collect] cache member failed, %v", err)
 	}
 
-	// 更新 user_subject 缓存
-	payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Follower: 1})
-	if err != nil {
-		return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
-	}
-
-	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
-	if err != nil {
-		return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
-	}
-
 	switch in.CollectType {
 	case 1:
 		// 关注用户
+
+		// 更新 user_subject 缓存
+		payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Id: in.ObjId, Follower: 1})
+		if err != nil {
+			return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
+		}
+
+		_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
+		if err != nil {
+			return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
+		}
 
 		// 关注者计数器+1, 队列调度器定时更新数据库
 		err = svcCtx.Rdb.SAdd(ctx,
@@ -286,6 +286,8 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 		if err != nil {
 			return fmt.Errorf("increase [user_follower] failed, err: %v", err)
 		}
+	case 4:
+		// 关注问题
 	}
 	return nil
 }
