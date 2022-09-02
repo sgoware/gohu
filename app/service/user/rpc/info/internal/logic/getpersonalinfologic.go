@@ -92,6 +92,7 @@ func (l *GetPersonalInfoLogic) GetPersonalInfo(in *pb.GetPersonalInfoReq) (res *
 	if err != nil {
 		logger.Errorf("sync struct [UserSubjectPayload] failed, err: %v", err)
 	}
+	logger.Debugf("payload: %v", payload)
 	payloadJson, err := json.Marshal(payload)
 	if err != nil {
 		logger.Errorf("marshal [payload] to json failed, err: %v", err)
