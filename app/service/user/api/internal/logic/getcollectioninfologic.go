@@ -32,6 +32,7 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(req *types.GetCollectionInfoR
 	res, _ := l.svcCtx.InfoRpcClient.GetCollectionInfo(l.ctx, &info.GetCollectionInfoReq{
 		UserId:         userId,
 		CollectionType: req.CollectionType,
+		ObjType:        req.ObjType,
 	})
 	return &types.GetCollectionInfoRes{
 		Code: res.Code,

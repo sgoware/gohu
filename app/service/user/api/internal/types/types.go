@@ -96,8 +96,7 @@ type GetCollectionInfoReq struct {
 }
 
 type GetCollectionInfoResData struct {
-	ObjType []int32 `json:"obj_type"`
-	ObjId   []int64 `json:"obj_id"`
+	ObjId []int64 `json:"obj_id"`
 }
 
 type GetCollectionInfoRes struct {

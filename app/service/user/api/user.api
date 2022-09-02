@@ -93,8 +93,7 @@ type (
 		ObjType        int32 `path:"obj_type"`
 	}
 	GetCollectionInfoResData {
-		ObjType []int32 `json:"obj_type"`
-		ObjId   []int64 `json:"obj_id"`
+		ObjId []int64 `json:"obj_id"`
 	}
 	GetCollectionInfoRes {
 		Code int32                    `json:"code"`
