@@ -260,41 +260,43 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 	}
 
 	switch in.CollectType {
-	case 1:
-		// 关注用户
-
-		// 更新 user_subject 缓存
-		payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Id: in.ObjId, Follower: 1})
-		if err != nil {
-			return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
-		}
-
-		_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
-		if err != nil {
-			return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
-		}
-
-		// 关注者计数器+1, 队列调度器定时更新数据库
-		err = svcCtx.Rdb.SAdd(ctx,
-			"user_follower",
-			in.ObjId).Err()
-		if err != nil {
-			return fmt.Errorf("add [user_follower] member failed, err: %v", err)
-		}
-		err = svcCtx.Rdb.Incr(ctx,
-			fmt.Sprintf("user_follower_%d", in.UserId)).Err()
-		if err != nil {
-			return fmt.Errorf("increase [user_follower] failed, err: %v", err)
-		}
 	case 4:
-		// 关注问题
+		// 关注
+		switch in.ObjType {
+		case 1:
+			// 关注用户
+
+			// 更新 user_subject 缓存
+			payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Id: in.ObjId, Follower: 1})
+			if err != nil {
+				return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
+			}
+
+			_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
+			if err != nil {
+				return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
+			}
+
+			// 关注者计数器+1, 队列调度器定时更新数据库
+			err = svcCtx.Rdb.SAdd(ctx,
+				"user_follower",
+				in.ObjId).Err()
+			if err != nil {
+				return fmt.Errorf("add [user_follower] member failed, err: %v", err)
+			}
+			err = svcCtx.Rdb.Incr(ctx,
+				fmt.Sprintf("user_follower_%d", in.UserId)).Err()
+			if err != nil {
+				return fmt.Errorf("increase [user_follower] failed, err: %v", err)
+			}
+		case 4:
+			// 关注问题
+		}
 	}
 	return nil
 }
 
 func deleteCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
-	logger := log.GetSugaredLogger()
-
 	// 更新 user_collect 缓存
 	err = svcCtx.Rdb.SRem(ctx,
 		fmt.Sprintf("user_collect_%d_%d", in.UserId, in.CollectType),
@@ -314,11 +316,39 @@ func deleteCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.Do
 		return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
 	}
 
-	// 关注者计数器-1, 队列调度器定时更新数据库
-	err = svcCtx.Rdb.Decr(ctx,
-		fmt.Sprintf("user_follower_%d", in.UserId)).Err()
-	if err != nil {
-		logger.Errorf("increase [user_follower] failed, err: %v", err)
+	switch in.CollectType {
+	case 4:
+		// 关注
+		switch in.ObjType {
+		case 1:
+			// 关注用户
+
+			// 更新 user_subject 缓存
+			payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Id: in.ObjId, Follower: -1})
+			if err != nil {
+				return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
+			}
+
+			_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
+			if err != nil {
+				return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
+			}
+
+			// 关注者计数器-1, 队列调度器定时更新数据库
+			err = svcCtx.Rdb.SRem(ctx,
+				"user_follower",
+				in.ObjId).Err()
+			if err != nil {
+				return fmt.Errorf("add [user_follower] member failed, err: %v", err)
+			}
+			err = svcCtx.Rdb.Decr(ctx,
+				fmt.Sprintf("user_follower_%d", in.UserId)).Err()
+			if err != nil {
+				return fmt.Errorf("increase [user_follower] failed, err: %v", err)
+			}
+		case 4:
+			// 关注问题
+		}
 	}
 	return nil
 }
