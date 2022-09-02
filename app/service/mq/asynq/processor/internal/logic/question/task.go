@@ -14,7 +14,6 @@ import (
 	"main/app/service/question/dao/model"
 	"main/app/service/question/dao/query"
 	"main/app/utils/structx"
-	"time"
 )
 
 type MsgCrudQuestionSubjectHandler struct {
@@ -87,15 +86,11 @@ func (l *MsgCrudQuestionSubjectHandler) ProcessTask(ctx context.Context, task *a
 
 	questionSubjectModel := l.QuestionModel.QuestionSubject
 
-	nowTime := time.Now()
-
 	switch payload.Action {
 	case 1:
-		questionSubjectId := l.IdGenerator.NewLong()
-
 		err = questionSubjectModel.WithContext(ctx).
 			Create(&model.QuestionSubject{
-				ID:          questionSubjectId,
+				ID:          payload.Id,
 				UserID:      payload.UserId,
 				IPLoc:       payload.IpLoc,
 				Title:       payload.Title,
@@ -106,8 +101,8 @@ func (l *MsgCrudQuestionSubjectHandler) ProcessTask(ctx context.Context, task *a
 				ViewCount:   payload.ViewCount,
 				State:       payload.State,
 				Attrs:       payload.Attrs,
-				CreateTime:  nowTime,
-				UpdateTime:  nowTime,
+				CreateTime:  payload.CreateTime,
+				UpdateTime:  payload.UpdateTime,
 			})
 		if err != nil {
 			return fmt.Errorf("create [question_subject] record failed, err: %v", err)
@@ -148,8 +143,6 @@ func (l *MsgCrudQuestionContentHandler) ProcessTask(ctx context.Context, task *a
 
 	questionContentModel := l.QuestionModel.QuestionContent
 
-	nowTime := time.Now()
-
 	switch payload.Action {
 	case 1:
 		err = questionContentModel.WithContext(ctx).
@@ -157,8 +150,8 @@ func (l *MsgCrudQuestionContentHandler) ProcessTask(ctx context.Context, task *a
 				QuestionID: payload.QuestionId,
 				Content:    payload.Content,
 				Meta:       payload.Meta,
-				CreateTime: nowTime,
-				UpdateTime: nowTime,
+				CreateTime: payload.CreateTime,
+				UpdateTime: payload.UpdateTime,
 			})
 		if err != nil {
 			return fmt.Errorf("create [question_Content] record failed, err: %v", err)
