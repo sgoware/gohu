@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/hibiken/asynq"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	CommentQuery "main/app/service/comment/dao/query"
@@ -21,6 +22,8 @@ type ServiceContext struct {
 	NotificationModel *NotificationQuery.Query
 
 	Rdb *redis.Client
+
+	AsynqClient *asynq.Client
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -60,5 +63,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		NotificationModel: NotificationQuery.Use(notificationDB),
 
 		Rdb: rdb,
+
+		AsynqClient: asynq.NewClient(c.AsynqClientConf),
 	}
 }

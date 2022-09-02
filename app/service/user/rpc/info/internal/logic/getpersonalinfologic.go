@@ -2,14 +2,17 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/hibiken/asynq"
 	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 	"main/app/common/log"
-	"net/http"
-
+	"main/app/service/mq/asynq/processor/job"
 	"main/app/service/user/rpc/info/internal/svc"
 	"main/app/service/user/rpc/info/pb"
+	"main/app/utils/structx"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -80,17 +83,36 @@ func (l *GetPersonalInfoLogic) GetPersonalInfo(in *pb.GetPersonalInfoReq) (res *
 		}
 		return res, nil
 	}
+	payload := &job.UserSubjectPayload{}
+	err = structx.SyncWithNoZero(*userSubject, payload)
+	if err != nil {
+		logger.Errorf("sync struct [UserSubjectPayload] failed, err: %v", err)
+	}
+	payloadJson, err := json.Marshal(payload)
+	if err != nil {
+		logger.Errorf("marshal [payload] to json failed, err: %v", err)
+	}
+
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectCacheTask, payloadJson))
+	if err != nil {
+		logger.Errorf("create [MsgUpdateUserSubjectCacheTask] insert queue failed, err: %v", err)
+	}
 
 	res = &pb.GetPersonalInfoRes{
 		Code: http.StatusOK,
 		Msg:  "get personal info successfully",
 		Ok:   true,
 		Data: &pb.GetPersonalInfoRes_Data{
-			Username: userSubject.Username,
-			Nickname: userSubject.Nickname,
-			Email:    userSubject.Email,
-			Phone:    userSubject.Phone,
-			Vip:      userSubject.Vip,
+			Username:   userSubject.Username,
+			Nickname:   userSubject.Nickname,
+			Email:      userSubject.Email,
+			Phone:      userSubject.Phone,
+			LastIp:     userSubject.LastIP,
+			Vip:        userSubject.Vip,
+			Follower:   userSubject.Follower,
+			State:      userSubject.State,
+			CreateTime: userSubject.CreateTime.String(),
+			UpdateTime: userSubject.UpdateTime.String(),
 		},
 	}
 	logger.Debugf("send message: %v", res.String())
