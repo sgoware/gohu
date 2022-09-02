@@ -90,6 +90,7 @@ type (
 
 	GetCollectionInfoReq {
 		CollectionType int32 `path:"collection_type"`
+		ObjType        int32 `path:"obj_type"`
 	}
 	GetCollectionInfoResData {
 		ObjType []int32 `json:"obj_type"`
@@ -167,7 +168,7 @@ service user {
 	get /api/user/obj/:obj_type (GetObjInfoReq) returns (GetObjInfoRes)
 	
 	@handler GetCollectionInfo
-	get /api/user/collection/:collection_type (GetCollectionInfoReq) returns (GetCollectionInfoRes)
+	get /api/user/collection/:collection_type/:obj_type (GetCollectionInfoReq) returns (GetCollectionInfoRes)
 	
 	@handler GetNotificationInfo
 	get /api/user/notification/:message_type (GetNotificationInfoReq) returns (GetNotificationInfoRes)

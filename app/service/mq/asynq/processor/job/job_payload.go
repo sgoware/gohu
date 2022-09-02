@@ -41,8 +41,5 @@ type UserCollectPayload struct {
 	UpdateTime  time.Time `json:"updateTime"`
 }
 
-type ScheduleUpdateQuestionRecordPayload struct {
-}
-
 type ScheduleUpdateCommentRecordPayload struct {
 }

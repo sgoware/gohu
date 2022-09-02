@@ -16,6 +16,7 @@ import (
 	"main/app/service/user/dao/pb"
 	"main/app/service/user/dao/query"
 	"main/app/utils/structx"
+	"strings"
 	"time"
 )
 
@@ -422,4 +423,48 @@ func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context
 
 func (l *MsgUpdateUserCollectCacheHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
 	return nil
+}
+
+func (l *ScheduleUpdateUserCollectRecordHandler) ProcessTask(ctx context.Context, _ *asynq.Task) (err error) {
+	userCollectionModel := l.UserModel.UserCollection
+	for {
+		cmd, err := l.Rdb.RPop(ctx, "user_collect").Result()
+		switch err {
+		case redis.Nil:
+			return nil
+		case nil:
+
+		default:
+			return fmt.Errorf("get [user_collect] list member failed, err: %v", err)
+		}
+		output := strings.Split(cmd, "_")
+		userId := cast.ToInt64(output[1])
+		collectType := cast.ToInt32(output[2])
+		objType := cast.ToInt32(output[3])
+		objId := cast.ToInt64(output[4])
+		if output[0] == "0" {
+			// 创建操作
+			err = userCollectionModel.WithContext(ctx).
+				Create(&model.UserCollection{
+					UserID:      userId,
+					CollectType: collectType,
+					ObjType:     objType,
+					ObjID:       objId,
+				})
+			if err != nil {
+				return fmt.Errorf("create [user_collect] record failed, err: %v", err)
+			}
+		} else {
+			// 删除操作
+			_, err = userCollectionModel.WithContext(ctx).
+				Where(userCollectionModel.UserID.Eq(userId),
+					userCollectionModel.CollectType.Eq(collectType),
+					userCollectionModel.ObjType.Eq(objType),
+					userCollectionModel.ObjID.Eq(objId)).
+				Delete()
+			if err != nil {
+				return fmt.Errorf("delete [user_collect] record failed, err: %v", err)
+			}
+		}
+	}
 }

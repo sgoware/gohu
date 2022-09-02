@@ -38,8 +38,7 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(req *types.GetCollectionInfoR
 		Msg:  res.Msg,
 		Ok:   res.Ok,
 		Data: types.GetCollectionInfoResData{
-			ObjType: res.Data.ObjType,
-			ObjId:   res.Data.ObjId,
+			ObjId: res.Data.ObjId,
 		},
 	}, nil
 }

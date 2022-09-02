@@ -9,10 +9,18 @@ import (
 func (l *AsyNqScheduler) updateUserRecord() {
 	logger := log.GetSugaredLogger()
 
-	task := asynq.NewTask(job.ScheduleUpdateUserSubjectRecordTask, nil)
-	entryId, err := l.svcCtx.Scheduler.Register("*/1 * * * *", task)
+	entryId, err := l.svcCtx.Scheduler.Register("*/1 * * * *",
+		asynq.NewTask(job.ScheduleUpdateUserSubjectRecordTask, nil))
 	if err != nil {
-		logger.Errorf("register [updateUserRecord] task to scheduler failed, err: %v", err)
+		logger.Errorf("register [updateUserSubjectRecord] task to scheduler failed, err: %v", err)
 	}
+	logger.Debugf("scheduler registered an entry: %v", entryId)
+
+	entryId, err = l.svcCtx.Scheduler.Register("*/1 * * * *",
+		asynq.NewTask(job.ScheduleUpdateUserCollectRecordTask, nil))
+	if err != nil {
+		logger.Errorf("register [updateUserCollectRecord] task to scheduler failed, err: %v", err)
+	}
+
 	logger.Debugf("scheduler registered an entry: %v", entryId)
 }

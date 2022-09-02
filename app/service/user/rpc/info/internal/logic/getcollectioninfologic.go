@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"github.com/spf13/cast"
 	"main/app/common/log"
-	"net/http"
-	"strings"
-
 	"main/app/service/user/rpc/info/internal/svc"
 	"main/app/service/user/rpc/info/pb"
+	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,22 +31,18 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	logger.Debugf("recv message: %v", in.String())
 
 	userCollectionsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
-		fmt.Sprintf("user_collect_%d_%d", in.UserId, in.CollectionType)).Result()
+		fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType)).Result()
 	if err == nil {
-		objTypes := make([]int32, 0)
 		objIds := make([]int64, 0)
 		for _, userCollectionCache := range userCollectionsCache {
-			output := strings.Split(userCollectionCache, ":")
-			objTypes = append(objTypes, cast.ToInt32(output[0]))
-			objIds = append(objIds, cast.ToInt64(output[1]))
+			objIds = append(objIds, cast.ToInt64(userCollectionCache))
 		}
 		res = &pb.GetCollectionInfoRes{
 			Code: http.StatusOK,
 			Msg:  "get collections successfully",
 			Ok:   true,
 			Data: &pb.GetCollectionInfoRes_Data{
-				ObjType: objTypes,
-				ObjId:   objIds,
+				ObjId: objIds,
 			},
 		}
 		logger.Debugf("send message: %v", res.String())
@@ -76,16 +70,14 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 		Msg:  "get collections successfully",
 		Ok:   true,
 		Data: &pb.GetCollectionInfoRes_Data{
-			ObjType: make([]int32, 0),
-			ObjId:   make([]int64, 0),
+			ObjId: make([]int64, 0),
 		},
 	}
 	for _, userCollection := range userCollections {
-		res.Data.ObjType = append(res.Data.ObjType, userCollection.ObjType)
 		res.Data.ObjId = append(res.Data.ObjId, userCollection.ObjID)
 		l.svcCtx.Rdb.SAdd(l.ctx,
-			fmt.Sprintf("user_collect_%d_%d", in.UserId, in.CollectionType),
-			fmt.Sprintf("%d:%d", userCollection.ObjType, userCollection.ObjID))
+			fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, userCollection.ObjType),
+			userCollection.ObjID)
 	}
 	logger.Debugf("send message: %v", res.String())
 	return res, nil

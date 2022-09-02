@@ -41,6 +41,7 @@ message GetPersonalInfoRes{
 message GetCollectionInfoReq{
     int64 user_id=1;
     int32 collection_type=2;
+    int32 obj_type=3;
 }
 message GetCollectionInfoRes{
     int32 code=1;
@@ -48,8 +49,7 @@ message GetCollectionInfoRes{
     bool ok=3;
     Data data=4;
     message Data{
-        repeated int32 obj_type=1; // 0:回答 1:文章
-        repeated int64 obj_id=2;
+        repeated int64 obj_id=1;
     }
 }
 
