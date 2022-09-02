@@ -16,15 +16,9 @@ type (
 		Ok   bool   `json:"ok"`
 		Data string `json:"data"`
 	}
-
-	GetUserNotificationIdsReq{
-	}
-	GetUserNotificationIdsRes{
-
-	}
 )
 
 service notification {
 	@handler GetNotification
-	get /api/notification/:notificationId (GetNotificationReq) returns (GetNotificationRes)
+	get /api/notification/:notification_id (GetNotificationReq) returns (GetNotificationRes)
 }

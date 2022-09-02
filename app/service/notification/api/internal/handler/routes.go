@@ -14,7 +14,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/api/notification/:notificationId",
+				Path:    "/api/notification/:notification_id",
 				Handler: GetNotificationHandler(serverCtx),
 			},
 		},
