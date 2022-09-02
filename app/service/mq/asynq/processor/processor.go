@@ -52,7 +52,7 @@ func main() {
 
 	svcContext := svc.NewServiceContext(c)
 	ctx := context.Background()
-	asynqProcessor := logic.NewProcessor(ctx, c, svcContext)
+	asynqProcessor := logic.NewProcessor(ctx, svcContext)
 	mux := asynqProcessor.Register()
 
 	if err := svcContext.AsynqServer.Run(mux); err != nil {

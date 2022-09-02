@@ -45,7 +45,7 @@ func main() {
 	// 初始化log、trace
 	err = c.SetUp()
 	if err != nil {
-		logger.Fatalf("initialize go-zero internal service failed, err: %v")
+		logger.Fatalf("initialize go-zero internal service failed, err: %v", err)
 	}
 
 	svcContext := svc.NewServiceContext(c)
