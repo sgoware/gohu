@@ -371,6 +371,7 @@ func (l *MsgAddUserSubjectCacheHandler) ProcessTask(ctx context.Context, task *a
 }
 
 func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
+	return fmt.Errorf("eee")
 	members, err := l.Rdb.SMembers(ctx,
 		"user_follower").Result()
 	if err != nil {
