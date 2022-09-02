@@ -305,17 +305,6 @@ func deleteCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.Do
 		return fmt.Errorf("delete [user_collect] cache member failed, %v", err)
 	}
 
-	// 更新 user_subject 缓存
-	payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Follower: -1})
-	if err != nil {
-		return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
-	}
-
-	_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
-	if err != nil {
-		return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
-	}
-
 	switch in.CollectType {
 	case 4:
 		// 关注
