@@ -2,12 +2,14 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/hibiken/asynq"
 	"google.golang.org/protobuf/proto"
 	"main/app/common/log"
 	"main/app/common/mq/nsq"
+	"main/app/service/mq/asynq/processor/job"
 	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
-	"main/app/service/question/dao/model"
 	modelpb "main/app/service/question/dao/pb"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
@@ -45,32 +47,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 
 	nowTime := time.Now()
 
-	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
-	questionContentModel := l.svcCtx.QuestionModel.QuestionContent
-
 	ipLoc := ip.GetIpLocFromApi(j.Get("last_ip").String())
-
-	err = questionSubjectModel.WithContext(l.ctx).
-		Create(&model.QuestionSubject{
-			ID:         questionSubjectId,
-			UserID:     userId,
-			IPLoc:      ipLoc,
-			Title:      in.Title,
-			Topic:      in.Topic,
-			Tag:        in.Tag,
-			CreateTime: nowTime,
-			UpdateTime: nowTime,
-		})
-	if err != nil {
-		logger.Errorf("publish question failed, err: %v", err)
-		res = &pb.PublishQuestionRes{
-			Code: http.StatusInternalServerError,
-			Msg:  "internal err",
-			Ok:   false,
-		}
-		logger.Debugf("send message: %v", res.String())
-		return res, nil
-	}
 
 	questionSubjectProto := &modelpb.QuestionSubject{
 		Id:         questionSubjectId,
@@ -98,22 +75,37 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		bytes,
 		time.Second*86400)
 
-	err = questionContentModel.WithContext(l.ctx).
-		Create(&model.QuestionContent{
-			QuestionID: questionSubjectId,
-			Content:    in.Content,
-			Meta:       "",
-			CreateTime: nowTime,
-			UpdateTime: nowTime,
-		})
+	payload, err := json.Marshal(job.MsgCrudQuestionSubjectRecordPayload{
+		Action:     1,
+		Id:         questionSubjectId,
+		UserId:     userId,
+		IpLoc:      ipLoc,
+		Title:      in.Title,
+		Topic:      in.Topic,
+		Tag:        in.Tag,
+		CreateTime: nowTime,
+		UpdateTime: nowTime,
+	})
 	if err != nil {
-		logger.Errorf("publish question failed, err: %v", err)
+		logger.Errorf("marshal [MsgCrudQuestionSubjectRecordPayload] failed, err: %v", err)
 		res = &pb.PublishQuestionRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
 			Ok:   false,
 		}
-		logger.Debugf("send message: %v", res.String())
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
+
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgCrudQuestionSubjectRecordTask, payload))
+	if err != nil {
+		logger.Errorf("create [MsgCrudQuestionSubjectRecordTask] insert queue failed, err: %v", err)
+		res = &pb.PublishQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
 		return res, nil
 	}
 
@@ -139,6 +131,36 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		fmt.Sprintf("question_content_%d", questionSubjectId),
 		bytes,
 		time.Second*86400)
+
+	payload, err = json.Marshal(job.MsgCrudQuestionContentRecordPayload{
+		Action:     1,
+		QuestionId: questionSubjectId,
+		Content:    in.Content,
+		CreateTime: nowTime,
+		UpdateTime: nowTime,
+	})
+	if err != nil {
+		logger.Errorf("marshal [MsgCrudQuestionContentRecordPayload] failed, err: %v", err)
+		res = &pb.PublishQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
+
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgCrudQuestionContentRecordTask, payload))
+	if err != nil {
+		logger.Errorf("create [MsgCrudQuestionContentRecordTask] insert queue failed, err: %v", err)
+		res = &pb.PublishQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
 
 	producer, err := nsq.GetProducer()
 	if err != nil {

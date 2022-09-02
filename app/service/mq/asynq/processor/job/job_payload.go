@@ -41,6 +41,32 @@ type UserCollectPayload struct {
 	UpdateTime  time.Time `json:"updateTime"`
 }
 
+type MsgCrudQuestionSubjectRecordPayload struct {
+	Action      int32     `json:"action"` // 1:创建 2:更新 3:删除
+	Id          int64     `json:"id"`
+	UserId      int64     `json:"user_id"`
+	IpLoc       string    `json:"ip_loc"`
+	Title       string    `json:"title"`
+	Topic       string    `json:"topic"`
+	Tag         string    `json:"tag"`
+	SubCount    int32     `json:"sub_count"`
+	AnswerCount int32     `json:"answer_count"`
+	ViewCount   int64     `json:"view_count"`
+	State       int32     `json:"state"`
+	Attrs       int32     `json:"attrs"`
+	CreateTime  time.Time `json:"create_time"`
+	UpdateTime  time.Time `json:"update_time"`
+}
+
+type MsgCrudQuestionContentRecordPayload struct {
+	Action     int32     `json:"action"`
+	QuestionId int64     `json:"question_id"`
+	Content    string    `json:"content"`
+	Meta       string    `json:"meta"`
+	CreateTime time.Time `json:"create_time"`
+	UpdateTime time.Time `json:"update_time"`
+}
+
 type MsgCrudCommentSubjectPayload struct {
 	Action     int32     `json:"action"` // 1:创建 2:更新 3:删除
 	Id         int64     `json:"id"`

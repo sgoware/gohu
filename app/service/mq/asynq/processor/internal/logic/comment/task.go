@@ -7,10 +7,12 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
 	"github.com/yitter/idgenerator-go/idgen"
+	"google.golang.org/protobuf/proto"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/comment/dao/model"
 	"main/app/service/comment/dao/query"
+	"main/app/service/comment/rpc/info/pb"
 	"main/app/service/mq/asynq/processor/internal/config"
 	"main/app/service/mq/asynq/processor/job"
 	"main/app/utils/structx"
@@ -62,6 +64,31 @@ func (l *MsgCrudCommentSubjectHandler) ProcessTask(ctx context.Context, task *as
 	case 1:
 		// 创建
 		commentSubjectId := l.IdGenerator.NewLong()
+
+		commentSubjectProto := &pb.CommentSubject{
+			Id:         commentSubjectId,
+			ObjType:    payload.ObjType,
+			ObjId:      payload.ObjId,
+			Count:      payload.Count,
+			RootCount:  payload.RootCount,
+			State:      payload.State,
+			Attrs:      payload.Attrs,
+			CreateTime: payload.CreateTime.String(),
+			UpdateTime: payload.UpdateTime.String(),
+		}
+
+		commentSubjectBytes, err := proto.Marshal(commentSubjectProto)
+		if err != nil {
+			return fmt.Errorf("marshal [commentSubjectBytes] failed, err: %v", err)
+		}
+
+		err = l.Rdb.Set(ctx,
+			fmt.Sprintf("comment_subject_%d", payload.Id),
+			commentSubjectBytes,
+			time.Second*86400).Err()
+		if err != nil {
+			return fmt.Errorf("create [comment_subject] cache failed, err: %v", err)
+		}
 
 		err = commentSubjectModel.WithContext(ctx).
 			Create(&model.CommentSubject{

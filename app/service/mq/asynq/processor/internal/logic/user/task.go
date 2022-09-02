@@ -245,7 +245,7 @@ func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asy
 
 	userSubjectBytes, err := proto.Marshal(userSubjectProto)
 	if err != nil {
-		return fmt.Errorf("marshal [userSubjectProto] into proto failed, err; %v", err)
+		return fmt.Errorf("marshal [userSubjectProto] into proto failed, err: %v", err)
 	}
 
 	err = l.Rdb.Set(ctx,

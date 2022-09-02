@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/hibiken/asynq"
 	"main/app/service/mq/asynq/processor/internal/logic/comment"
+	"main/app/service/mq/asynq/processor/internal/logic/question"
 	"main/app/service/mq/asynq/processor/internal/logic/user"
 	"main/app/service/mq/asynq/processor/internal/svc"
 	"main/app/service/mq/asynq/processor/job"
@@ -30,6 +31,9 @@ func (p *Processor) Register() *asynq.ServeMux {
 	mux.Handle(job.MsgAddUserSubjectCacheTask, user.NewMsgAddUserSubjectCacheHandler(p.svcCtx.Config))
 	mux.Handle(job.ScheduleUpdateUserSubjectRecordTask, user.NewScheduleUpdateUserSubjectRecordHandler(p.svcCtx.Config))
 	mux.Handle(job.ScheduleUpdateUserCollectRecordTask, user.NewScheduleUpdateUserCollectRecordHandler(p.svcCtx.Config))
+
+	mux.Handle(job.MsgCrudQuestionSubjectRecordTask, question.NewMsgCrudQuestionSubjectHandler(p.svcCtx.Config))
+	mux.Handle(job.MsgCrudQuestionContentRecordTask, question.NewMsgCrudQuestionContentHandler(p.svcCtx.Config))
 
 	mux.Handle(job.MsgCrudCommentSubjectTask, comment.NewMsgCrudCommentSubjectHandler(p.svcCtx.Config))
 
