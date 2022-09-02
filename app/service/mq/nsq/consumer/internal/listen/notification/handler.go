@@ -328,29 +328,5 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 		}
 
 	}
-	//msg := &questionMqProduce.AnswerSubjectMessage{}
-	//err = json.Unmarshal(nsqMsg.Body, &msg)
-	//if err != nil {
-	//	return err
-	//}
-	//switch msg.Action {
-	//case "init":
-	//	res, _ := m.NotificationCrudRpcClient.InitSubject(context.Background(), &crud.InitSubjectReq{
-	//		ObjType: msg.Data.ObjType,
-	//		ObjId:   msg.Data.ObjId,
-	//	})
-	//	if !res.Ok {
-	//		return errors.New(res.Msg)
-	//	}
-	//
-	//case "delete":
-	//	res, _ := m.NotificationCrudRpcClient.DeleteSubject(context.Background(), &crud.DeleteSubjectReq{
-	//		ObjType: msg.Data.ObjType,
-	//		ObjId:   msg.Data.ObjId,
-	//	})
-	//	if !res.Ok {
-	//		return errors.New(res.Msg)
-	//	}
-	//}
 	return nil
 }
