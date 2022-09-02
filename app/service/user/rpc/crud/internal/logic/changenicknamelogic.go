@@ -45,12 +45,11 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 				Msg:  "nickname already exist",
 				Ok:   false,
 			}
-			logger.Debugf("send message: %v", res.String())
-			return res, nil
 		}
 	case gorm.ErrRecordNotFound:
 		{
 			payload, err := json.Marshal(job.UserSubjectPayload{
+				Id:       in.Id,
 				Nickname: in.Nickname,
 			})
 			if err != nil {
