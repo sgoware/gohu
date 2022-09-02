@@ -75,6 +75,13 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 	case nil:
 		// 用户已经存在的情况
 		{
+			err = l.svcCtx.Rdb.SAdd(l.ctx,
+				"user_register_set",
+				in.Username).Err()
+			if err != nil {
+				logger.Errorf("update [user_register_set] cache failed, err: %v", err)
+			}
+
 			res = &crud.RegisterRes{
 				Code: http.StatusForbidden,
 				Msg:  "user already exist",
