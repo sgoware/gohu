@@ -1,6 +1,7 @@
 package structx
 
 import (
+	"github.com/shopspring/decimal"
 	"reflect"
 	"strings"
 	"time"
@@ -14,7 +15,8 @@ func SyncWithNoZero(src interface{}, dst interface{}) (err error) {
 	vDst := reflect.ValueOf(dst).Elem()
 	srcNumField := tSrc.NumField()
 	dstNumField := tDst.NumField()
-	vis := make([]bool, 100)
+	vis := make([]bool,
+		decimal.Max(decimal.NewFromInt(int64(srcNumField)), decimal.NewFromInt(int64(dstNumField))).IntPart())
 	for i := 0; i < srcNumField; i++ {
 		if vSrc.Field(i).IsZero() || !tSrc.Field(i).IsExported() {
 			continue
