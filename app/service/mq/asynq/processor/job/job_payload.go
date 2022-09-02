@@ -10,22 +10,7 @@ type MsgCreateUserSubjectPayload struct {
 	UpdateTime time.Time `json:"update_time"`
 }
 
-type MsgUpdateUserSubjectRecordPayload struct {
-	Id         int64     `json:"id"`
-	Username   string    `json:"username"`
-	Password   string    `json:"password"`
-	Nickname   string    `json:"nickname"`
-	Email      string    `json:"email"`
-	Phone      string    `json:"phone"`
-	LastIp     string    `json:"last_ip"`
-	Vip        int32     `json:"vip"`
-	Follower   int32     `json:"follower"`
-	State      int32     `json:"state"`
-	CreateTime time.Time `json:"create_time"`
-	UpdateTime time.Time `json:"update_time"`
-}
-
-type MsgUpdateUserSubjectCachePayload struct {
+type UserSubjectPayload struct {
 	Id         int64     `json:"id"`
 	Username   string    `json:"username"`
 	Password   string    `json:"password"`

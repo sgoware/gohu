@@ -110,7 +110,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 				UpdateTime: time.Now(),
 			})
 			if err != nil {
-				logger.Errorf("marshal [MsgUpdateUserSubjectRecordPayload] into json failed, err: %v", err)
+				logger.Errorf("marshal [UserSubjectPayload] into json failed, err: %v", err)
 			} else {
 				_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgCreateUserSubjectTask, payload))
 				if err != nil {

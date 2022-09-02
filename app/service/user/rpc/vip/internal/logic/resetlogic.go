@@ -47,12 +47,12 @@ func (l *ResetLogic) Reset(in *pb.ResetReq) (res *pb.ResetRes, err error) {
 		return res, nil
 	}
 
-	payload, err := json.Marshal(job.MsgUpdateUserSubjectCachePayload{
+	payload, err := json.Marshal(job.UserSubjectPayload{
 		Id:  in.Id,
 		Vip: 0,
 	})
 	if err != nil {
-		logger.Errorf("marshal [MsgUpdateUserSubjectCachePayload] to json failed, err: %v", err)
+		logger.Errorf("marshal [UserSubjectPayload] to json failed, err: %v", err)
 		res = &pb.ResetRes{
 			Code: http.StatusOK,
 			Msg:  "internal err",

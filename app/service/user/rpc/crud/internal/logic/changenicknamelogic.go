@@ -50,11 +50,11 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 		}
 	case gorm.ErrRecordNotFound:
 		{
-			payload, err := json.Marshal(job.MsgUpdateUserSubjectRecordPayload{
+			payload, err := json.Marshal(job.UserSubjectPayload{
 				Nickname: in.Nickname,
 			})
 			if err != nil {
-				logger.Errorf("marshal [MsgUpdateUserSubjectRecordPayload] into json failed, err: %v", err)
+				logger.Errorf("marshal [UserSubjectPayload] into json failed, err: %v", err)
 				res = &pb.ChangeNicknameRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",
@@ -74,6 +74,7 @@ func (l *ChangeNickNameLogic) ChangeNickName(in *pb.ChangeNicknameReq) (res *pb.
 				logger.Debugf("send message: %v", err)
 				return res, nil
 			}
+			_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectCacheTask, payload))
 			res = &pb.ChangeNicknameRes{
 				Code: http.StatusOK,
 				Msg:  "change nickname successfully",

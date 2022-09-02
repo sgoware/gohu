@@ -174,9 +174,9 @@ func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asy
 }
 
 func (l *MsgUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
-	var payload job.MsgUpdateUserSubjectRecordPayload
+	var payload job.UserSubjectPayload
 	if err = json.Unmarshal(task.Payload(), &payload); err != nil {
-		return fmt.Errorf("unmarshal [MsgUpdateUserSubjectRecordPayload] failed, err: %v", err)
+		return fmt.Errorf("unmarshal [UserSubjectPayload] failed, err: %v", err)
 	}
 
 	userSubjectModel := l.UserModel.UserSubject
@@ -199,9 +199,9 @@ func (l *MsgUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context, tas
 }
 
 func (l *MsgUpdateUserSubjectCacheHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
-	var payload job.MsgUpdateUserSubjectRecordPayload
+	var payload job.UserSubjectPayload
 	if err = json.Unmarshal(task.Payload(), &payload); err != nil {
-		return fmt.Errorf("unmarshal [MsgUpdateUserSubjectRecordPayload] failed, err: %v", err)
+		return fmt.Errorf("unmarshal [UserSubjectPayload] failed, err: %v", err)
 	}
 
 	userSubjectBytes, err := l.Rdb.Get(ctx,

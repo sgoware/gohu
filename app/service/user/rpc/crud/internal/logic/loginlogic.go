@@ -65,12 +65,12 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		password := output[1]
 		if in.Password == password {
 			// // 更新最近登录 ip
-			payload, err := json.Marshal(job.MsgUpdateUserSubjectRecordPayload{
+			payload, err := json.Marshal(job.UserSubjectPayload{
 				Id:     cast.ToInt64(userId),
 				LastIp: in.LastIp,
 			})
 			if err != nil {
-				logger.Errorf("marshal [MsgUpdateUserSubjectRecordPayload] into json failed, err: %v", err)
+				logger.Errorf("marshal [UserSubjectPayload] into json failed, err: %v", err)
 			} else {
 				_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgUpdateUserSubjectRecordTask, payload))
 				if err != nil {
