@@ -63,7 +63,7 @@ type (
 	}
 
 	GetQuestionReq {
-		Id int64 `path:"question_id"`
+		QuestionId int64 `path:"question_id"`
 	}
 	GetQuestionResData {
 		QuestionSubject QuestionSubject `json:"question_subject"`
@@ -77,7 +77,7 @@ type (
 	}
 
 	GetAnswerReq {
-		Id int64 `path:"id"`
+		AnswerId int64 `path:"answer_id"`
 	}
 	GetAnswerResData {
 		AnswerIndex   AnswerIndex   `json:"answer_index"`

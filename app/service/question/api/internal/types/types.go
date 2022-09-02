@@ -60,7 +60,7 @@ type CrudRes struct {
 }
 
 type GetQuestionReq struct {
-	Id int64 `path:"question_id"`
+	QuestionId int64 `path:"question_id"`
 }
 
 type GetQuestionResData struct {
@@ -76,7 +76,7 @@ type GetQuestionRes struct {
 }
 
 type GetAnswerReq struct {
-	Id int64 `path:"id"`
+	AnswerId int64 `path:"answer_id"`
 }
 
 type GetAnswerResData struct {
