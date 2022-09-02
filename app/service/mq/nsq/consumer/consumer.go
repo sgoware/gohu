@@ -1,12 +1,14 @@
 package main
 
 import (
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/service"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/mq/nsq/consumer/internal/config"
 	"main/app/service/mq/nsq/consumer/internal/listen"
+
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/service"
+	_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 )
 
 const mqName = "mq.nsq.consumer"
