@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"main/app/common/log"
 	"main/app/service/mq/asynq/processor/job"
+	modelpb "main/app/service/user/dao/pb"
 	"main/app/service/user/rpc/info/internal/svc"
 	"main/app/service/user/rpc/info/pb"
 	"main/app/utils/structx"
@@ -40,10 +41,24 @@ func (l *GetPersonalInfoLogic) GetPersonalInfo(in *pb.GetPersonalInfoReq) (res *
 	if err == nil {
 		// 查找缓存成功
 		rpcResData := &pb.GetPersonalInfoRes_Data{}
-		err = proto.Unmarshal(userSubjectBytes, rpcResData)
+
+		userSubjectProto := &modelpb.UserSubject{}
+
+		err = proto.Unmarshal(userSubjectBytes, userSubjectProto)
 		if err != nil {
 			logger.Errorf("unmarshal [rpcResData] failed, err: %v", err)
 		} else {
+			err = structx.SyncWithNoZero(*userSubjectProto, rpcResData)
+			if err != nil {
+				logger.Errorf("sync struct [GetPersonalInfoRes_Data] failed, err: %v", err)
+				res = &pb.GetPersonalInfoRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", err)
+				return res, nil
+			}
 			res = &pb.GetPersonalInfoRes{
 				Code: http.StatusOK,
 				Msg:  "get personal info successfully",

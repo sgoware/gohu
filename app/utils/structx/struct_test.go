@@ -54,6 +54,21 @@ type UserSubjectModel struct {
 	UpdateTime time.Time `gorm:"autoUpdateTime;column:update_time;not null" json:"update_time"` // 修改时间
 }
 
+type UserSubjectPayload struct {
+	Id         int64     `json:"id"`
+	Username   string    `json:"username"`
+	Password   string    `json:"password"`
+	Nickname   string    `json:"nickname"`
+	Email      string    `json:"email"`
+	Phone      string    `json:"phone"`
+	LastIp     string    `json:"last_ip"`
+	Vip        int32     `json:"vip"`
+	Follower   int32     `json:"follower"`
+	State      int32     `json:"state"`
+	CreateTime time.Time `json:"create_time"`
+	UpdateTime time.Time `json:"update_time"`
+}
+
 func TestSyncWithNoZero(t *testing.T) {
 	type args struct {
 		src interface{}
@@ -138,6 +153,44 @@ func TestSyncWithNoZero(t *testing.T) {
 				State:      0,
 				CreateTime: time.Unix(1662046824, 0).String(),
 				UpdateTime: time.Unix(1662046824, 0).String(),
+			},
+		},
+		{
+			name: "3",
+			args: args{
+				src: UserSubjectPayload{
+					Id:         10006,
+					Username:   "StellarisW",
+					Password:   "asd",
+					Nickname:   "qwd",
+					Email:      "",
+					Phone:      "",
+					LastIp:     "",
+					Vip:        0,
+					Follower:   0,
+					State:      0,
+					CreateTime: time.Unix(1662046824, 0),
+					UpdateTime: time.Unix(1662046824, 0),
+				},
+				dst: &UserSubjectProto{},
+			},
+			wantErr: false,
+			wantStruct: &UserSubjectProto{
+				state:         protoimpl.MessageState{},
+				sizeCache:     0,
+				unknownFields: nil,
+				Id:            10006,
+				Username:      "StellarisW",
+				Password:      "asd",
+				Nickname:      "qwd",
+				Email:         "",
+				Phone:         "",
+				LastIp:        "",
+				Vip:           0,
+				Follower:      0,
+				State:         0,
+				CreateTime:    time.Unix(1662046824, 0).String(),
+				UpdateTime:    time.Unix(1662046824, 0).String(),
 			},
 		},
 	}

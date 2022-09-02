@@ -87,7 +87,7 @@ func (l *GetNotificationLogic) GetNotification(in *pb.GetNotificationReq) (res *
 	notificationContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
 		fmt.Sprintf("notification_content_%d", in.NotificationId)).Bytes()
 	if err != nil {
-		logger.Errorf("get [notificationContent] cache failed, err: %v")
+		logger.Errorf("get [notification_content] cache failed, err: %v")
 
 		notificationContentModel := l.svcCtx.NotificationModel.NotificationContent
 
@@ -95,7 +95,7 @@ func (l *GetNotificationLogic) GetNotification(in *pb.GetNotificationReq) (res *
 			Where(notificationContentModel.SubjectID.Eq(in.NotificationId)).
 			First()
 		if err != nil {
-			logger.Errorf("get [notificationContent] in mysql failed, err: %v", err)
+			logger.Errorf("get [notification_content] in mysql failed, err: %v", err)
 			res = &pb.GetNotificationRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
