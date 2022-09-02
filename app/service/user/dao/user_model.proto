@@ -9,11 +9,12 @@ message UserSubject{
     string nickname=4;
     string email=5;
     string phone=6;
-    int32 vip=7;
-    int32 follower=8;
-    int32 state=9;
-    string create_time=10;
-    string update_time=11;
+    string last_ip=7;
+    int32 vip=8;
+    int32 follower=9;
+    int32 state=10;
+    string create_time=11;
+    string update_time=12;
 }
 
 message UserCollection{
