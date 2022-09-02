@@ -45,16 +45,16 @@ func main() {
 	// 初始化log、trace
 	err = c.SetUp()
 	if err != nil {
-		logger.Fatalf("initialize go-zero internal service failed, err: %v")
+		logger.Fatalf("initialize go-zero internal service failed, err: %v", err)
 	}
 
 	svcContext := svc.NewServiceContext(c)
 	ctx := context.Background()
-	asynqProcessor := logic.NewProcessor(ctx, svcContext)
+	asynqProcessor := logic.NewProcessor(ctx, c, svcContext)
 	mux := asynqProcessor.Register()
 
 	if err := svcContext.AsynqServer.Run(mux); err != nil {
-		logger.Fatalf("run asynq processor failed, err: %v")
+		logger.Fatalf("run asynq processor failed, err: %v", err)
 		os.Exit(1)
 	}
 }
