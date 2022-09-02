@@ -11,7 +11,6 @@ import (
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/mq/asynq/processor/internal/config"
-	"main/app/service/mq/asynq/processor/internal/svc"
 	"main/app/service/mq/asynq/processor/job"
 	"main/app/service/user/dao/model"
 	"main/app/service/user/dao/pb"
@@ -83,7 +82,7 @@ func NewUpdateUserSubjectRecordHandler(c config.Config) *MsgUpdateUserSubjectRec
 	}
 }
 
-func NewUpdateUserSubjectCacheHandler(svcCtx *svc.ServiceContext) *MsgUpdateUserSubjectCacheHandler {
+func NewUpdateUserSubjectCacheHandler(c config.Config) *MsgUpdateUserSubjectCacheHandler {
 	logger := log.GetSugaredLogger()
 	rdb, err := apollo.GetRedisClient("user.yaml")
 	if err != nil {
@@ -95,7 +94,7 @@ func NewUpdateUserSubjectCacheHandler(svcCtx *svc.ServiceContext) *MsgUpdateUser
 	}
 }
 
-func NewMsgAddUserSubjectCacheHandler(svcCtx *svc.ServiceContext) *MsgAddUserSubjectCacheHandler {
+func NewMsgAddUserSubjectCacheHandler(c config.Config) *MsgAddUserSubjectCacheHandler {
 	logger := log.GetSugaredLogger()
 
 	rdb, err := apollo.GetRedisClient("user.yaml")
@@ -108,7 +107,7 @@ func NewMsgAddUserSubjectCacheHandler(svcCtx *svc.ServiceContext) *MsgAddUserSub
 	}
 }
 
-func NewScheduleUpdateUserSubjectRecordHandler(svcCtx *svc.ServiceContext) *ScheduleUpdateUserSubjectRecordHandler {
+func NewScheduleUpdateUserSubjectRecordHandler(c config.Config) *ScheduleUpdateUserSubjectRecordHandler {
 	logger := log.GetSugaredLogger()
 
 	rdb, err := apollo.GetRedisClient("user.yaml")

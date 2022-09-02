@@ -25,6 +25,8 @@ func (p *Processor) Register() *asynq.ServeMux {
 
 	mux.Handle(job.MsgCreateUserSubjectTask, user.NewCreateUserSubjectRecordHandler(p.svcCtx.Config))
 	mux.Handle(job.MsgUpdateUserSubjectRecordTask, user.NewUpdateUserSubjectRecordHandler(p.svcCtx.Config))
+	mux.Handle(job.MsgUpdateUserSubjectCacheTask, user.NewUpdateUserSubjectCacheHandler(p.svcCtx.Config))
+	mux.Handle(job.MsgAddUserSubjectCacheTask, user.NewMsgAddUserSubjectCacheHandler(p.svcCtx.Config))
 
 	return mux
 }
