@@ -99,7 +99,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 
 	// 在数据库中查找用户
 	userSubjectModel := l.svcCtx.UserModel.UserSubject
-	userInfo, err := userSubjectModel.WithContext(l.ctx).Where(userSubjectModel.Username.Eq(in.Username)).First()
+	userSubject, err := userSubjectModel.WithContext(l.ctx).Where(userSubjectModel.Username.Eq(in.Username)).First()
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
@@ -130,12 +130,12 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 			return res, err
 		}
 	}
-	logger.Debugf("userInfo: \n%v", userInfo)
+	logger.Debugf("userSubject: \n%v", userSubject)
 
 	// 验证密码
 	d := sha3.Sum224([]byte(in.Password))
 	encryptedPassword := hex.EncodeToString(d[:])
-	if userInfo.Password != encryptedPassword {
+	if userSubject.Password != encryptedPassword {
 		res = &pb.LoginRes{
 			Code: http.StatusUnauthorized,
 			Msg:  "wrong password",
@@ -143,6 +143,14 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 		}
 		logger.Debugf("send message: %v", res.String())
 		return res, nil
+	}
+
+	err = l.svcCtx.Rdb.Set(l.ctx,
+		fmt.Sprintf("user_login_%s", in.Username),
+		fmt.Sprintf("%d:%s", userSubject.ID, userSubject.Password),
+		time.Second*86400).Err()
+	if err != nil {
+		logger.Errorf("set [user_login] cache failed, err: %v", err)
 	}
 
 	// 更新最近登录 ip
@@ -160,7 +168,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 	}
 
 	// 生成 oauth 服务器的认证头
-	basicAuthString := getBasicAuth(l.svcCtx.ClientId, l.svcCtx.ClientSecret, cast.ToString(userInfo.ID))
+	basicAuthString := getBasicAuth(l.svcCtx.ClientId, l.svcCtx.ClientSecret, cast.ToString(userSubject.ID))
 
 	res = &pb.LoginRes{
 		Code: http.StatusOK,
