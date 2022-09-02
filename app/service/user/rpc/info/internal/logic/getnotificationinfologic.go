@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/spf13/cast"
+	"gorm.io/gorm"
 	"main/app/common/log"
 	"main/app/service/notification/dao/model"
 	"net/http"
@@ -37,56 +38,100 @@ func (l *GetNotificationInfoLogic) GetNotificationInfo(in *pb.GetNotificationInf
 	notificationIdsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
 		fmt.Sprintf("notification_%d_%d", in.UserId, in.MessageType)).Result()
 	if err == nil {
-		for _, notificationIdCache := range notificationIdsCache {
-			notificationIds = append(notificationIds, cast.ToInt64(notificationIdCache))
+		if len(notificationIdsCache) > 1 {
+			for _, notificationIdCache := range notificationIdsCache {
+				if notificationIdCache != "0" {
+					notificationIds = append(notificationIds, cast.ToInt64(notificationIdCache))
+				}
+			}
+			res = &pb.GetNotificationInfoRes{
+				Code: http.StatusOK,
+				Msg:  "get notification ids successfully",
+				Ok:   true,
+				Data: &pb.GetNotificationInfoRes_Data{NotificationIds: notificationIds},
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
 		}
 	} else {
 		logger.Errorf("get notification ids cache %d failed, err: %v", in.UserId, err)
+	}
 
-		notificationSubjectModel := l.svcCtx.NotificationModel.NotificationSubject
+	notificationSubjectModel := l.svcCtx.NotificationModel.NotificationSubject
 
-		notificationSubjects := make([]*model.NotificationSubject, 0)
-		if in.MessageType == 0 {
-			notificationSubjects, err = notificationSubjectModel.WithContext(l.ctx).
-				Select(notificationSubjectModel.UserID, notificationSubjectModel.ID).
-				Where(notificationSubjectModel.UserID.Eq(in.UserId)).
-				Find()
-			if err != nil {
-				logger.Errorf("get notification ids in mysql failed, err: %v", err)
-				res = &pb.GetNotificationInfoRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				logger.Debugf("send message: %v", res.String())
-				return res, nil
-			}
-		} else {
-			notificationSubjects, err = notificationSubjectModel.WithContext(l.ctx).
-				Select(notificationSubjectModel.UserID, notificationSubjectModel.MessageType, notificationSubjectModel.ID).
-				Where(notificationSubjectModel.UserID.Eq(in.UserId),
-					notificationSubjectModel.MessageType.Eq(in.MessageType)).
-				Find()
-			if err != nil {
-				logger.Errorf("get notification ids in mysql failed, err: %v", err)
-				res = &pb.GetNotificationInfoRes{
-					Code: http.StatusInternalServerError,
-					Msg:  "internal err",
-					Ok:   false,
-				}
-				logger.Debugf("send message: %v", res.String())
-				return res, nil
-			}
-		}
-		for _, notificationSubject := range notificationSubjects {
-			notificationIds = append(notificationIds, notificationSubject.ID)
+	notificationSubjects := make([]*model.NotificationSubject, 0)
+	if in.MessageType == 0 {
+		notificationSubjects, err = notificationSubjectModel.WithContext(l.ctx).
+			Select(notificationSubjectModel.UserID, notificationSubjectModel.ID).
+			Where(notificationSubjectModel.UserID.Eq(in.UserId)).
+			Find()
+		switch err {
+		case gorm.ErrRecordNotFound:
+			// 设置空缓存
 			l.svcCtx.Rdb.SAdd(l.ctx,
 				fmt.Sprintf("notification_%d_0", in.UserId),
-				notificationSubject.ID)
+				0)
+			res = &pb.GetNotificationInfoRes{
+				Code: http.StatusOK,
+				Msg:  "get notification ids successfully",
+				Ok:   true,
+				Data: &pb.GetNotificationInfoRes_Data{NotificationIds: nil},
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+
+		case nil:
+
+		default:
+			logger.Errorf("query [notification_subject] record failed ,err: %v", err)
+			res = &pb.GetNotificationInfoRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+	} else {
+		notificationSubjects, err = notificationSubjectModel.WithContext(l.ctx).
+			Select(notificationSubjectModel.UserID, notificationSubjectModel.MessageType, notificationSubjectModel.ID).
+			Where(notificationSubjectModel.UserID.Eq(in.UserId),
+				notificationSubjectModel.MessageType.Eq(in.MessageType)).
+			Find()
+		switch err {
+		case gorm.ErrRecordNotFound:
 			l.svcCtx.Rdb.SAdd(l.ctx,
 				fmt.Sprintf("notification_%d_%d", in.UserId, in.MessageType),
-				notificationSubject.ID)
+				0)
+			res = &pb.GetNotificationInfoRes{
+				Code: http.StatusOK,
+				Msg:  "get notification ids successfully",
+				Ok:   true,
+				Data: &pb.GetNotificationInfoRes_Data{NotificationIds: nil},
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+
+		case nil:
+
+		default:
+			logger.Errorf("query [notification_subject] record failed ,err: %v", err)
+			res = &pb.GetNotificationInfoRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
 		}
+	}
+
+	for _, notificationSubject := range notificationSubjects {
+		notificationIds = append(notificationIds, notificationSubject.ID)
+		l.svcCtx.Rdb.SAdd(l.ctx,
+			fmt.Sprintf("notification_%d_0", in.UserId),
+			notificationSubject.ID)
+		l.svcCtx.Rdb.SAdd(l.ctx,
+			fmt.Sprintf("notification_%d_%d", in.UserId, in.MessageType),
+			notificationSubject.ID)
 	}
 
 	res = &pb.GetNotificationInfoRes{

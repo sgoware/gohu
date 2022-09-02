@@ -76,9 +76,11 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 
 	// 设置用户所有的notification_id
 	l.svcCtx.Rdb.SAdd(l.ctx,
-		fmt.Sprintf("notification_%d_0", notificationSubject.UserID))
+		fmt.Sprintf("notification_%d_0", notificationSubject.UserID),
+		notificationSubject.ID)
 	l.svcCtx.Rdb.SAdd(l.ctx,
-		fmt.Sprintf("notification_%d_%d", notificationSubject.UserID, notificationSubject.MessageType))
+		fmt.Sprintf("notification_%d_%d", notificationSubject.UserID, notificationSubject.MessageType),
+		notificationSubject.ID)
 
 	notificationContent, err := notificationContentModel.WithContext(l.ctx).
 		Where(notificationContentModel.SubjectID.Eq(notificationSubject.ID),
