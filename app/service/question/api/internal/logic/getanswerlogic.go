@@ -25,7 +25,7 @@ func NewGetAnswerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAnsw
 }
 
 func (l *GetAnswerLogic) GetAnswer(req *types.GetAnswerReq) (resp *types.GetAnswerRes, err error) {
-	res, _ := l.svcCtx.InfoRpcClient.GetAnswer(l.ctx, &info.GetAnswerReq{AnswerId: req.Id})
+	res, _ := l.svcCtx.InfoRpcClient.GetAnswer(l.ctx, &info.GetAnswerReq{AnswerId: req.AnswerId})
 	return &types.GetAnswerRes{
 		Code: res.Code,
 		Msg:  res.Msg,
