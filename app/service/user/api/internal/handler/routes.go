@@ -36,7 +36,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/api/user/collection/:collectionType",
+					Path:    "/api/user/collection/:collection_type",
 					Handler: DoCollectionHandler(serverCtx),
 				},
 				{
@@ -46,7 +46,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/api/user/profile/:userId",
+					Path:    "/api/user/profile/:user_id",
 					Handler: GetPersonalInfoHandler(serverCtx),
 				},
 				{
@@ -56,7 +56,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/api/user/notification/:messageType",
+					Path:    "/api/user/notification/:message_type",
 					Handler: GetNotificationInfoHandler(serverCtx),
 				},
 				{
