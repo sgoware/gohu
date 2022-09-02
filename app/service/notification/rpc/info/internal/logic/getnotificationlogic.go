@@ -36,7 +36,15 @@ func (l *GetNotificationLogic) GetNotification(in *pb.GetNotificationReq) (res *
 
 	notificationSubjectBytes, err := l.svcCtx.Rdb.Get(l.ctx,
 		fmt.Sprintf("notification_subject_%d", in.NotificationId)).Bytes()
-	if err != nil {
+	if err == nil {
+		notificationSubjectProto := &pb.NotificationSubject{}
+		err = proto.Unmarshal(notificationSubjectBytes, notificationSubjectProto)
+		if err != nil {
+			logger.Errorf("unmarshal [notificationSubjectBytes] failed, err: %v", err)
+		}
+
+		resData.NotificationSubject = notificationSubjectProto
+	} else {
 		logger.Errorf("get [notification_subject] cache failed, err: %v", err)
 
 		notificationSubjectModel := l.svcCtx.NotificationModel.NotificationSubject
@@ -74,20 +82,26 @@ func (l *GetNotificationLogic) GetNotification(in *pb.GetNotificationReq) (res *
 				notificationSubjectBytes,
 				time.Second*86400)
 		}
-	} else {
-		notificationSubjectProto := &pb.NotificationSubject{}
-		err = proto.Unmarshal(notificationSubjectBytes, notificationSubjectProto)
-		if err != nil {
-			logger.Errorf("unmarshal [notificationSubjectBytes] failed, err: %v", err)
-		}
-
-		resData.NotificationSubject = notificationSubjectProto
 	}
 
 	notificationContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
 		fmt.Sprintf("notification_content_%d", in.NotificationId)).Bytes()
-	if err != nil {
-		logger.Errorf("get [notification_content] cache failed, err: %v")
+	if err == nil {
+		notificationContentProto := &pb.NotificationContent{}
+		err = proto.Unmarshal(notificationContentBytes, notificationContentProto)
+		if err != nil {
+			logger.Errorf("unmarshal [notificationContentProto] failed, err: %v", err)
+			res = &pb.GetNotificationRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+		resData.NotificationContent = notificationContentProto
+	} else {
+		logger.Errorf("get [notification_content] cache failed, err: %v", err)
 
 		notificationContentModel := l.svcCtx.NotificationModel.NotificationContent
 
@@ -126,19 +140,6 @@ func (l *GetNotificationLogic) GetNotification(in *pb.GetNotificationReq) (res *
 				fmt.Sprintf("notification_content_%d", notificationContent.SubjectID),
 				notificationContentBytes,
 				time.Second*86400)
-		}
-	} else {
-		notificationContentProto := &pb.NotificationContent{}
-		err = proto.Unmarshal(notificationContentBytes, notificationContentProto)
-		if err != nil {
-			logger.Errorf("unmarshal [notificationContentProto] failed, err: %v", err)
-			res = &pb.GetNotificationRes{
-				Code: http.StatusInternalServerError,
-				Msg:  "internal err",
-				Ok:   false,
-			}
-			logger.Debugf("send message: %v", err)
-			return res, nil
 		}
 	}
 
