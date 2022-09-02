@@ -117,7 +117,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		answerIndexBytes,
 		time.Second*86400)
 
-	// 发布消息-初始化评论模块
+	// 发布消息-初始化评论模块 TODO: 使用asynq
 	producer, err := nsq.GetProducer()
 	if err != nil {
 		logger.Errorf("get producer failed, err: %v", err)

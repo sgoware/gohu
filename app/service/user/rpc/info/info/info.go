@@ -16,6 +16,9 @@ type (
 	GetCollectionInfoReq        = pb.GetCollectionInfoReq
 	GetCollectionInfoRes        = pb.GetCollectionInfoRes
 	GetCollectionInfoRes_Data   = pb.GetCollectionInfoRes_Data
+	GetFollowerReq              = pb.GetFollowerReq
+	GetFollowerRes              = pb.GetFollowerRes
+	GetFollowerRes_Data         = pb.GetFollowerRes_Data
 	GetNotificationInfoReq      = pb.GetNotificationInfoReq
 	GetNotificationInfoRes      = pb.GetNotificationInfoRes
 	GetNotificationInfoRes_Data = pb.GetNotificationInfoRes_Data
@@ -31,6 +34,7 @@ type (
 		GetPersonalInfo(ctx context.Context, in *GetPersonalInfoReq, opts ...grpc.CallOption) (*GetPersonalInfoRes, error)
 		GetCollectionInfo(ctx context.Context, in *GetCollectionInfoReq, opts ...grpc.CallOption) (*GetCollectionInfoRes, error)
 		GetNotificationInfo(ctx context.Context, in *GetNotificationInfoReq, opts ...grpc.CallOption) (*GetNotificationInfoRes, error)
+		GetFollower(ctx context.Context, in *GetFollowerReq, opts ...grpc.CallOption) (*GetFollowerRes, error)
 	}
 
 	defaultInfo struct {
@@ -62,4 +66,9 @@ func (m *defaultInfo) GetCollectionInfo(ctx context.Context, in *GetCollectionIn
 func (m *defaultInfo) GetNotificationInfo(ctx context.Context, in *GetNotificationInfoReq, opts ...grpc.CallOption) (*GetNotificationInfoRes, error) {
 	client := pb.NewInfoClient(m.cli.Conn())
 	return client.GetNotificationInfo(ctx, in, opts...)
+}
+
+func (m *defaultInfo) GetFollower(ctx context.Context, in *GetFollowerReq, opts ...grpc.CallOption) (*GetFollowerRes, error) {
+	client := pb.NewInfoClient(m.cli.Conn())
+	return client.GetFollower(ctx, in, opts...)
 }

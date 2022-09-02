@@ -115,6 +115,19 @@ type (
 		Data GetNotificationInfoResData `json:"data"`
 	}
 
+	GetFollowerIdsReq {
+		UserId int64 `path:"user_id"`
+	}
+	GetFollowerIdsResData {
+		UserIds []int64 `json:"user_ids"`
+	}
+	GetFollowerIdsRes {
+		Code int32                 `json:"code"`
+		Msg  string                `json:"msg"`
+		Ok   bool                  `json:"ok"`
+		Data GetFollowerIdsResData `json:"data"`
+	}
+
 	VipUpgradeReq {
 	}
 	VipUpgradeResData {
@@ -171,6 +184,9 @@ service user {
 	
 	@handler GetNotificationInfo
 	get /api/user/notification/:message_type (GetNotificationInfoReq) returns (GetNotificationInfoRes)
+	
+	@handler GetFollowerIds
+	get /api/user/follower/:user_id (GetFollowerIdsReq) returns (GetFollowerIdsRes)
 	
 	@handler VipUpgrade
 	post /api/user/vip/upgrade (VipUpgradeReq) returns (VipUpgradeRes)

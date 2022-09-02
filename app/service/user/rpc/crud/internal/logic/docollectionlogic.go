@@ -159,6 +159,14 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 							logger.Debugf("send message: %v", err)
 							return res, nil
 						}
+						// 更新关注者缓存
+						err = l.svcCtx.Rdb.SAdd(l.ctx,
+							fmt.Sprintf("user_follower_member_%d", in.ObjId),
+							in.UserId).Err()
+						if err != nil {
+							logger.Errorf("update [user_follower_member] failed, err: %v", err)
+						}
+
 						res = &pb.DoCollectionRes{
 							Code: http.StatusOK,
 							Msg:  "follow user successfully",

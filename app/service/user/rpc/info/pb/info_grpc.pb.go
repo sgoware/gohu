@@ -26,6 +26,7 @@ type InfoClient interface {
 	GetPersonalInfo(ctx context.Context, in *GetPersonalInfoReq, opts ...grpc.CallOption) (*GetPersonalInfoRes, error)
 	GetCollectionInfo(ctx context.Context, in *GetCollectionInfoReq, opts ...grpc.CallOption) (*GetCollectionInfoRes, error)
 	GetNotificationInfo(ctx context.Context, in *GetNotificationInfoReq, opts ...grpc.CallOption) (*GetNotificationInfoRes, error)
+	GetFollower(ctx context.Context, in *GetFollowerReq, opts ...grpc.CallOption) (*GetFollowerRes, error)
 }
 
 type infoClient struct {
@@ -72,6 +73,15 @@ func (c *infoClient) GetNotificationInfo(ctx context.Context, in *GetNotificatio
 	return out, nil
 }
 
+func (c *infoClient) GetFollower(ctx context.Context, in *GetFollowerReq, opts ...grpc.CallOption) (*GetFollowerRes, error) {
+	out := new(GetFollowerRes)
+	err := c.cc.Invoke(ctx, "/info.Info/GetFollower", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InfoServer is the server API for Info service.
 // All implementations must embed UnimplementedInfoServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type InfoServer interface {
 	GetPersonalInfo(context.Context, *GetPersonalInfoReq) (*GetPersonalInfoRes, error)
 	GetCollectionInfo(context.Context, *GetCollectionInfoReq) (*GetCollectionInfoRes, error)
 	GetNotificationInfo(context.Context, *GetNotificationInfoReq) (*GetNotificationInfoRes, error)
+	GetFollower(context.Context, *GetFollowerReq) (*GetFollowerRes, error)
 	mustEmbedUnimplementedInfoServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedInfoServer) GetCollectionInfo(context.Context, *GetCollection
 }
 func (UnimplementedInfoServer) GetNotificationInfo(context.Context, *GetNotificationInfoReq) (*GetNotificationInfoRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNotificationInfo not implemented")
+}
+func (UnimplementedInfoServer) GetFollower(context.Context, *GetFollowerReq) (*GetFollowerRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFollower not implemented")
 }
 func (UnimplementedInfoServer) mustEmbedUnimplementedInfoServer() {}
 
@@ -184,6 +198,24 @@ func _Info_GetNotificationInfo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Info_GetFollower_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFollowerReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfoServer).GetFollower(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/info.Info/GetFollower",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfoServer).GetFollower(ctx, req.(*GetFollowerReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Info_ServiceDesc is the grpc.ServiceDesc for Info service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Info_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNotificationInfo",
 			Handler:    _Info_GetNotificationInfo_Handler,
+		},
+		{
+			MethodName: "GetFollower",
+			Handler:    _Info_GetFollower_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

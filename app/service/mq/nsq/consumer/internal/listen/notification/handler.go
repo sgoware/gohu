@@ -226,7 +226,8 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 			questionInfoRes := gjson.Parse(questionInfoResJson.String())
 			if !questionInfoRes.Get("ok").Bool() {
-				return fmt.Errorf("query question info failed, err: %v", questionInfoRes.Get("msg"))
+				return fmt.Errorf("query question info failed, err: %v",
+					questionInfoRes.Get("msg").String())
 			}
 
 			userInfoResJson, err := req.NewRequest().Get(
@@ -237,20 +238,39 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 			userInfoRes := gjson.Parse(userInfoResJson.String())
 			if !userInfoRes.Get("ok").Bool() {
-				return fmt.Errorf("query user info failed, err: %v", userInfoRes.Get("msg"))
+				return fmt.Errorf("query user info failed, err: %v",
+					userInfoRes.Get("msg").String())
 			}
 
-			rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
-				UserId:      questionInfoRes.Get("data.user_id").Int(),
-				MessageType: 4,
-				Title: fmt.Sprintf("你关注的用户 %s 提出了问题 %s",
-					userInfoRes.Get("data.nickname"),
-					questionInfoRes.Get("data.question_subject.title")),
-				Content: "",
-				Url:     fmt.Sprintf("https://%s/question/%s", m.Domain, data.ObjId),
-			})
-			if !rpcRes.Ok {
-				return fmt.Errorf("publish subscription notification failed, err: %v", err)
+			followerResJson, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/user/follower/%d",
+					m.Domain,
+					data.UserId))
+			if err != nil {
+				return fmt.Errorf("query followers failed, err: %v", err)
+			}
+
+			followersRes := gjson.Parse(followerResJson.String())
+			if !followersRes.Get("ok").Bool() {
+				return fmt.Errorf("query follower failed, err: %v",
+					followersRes.Get("msg").String())
+			}
+
+			followers := followersRes.Get("data.user_ids").Array()
+
+			for _, follower := range followers {
+				rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+					UserId:      follower.Int(),
+					MessageType: 4,
+					Title: fmt.Sprintf("你关注的用户 %s 提出了问题 %s",
+						userInfoRes.Get("data.nickname"),
+						questionInfoRes.Get("data.question_subject.title")),
+					Content: "",
+					Url:     fmt.Sprintf("https://%s/question/%s", m.Domain, data.ObjId),
+				})
+				if !rpcRes.Ok {
+					return fmt.Errorf("publish subscription notification failed, err: %v", err)
+				}
 			}
 
 		}

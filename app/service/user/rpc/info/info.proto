@@ -67,10 +67,24 @@ message GetNotificationInfoRes{
     }
 }
 
+message GetFollowerReq{
+    int64 user_id=1;
+}
+message GetFollowerRes{
+    int32 code=1;
+    string msg=2;
+    bool ok=3;
+    Data data=4;
+    message Data{
+        repeated int64 user_ids=1;
+    }
+}
 
 service Info{
     rpc GetObjInfo(GetObjInfoReq) returns(GetObjInfoRes);
     rpc GetPersonalInfo(GetPersonalInfoReq) returns(GetPersonalInfoRes);
     rpc GetCollectionInfo(GetCollectionInfoReq) returns(GetCollectionInfoRes);
     rpc GetNotificationInfo(GetNotificationInfoReq) returns(GetNotificationInfoRes);
+
+    rpc GetFollower(GetFollowerReq) returns(GetFollowerRes);
 }

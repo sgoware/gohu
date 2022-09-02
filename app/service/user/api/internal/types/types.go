@@ -121,6 +121,21 @@ type GetNotificationInfoRes struct {
 	Data GetNotificationInfoResData `json:"data"`
 }
 
+type GetFollowerIdsReq struct {
+	UserId int64 `path:"user_id"`
+}
+
+type GetFollowerIdsResData struct {
+	UserIds []int64 `json:"user_ids"`
+}
+
+type GetFollowerIdsRes struct {
+	Code int32                 `json:"code"`
+	Msg  string                `json:"msg"`
+	Ok   bool                  `json:"ok"`
+	Data GetFollowerIdsResData `json:"data"`
+}
+
 type VipUpgradeReq struct {
 }
 

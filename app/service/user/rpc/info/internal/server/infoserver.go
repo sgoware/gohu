@@ -41,3 +41,8 @@ func (s *InfoServer) GetNotificationInfo(ctx context.Context, in *pb.GetNotifica
 	l := logic.NewGetNotificationInfoLogic(ctx, s.svcCtx)
 	return l.GetNotificationInfo(in)
 }
+
+func (s *InfoServer) GetFollower(ctx context.Context, in *pb.GetFollowerReq) (*pb.GetFollowerRes, error) {
+	l := logic.NewGetFollowerLogic(ctx, s.svcCtx)
+	return l.GetFollower(in)
+}

@@ -60,6 +60,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: GetNotificationInfoHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodGet,
+					Path:    "/api/user/follower/:user_id",
+					Handler: GetFollowerIdsHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/api/user/vip/upgrade",
 					Handler: VipUpgradeHandler(serverCtx),
