@@ -83,7 +83,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("questionSubject_%d", questionSubject.ID),
+		fmt.Sprintf("question_subject_%d", questionSubject.ID),
 		bytes,
 		time.Second*86400)
 
@@ -121,7 +121,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("questionContent_%d", questionContent.QuestionID),
+		fmt.Sprintf("question_content_%d", questionContent.QuestionID),
 		bytes,
 		time.Second*86400)
 

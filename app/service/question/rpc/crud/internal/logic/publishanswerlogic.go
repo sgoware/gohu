@@ -10,6 +10,7 @@ import (
 	"main/app/common/log"
 	"main/app/common/mq/nsq"
 	commentMqProducer "main/app/service/comment/mq/producer"
+	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
 	modelpb "main/app/service/question/dao/pb"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
@@ -38,12 +39,14 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 
 	j := gjson.Parse(in.UserDetails)
 
+	userId := j.Get("user_id").Int()
+
 	answerIndexModel := l.svcCtx.QuestionModel.AnswerIndex
 	answerContentModel := l.svcCtx.QuestionModel.AnswerContent
 
 	_, err = answerIndexModel.WithContext(l.ctx).
 		Select(answerIndexModel.UserID, answerIndexModel.QuestionID).
-		Where(answerIndexModel.UserID.Eq(j.Get("user_id").Int()),
+		Where(answerIndexModel.UserID.Eq(userId),
 			answerIndexModel.QuestionID.Eq(in.QuestionId),
 		).
 		First()
@@ -175,6 +178,18 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		fmt.Sprintf("answer_content_%d", answerContent.AnswerID),
 		answerContentBytes,
 		time.Second*86400)
+
+	err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+		MessageType: 5,
+		Data: notificationMqProducer.AnswerData{
+			UserId:     userId,
+			QuestionId: in.QuestionId,
+			AnswerId:   answerIndex.ID,
+		},
+	})
+	if err != nil {
+		logger.Errorf("publish msg to nsq failed, err: %v", err)
+	}
 
 	res = &pb.PublishAnswerRes{
 		Code: http.StatusOK,
