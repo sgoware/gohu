@@ -77,15 +77,16 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 		switch data.ObjType {
 		case 1:
 			// 回答
-			answerRes, err := req.NewRequest().Get(fmt.Sprintf("%s/api/answer/%d",
-				m.Domain, data.ObjId))
+			answerRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https%s/api/answer/%d", m.Domain, data.ObjId))
 			if err != nil {
 				return fmt.Errorf("query answer info failed, %v", err)
 			}
 			answerJson := gjson.Parse(answerRes.String())
 
-			questionRes, err := req.NewRequest().Get(fmt.Sprintf("%s/api/question/%d",
-				m.Domain, answerJson.Get("data.answer_index.question_id").Int()))
+			questionRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/question/%d",
+					m.Domain, answerJson.Get("data.answer_index.question_id").Int()))
 			if err != nil {
 				return fmt.Errorf("query question info failed, %v", err)
 			}
@@ -145,7 +146,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 		if data.CommentId == 0 {
 			commentSubjectRes, err := req.NewRequest().Get(
-				fmt.Sprintf("%s/api/comment/subject/%d", m.Domain, data.SubjectId))
+				fmt.Sprintf("https://%s/api/comment/subject/%d", m.Domain, data.SubjectId))
 			if err != nil {
 				return fmt.Errorf("query comment subject failed, err: %v", err)
 			}
@@ -156,7 +157,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			case 1:
 				// 回答
 				answerRes, err := req.NewRequest().Get(
-					fmt.Sprintf("%s/api/question/answer/%d", m.Domain, objId))
+					fmt.Sprintf("https://%s/api/question/answer/%d", m.Domain, objId))
 				if err != nil {
 					return fmt.Errorf("query answer failed, err: %v", err)
 				}
@@ -165,7 +166,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 				questionId := answerJson.Get("data.answer_index.question_id").Int()
 
 				questionRes, err := req.NewRequest().Get(
-					fmt.Sprintf("%s/api/question/question/%d", m.Domain, questionId))
+					fmt.Sprintf("https://%s/api/question/question/%d", m.Domain, questionId))
 				if err != nil {
 					return fmt.Errorf("query question failed, err: %v", err)
 				}
@@ -173,7 +174,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 				questionTitle := questionJson.Get("data.question_subject.title").String()
 
 				userInfoRes, err := req.NewRequest().Get(
-					fmt.Sprintf("%s/api/user/profile/%d", m.Domain, data.UserId))
+					fmt.Sprintf("https://%s/api/user/profile/%d", m.Domain, data.UserId))
 				if err != nil {
 					return fmt.Errorf("query user info failed, err: %v", err)
 				}
