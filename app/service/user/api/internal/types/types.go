@@ -91,7 +91,7 @@ type GetPersonalInfoRes struct {
 }
 
 type GetCollectionInfoReq struct {
-	CollectionType int32 `json:"collection_type"`
+	CollectionType int32 `path:"collection_type"`
 }
 
 type GetCollectionInfoResData struct {

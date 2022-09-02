@@ -89,7 +89,7 @@ type (
 	}
 
 	GetCollectionInfoReq {
-		CollectionType int32 `json:"collection_type"`
+		CollectionType int32 `path:"collection_type"`
 	}
 	GetCollectionInfoResData {
 		ObjType []int32 `json:"obj_type"`
