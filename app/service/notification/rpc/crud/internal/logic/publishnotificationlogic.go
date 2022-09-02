@@ -117,7 +117,7 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("notificationContent_%d", notificationContent.SubjectID),
+		fmt.Sprintf("notification_content_%d", notificationContent.SubjectID),
 		notificationContentBytes,
 		time.Second*86400)
 
