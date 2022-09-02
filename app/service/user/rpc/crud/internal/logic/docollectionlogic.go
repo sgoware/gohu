@@ -110,7 +110,60 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 			} else {
 				if !ok {
 					// 不存在收藏的缓存, 则是创建操作
-					err = DoCollection(l.ctx, l.svcCtx, in)
+					err = createCollectionCache(l.ctx, l.svcCtx, in)
+
+					// 更新 user_subject 缓存
+					payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Id: in.ObjId, Follower: 1})
+					if err != nil {
+						logger.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
+
+					_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
+					if err != nil {
+						logger.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
+
+					// 关注者计数器+1, 队列调度器定时更新数据库
+					err = l.svcCtx.Rdb.SAdd(l.ctx,
+						"user_follower",
+						in.ObjId).Err()
+					if err != nil {
+						logger.Errorf("add [user_follower] member failed, err: %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
+					err = l.svcCtx.Rdb.Incr(l.ctx,
+						fmt.Sprintf("user_follower_%d", in.ObjId)).Err()
+					if err != nil {
+						logger.Errorf("increase [user_follower] failed, err: %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
+
 					if err != nil {
 						logger.Errorf("follow user failed, err: %v", err)
 						res = &pb.DoCollectionRes{
@@ -151,7 +204,58 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 					return res, nil
 				} else {
 					// 存在收藏的缓存, 则是删除操作
-					err = deleteCollection(l.ctx, l.svcCtx, in)
+					err = deleteCollectionCache(l.ctx, l.svcCtx, in)
+					// 更新 user_subject 缓存
+					payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Id: in.ObjId, Follower: -1})
+					if err != nil {
+						logger.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
+
+					_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
+					if err != nil {
+						logger.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
+
+					// 关注者计数器-1, 队列调度器定时更新数据库
+					err = l.svcCtx.Rdb.SRem(l.ctx,
+						"user_follower",
+						in.ObjId).Err()
+					if err != nil {
+						logger.Errorf("add [user_follower] member failed, err: %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
+					err = l.svcCtx.Rdb.Decr(l.ctx,
+						fmt.Sprintf("user_follower_%d", in.UserId)).Err()
+					if err != nil {
+						logger.Errorf("increase [user_follower] failed, err: %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
 					if err != nil {
 						logger.Errorf("unfollow user failed, err: %v", err)
 						res = &pb.DoCollectionRes{
@@ -159,6 +263,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 							Msg:  "internal err",
 							Ok:   false,
 						}
+						logger.Debugf("send message: %v", err)
 						return res, nil
 					}
 					res = &pb.DoCollectionRes{
@@ -188,7 +293,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 			}
 			if cnt == 0 {
 				// 不存在, 则是创建操作
-				err = DoCollection(l.ctx, l.svcCtx, in)
+				err = createCollectionCache(l.ctx, l.svcCtx, in)
 				if err != nil {
 					logger.Errorf("follow user failed, err: %v", err)
 					res = &pb.DoCollectionRes{
@@ -228,7 +333,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 				return res, nil
 			}
 			// 存在记录, 则是删除操作
-			err = deleteCollection(l.ctx, l.svcCtx, in)
+			err = deleteCollectionCache(l.ctx, l.svcCtx, in)
 			if err != nil {
 				logger.Errorf("unfollow user failed, err: %v", err)
 				res = &pb.DoCollectionRes{
@@ -250,7 +355,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 	return nil, nil
 }
 
-func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
+func createCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
 	// 更新 user_collect 缓存
 	err = svcCtx.Rdb.SAdd(ctx,
 		fmt.Sprintf("user_collect_%d_%d", in.UserId, in.CollectType),
@@ -259,44 +364,10 @@ func DoCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoColl
 		return fmt.Errorf("add [user_collect] cache member failed, %v", err)
 	}
 
-	switch in.CollectType {
-	case 4:
-		// 关注
-		switch in.ObjType {
-		case 1:
-			// 关注用户
-
-			// 更新 user_subject 缓存
-			payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Id: in.ObjId, Follower: 1})
-			if err != nil {
-				return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
-			}
-
-			_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
-			if err != nil {
-				return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
-			}
-
-			// 关注者计数器+1, 队列调度器定时更新数据库
-			err = svcCtx.Rdb.SAdd(ctx,
-				"user_follower",
-				in.ObjId).Err()
-			if err != nil {
-				return fmt.Errorf("add [user_follower] member failed, err: %v", err)
-			}
-			err = svcCtx.Rdb.Incr(ctx,
-				fmt.Sprintf("user_follower_%d", in.ObjId)).Err()
-			if err != nil {
-				return fmt.Errorf("increase [user_follower] failed, err: %v", err)
-			}
-		case 4:
-			// 关注问题
-		}
-	}
 	return nil
 }
 
-func deleteCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
+func deleteCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
 	// 更新 user_collect 缓存
 	err = svcCtx.Rdb.SRem(ctx,
 		fmt.Sprintf("user_collect_%d_%d", in.UserId, in.CollectType),
@@ -305,39 +376,5 @@ func deleteCollection(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.Do
 		return fmt.Errorf("delete [user_collect] cache member failed, %v", err)
 	}
 
-	switch in.CollectType {
-	case 4:
-		// 关注
-		switch in.ObjType {
-		case 1:
-			// 关注用户
-
-			// 更新 user_subject 缓存
-			payload, err := json.Marshal(&job.MsgAddUserSubjectCachePayload{Id: in.ObjId, Follower: -1})
-			if err != nil {
-				return fmt.Errorf("marshal [MsgAddUserSubjectCachePayload] failed, %v", err)
-			}
-
-			_, err = svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgAddUserSubjectCacheTask, payload))
-			if err != nil {
-				return fmt.Errorf("create [MsgAddUserSubjectCacheTask] insert queue failed, %v", err)
-			}
-
-			// 关注者计数器-1, 队列调度器定时更新数据库
-			err = svcCtx.Rdb.SRem(ctx,
-				"user_follower",
-				in.ObjId).Err()
-			if err != nil {
-				return fmt.Errorf("add [user_follower] member failed, err: %v", err)
-			}
-			err = svcCtx.Rdb.Decr(ctx,
-				fmt.Sprintf("user_follower_%d", in.UserId)).Err()
-			if err != nil {
-				return fmt.Errorf("increase [user_follower] failed, err: %v", err)
-			}
-		case 4:
-			// 关注问题
-		}
-	}
 	return nil
 }

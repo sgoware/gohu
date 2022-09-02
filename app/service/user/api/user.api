@@ -149,6 +149,8 @@ service user {
 	@handler Login
 	post /api/user/login (LoginReq) returns (LoginRes)
 	
+	@handler GetPersonalInfo
+	get /api/user/profile/:user_id (GetPersonalInfoReq) returns (GetPersonalInfoRes)
 }
 
 @server(
@@ -163,9 +165,6 @@ service user {
 	
 	@handler GetObjInfo
 	get /api/user/obj/:obj_type (GetObjInfoReq) returns (GetObjInfoRes)
-	
-	@handler GetPersonalInfo
-	get /api/user/profile/:user_id (GetPersonalInfoReq) returns (GetPersonalInfoRes)
 	
 	@handler GetCollectionInfo
 	get /api/user/collection (GetCollectionInfoReq) returns (GetCollectionInfoRes)

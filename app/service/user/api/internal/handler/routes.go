@@ -22,6 +22,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/api/user/login",
 				Handler: LoginHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/user/profile/:user_id",
+				Handler: GetPersonalInfoHandler(serverCtx),
+			},
 		},
 	)
 
@@ -43,11 +48,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/api/user/obj/:obj_type",
 					Handler: GetObjInfoHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/api/user/profile/:user_id",
-					Handler: GetPersonalInfoHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

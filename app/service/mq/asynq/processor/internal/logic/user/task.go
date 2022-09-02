@@ -393,6 +393,10 @@ func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context
 		if err != nil {
 			return fmt.Errorf("get [user_follower] cnt failed, err: %v", err)
 		}
+
+		l.Rdb.Del(ctx,
+			fmt.Sprintf("user_follwer_%s", member))
+
 		userSubject, err := userSubjectModel.WithContext(ctx).
 			Select(userSubjectModel.ID, userSubjectModel.Follower).
 			Where(userSubjectModel.ID.Eq(cast.ToInt64(member))).
