@@ -11,7 +11,7 @@ type PublishNotificationMessage struct {
 	Data        interface{} `json:"data"`
 }
 
-type SubscriptionData struct {
+type FollowerData struct {
 	UserId     int64 `json:"user_id"` // 被通知的用户
 	FollowerId int64 `json:"follower_id"`
 }
@@ -27,6 +27,14 @@ type CommentData struct {
 	UserId    int64 `json:"userId"`
 	SubjectId int64 `json:"subjectId"`
 	CommentId int64 `json:"commentId"`
+}
+
+type SubscriptionData struct {
+}
+
+type AnswerData struct {
+	UserId     int64 `json:"userId"`     // 回答者用户id
+	QuestionId int64 `json:"questionId"` // 回答的问题id
 }
 
 func PublishNotification(producer *nsq.Producer,

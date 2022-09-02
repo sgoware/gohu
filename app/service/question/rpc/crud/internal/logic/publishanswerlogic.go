@@ -110,7 +110,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("answerIndex_%d", answerIndex.ID),
+		fmt.Sprintf("answer_index_%d", answerIndex.ID),
 		answerIndexBytes,
 		time.Second*86400)
 
@@ -172,7 +172,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("answerContent_%d", answerContent.AnswerID),
+		fmt.Sprintf("answer_content_%d", answerContent.AnswerID),
 		answerContentBytes,
 		time.Second*86400)
 

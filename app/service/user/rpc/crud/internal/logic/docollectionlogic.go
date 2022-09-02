@@ -96,7 +96,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 						// 通知被关注的用户
 						err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
 							MessageType: 1,
-							Data:        notificationMqProducer.SubscriptionData{UserId: in.ObjId, FollowerId: in.UserId},
+							Data:        notificationMqProducer.FollowerData{UserId: in.ObjId, FollowerId: in.UserId},
 						})
 						if err != nil {
 							logger.Errorf("publish notificaion to nsq failed, %v", err)
@@ -282,7 +282,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 					// 通知用户被关注了
 					err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
 						MessageType: 1,
-						Data:        notificationMqProducer.SubscriptionData{UserId: in.ObjId, FollowerId: in.UserId},
+						Data:        notificationMqProducer.FollowerData{UserId: in.ObjId, FollowerId: in.UserId},
 					})
 					if err != nil {
 						logger.Errorf("publish notification info to nsq failed, %v", err)

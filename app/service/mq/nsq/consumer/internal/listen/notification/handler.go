@@ -1,4 +1,4 @@
-package user
+package notification
 
 import (
 	"context"
@@ -28,7 +28,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 	switch msg.MessageType {
 	case 1:
 		// 关注我的
-		data := &notificationMqProducer.SubscriptionData{}
+		data := &notificationMqProducer.FollowerData{}
 
 		bytesData, err := json.Marshal(msg.Data)
 		if err != nil {
@@ -202,12 +202,11 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 		}
 
 	case 4:
-		// 邀请
-		// TODO: 通知系统: 邀请回答
+		// 关注的人
 
 	case 5:
-		// 提到我的
-		// TODO: 通知系统: 评论中提到我的
+		// 问题回答
+
 	}
 	//msg := &questionMqProduce.AnswerSubjectMessage{}
 	//err = json.Unmarshal(nsqMsg.Body, &msg)
