@@ -154,19 +154,19 @@ service user {
 	post /api/user/nickname (ChangeNicknameReq) returns (ChangeNicknameRes)
 	
 	@handler DoCollection
-	post /api/user/collection/:collectionType (DoCollectionReq) returns (DoCollectionRes)
+	post /api/user/collection/:collection_type (DoCollectionReq) returns (DoCollectionRes)
 	
 	@handler GetObjInfo
 	get /api/user/obj/:obj_type (GetObjInfoReq) returns (GetObjInfoRes)
 	
 	@handler GetPersonalInfo
-	get /api/user/profile/:userId (GetPersonalInfoReq) returns (GetPersonalInfoRes)
+	get /api/user/profile/:user_id (GetPersonalInfoReq) returns (GetPersonalInfoRes)
 	
 	@handler GetCollectionInfo
 	get /api/user/collection (GetCollectionInfoReq) returns (GetCollectionInfoRes)
 	
 	@handler GetNotificationInfo
-	get /api/user/notification/:messageType (GetNotificationInfoReq) returns (GetNotificationInfoRes)
+	get /api/user/notification/:message_type (GetNotificationInfoReq) returns (GetNotificationInfoRes)
 	
 	@handler VipUpgrade
 	post /api/user/vip/upgrade (VipUpgradeReq) returns (VipUpgradeRes)
