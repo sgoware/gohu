@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"gorm.io/gorm"
 	"main/app/common/log"
 	"net/http"
@@ -29,6 +30,31 @@ func NewDeleteQuestionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 func (l *DeleteQuestionLogic) DeleteQuestion(in *pb.DeleteQuestionReq) (res *pb.DeleteQuestionRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
+
+	err = l.svcCtx.Rdb.Del(l.ctx,
+		fmt.Sprintf("question_subject_%d", in.QuestionId)).Err()
+	if err != nil {
+		logger.Errorf("delete [question_subject] cache failed, err: %v", err)
+		res = &pb.DeleteQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+	l.svcCtx.Rdb.Del(l.ctx,
+		fmt.Sprintf("question_content_%d", in.QuestionId))
+	if err != nil {
+		logger.Errorf("delete [question_subject] cache failed, err: %v", err)
+		res = &pb.DeleteQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
 
 	// 删除question_subject后, 级联删除关联的回答和回答下的评论
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject

@@ -2,11 +2,9 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
-	"github.com/hibiken/asynq"
+	"fmt"
 	"gorm.io/gorm"
 	"main/app/common/log"
-	"main/app/service/mq/asynq/processor/job"
 	"net/http"
 
 	"main/app/service/question/rpc/crud/internal/svc"
@@ -33,6 +31,31 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
+	err = l.svcCtx.Rdb.Del(l.ctx,
+		fmt.Sprintf("answer_index_%d", in.AnswerId)).Err()
+	if err != nil {
+		logger.Errorf("delete [question_subject] cache failed, err: %v", err)
+		res = &pb.DeleteAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+	l.svcCtx.Rdb.Del(l.ctx,
+		fmt.Sprintf("question_content_%d", in.AnswerId))
+	if err != nil {
+		logger.Errorf("delete [question_subject] cache failed, err: %v", err)
+		res = &pb.DeleteAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
 	// 删除answer_index后, 级联删除关联的回答内容和评论
 	answerIndexModel := l.svcCtx.QuestionModel.AnswerIndex
 
@@ -56,33 +79,6 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 			Ok:   false,
 		}
 		logger.Debugf("send message: %v", res.String())
-		return res, nil
-	}
-
-	payload, err := json.Marshal(&job.MsgCrudCommentSubjectPayload{
-		Action: 3,
-		Id:     in.AnswerId,
-	})
-	if err != nil {
-		logger.Errorf("marshal [MsgCrudCommentSubjectPayload] failed, err: %v", err)
-		res = &pb.DeleteAnswerRes{
-			Code: http.StatusInternalServerError,
-			Msg:  "internal err",
-			Ok:   false,
-		}
-		logger.Debugf("send message: %v", err)
-		return res, nil
-	}
-
-	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgCrudCommentSubjectTask, payload))
-	if err != nil {
-		logger.Errorf("create [MsgCrudCommentSubjectTask] insert queue failed, err: %v", err)
-		res = &pb.DeleteAnswerRes{
-			Code: http.StatusInternalServerError,
-			Msg:  "internal err",
-			Ok:   false,
-		}
-		logger.Debugf("send message: %v", err)
 		return res, nil
 	}
 

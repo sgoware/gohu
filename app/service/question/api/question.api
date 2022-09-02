@@ -101,8 +101,8 @@ service question {
 
 service question{
 	@handler GetQuestion
-	get /api/question/question/:questionId (GetQuestionReq) returns (GetQuestionRes)
+	get /api/question/question/:question_id (GetQuestionReq) returns (GetQuestionRes)
 	
 	@handler GetAnswer
-	get /api/question/answer/:answerId (GetAnswerReq) returns (GetAnswerRes)
+	get /api/question/answer/:answer_id (GetAnswerReq) returns (GetAnswerRes)
 }

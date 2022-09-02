@@ -27,12 +27,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/api/question/question/:questionId",
+				Path:    "/api/question/question/:question_id",
 				Handler: GetQuestionHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/api/question/answer/:answerId",
+				Path:    "/api/question/answer/:answer_id",
 				Handler: GetAnswerHandler(serverCtx),
 			},
 		},
