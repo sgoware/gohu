@@ -38,6 +38,7 @@ func (l *GetPersonalInfoLogic) GetPersonalInfo(in *pb.GetPersonalInfoReq) (res *
 	userSubjectBytes, err := l.svcCtx.Rdb.Get(l.ctx,
 		fmt.Sprintf("user_subject_%d", in.UserId)).Bytes()
 	if err == nil {
+		// 查找缓存成功
 		rpcResData := &pb.GetPersonalInfoRes_Data{}
 		err = proto.Unmarshal(userSubjectBytes, rpcResData)
 		if err != nil {
@@ -55,6 +56,7 @@ func (l *GetPersonalInfoLogic) GetPersonalInfo(in *pb.GetPersonalInfoReq) (res *
 	}
 	logger.Errorf("get [user_subject] cache failed, err: %v", err)
 
+	// 在数据库中查找
 	userSubjectModel := l.svcCtx.UserModel.UserSubject
 
 	userSubject, err := userSubjectModel.WithContext(l.ctx).
@@ -83,6 +85,8 @@ func (l *GetPersonalInfoLogic) GetPersonalInfo(in *pb.GetPersonalInfoReq) (res *
 		}
 		return res, nil
 	}
+
+	// 更新缓存
 	payload := &job.UserSubjectPayload{}
 	err = structx.SyncWithNoZero(*userSubject, payload)
 	if err != nil {
