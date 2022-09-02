@@ -2,13 +2,15 @@ package main
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/mq/asynq/processor/internal/config"
 	"main/app/service/mq/asynq/processor/internal/logic"
 	"main/app/service/mq/asynq/processor/internal/svc"
 	"os"
+
+	"github.com/zeromicro/go-zero/core/logx"
+	_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 )
 
 const mqName = "mq.asynq.processor"

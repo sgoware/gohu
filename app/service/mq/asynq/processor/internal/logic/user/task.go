@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
-	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/protobuf/proto"
 	apollo "main/app/common/config"
 	"main/app/common/log"
@@ -16,33 +15,31 @@ import (
 	"main/app/service/user/dao/model"
 	"main/app/service/user/dao/pb"
 	"main/app/service/user/dao/query"
-	"main/app/service/user/rpc/crud/crud"
 	"main/app/utils/structx"
 	"time"
 )
 
 type MsgCreateUserSubjectHandler struct {
-	UserCrudRpcClient crud.Crud
-	Rdb               *redis.Client
-	UserModel         *query.Query
+	Rdb       *redis.Client
+	UserModel *query.Query
 }
 
 type MsgUpdateUserSubjectRecordHandler struct {
-	UserCrudRpcClient crud.Crud
-	Rdb               *redis.Client
-	UserModel         *query.Query
+	Rdb       *redis.Client
+	UserModel *query.Query
 }
 
 type MsgUpdateUserSubjectCacheHandler struct {
-	svcCtx *svc.ServiceContext
+	Rdb *redis.Client
 }
 
 type MsgAddUserSubjectCacheHandler struct {
-	svcCtx *svc.ServiceContext
+	Rdb *redis.Client
 }
 
 type ScheduleUpdateUserSubjectRecordHandler struct {
-	svcCtx *svc.ServiceContext
+	Rdb       *redis.Client
+	UserModel *query.Query
 }
 
 func NewCreateUserSubjectRecordHandler(c config.Config) *MsgCreateUserSubjectHandler {
@@ -59,8 +56,6 @@ func NewCreateUserSubjectRecordHandler(c config.Config) *MsgCreateUserSubjectHan
 	}
 
 	return &MsgCreateUserSubjectHandler{
-		UserCrudRpcClient: crud.NewCrud(zrpc.MustNewClient(c.UserCrudRpcClientConf)),
-
 		Rdb: rdb,
 
 		UserModel: query.Use(userDB),
@@ -81,8 +76,6 @@ func NewUpdateUserSubjectRecordHandler(c config.Config) *MsgUpdateUserSubjectRec
 	}
 
 	return &MsgUpdateUserSubjectRecordHandler{
-		UserCrudRpcClient: crud.NewCrud(zrpc.MustNewClient(c.UserCrudRpcClientConf)),
-
 		Rdb: rdb,
 
 		UserModel: query.Use(userDB),
@@ -90,20 +83,40 @@ func NewUpdateUserSubjectRecordHandler(c config.Config) *MsgUpdateUserSubjectRec
 }
 
 func NewUpdateUserSubjectCacheHandler(svcCtx *svc.ServiceContext) *MsgUpdateUserSubjectCacheHandler {
+	logger := log.GetSugaredLogger()
+	rdb, err := apollo.GetRedisClient("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize redis failed, err: %v", err)
+	}
+
 	return &MsgUpdateUserSubjectCacheHandler{
-		svcCtx: svcCtx,
+		Rdb: rdb,
 	}
 }
 
 func NewMsgAddUserSubjectCacheHandler(svcCtx *svc.ServiceContext) *MsgAddUserSubjectCacheHandler {
+	logger := log.GetSugaredLogger()
+
+	rdb, err := apollo.GetRedisClient("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize redis failed, err: %v", err)
+	}
+
 	return &MsgAddUserSubjectCacheHandler{
-		svcCtx: svcCtx,
+		Rdb: rdb,
 	}
 }
 
 func NewScheduleUpdateUserSubjectRecordHandler(svcCtx *svc.ServiceContext) *ScheduleUpdateUserSubjectRecordHandler {
+	logger := log.GetSugaredLogger()
+
+	rdb, err := apollo.GetRedisClient("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize redis failed, err: %v", err)
+	}
+
 	return &ScheduleUpdateUserSubjectRecordHandler{
-		svcCtx: svcCtx,
+		Rdb: rdb,
 	}
 }
 
@@ -190,7 +203,7 @@ func (l *MsgUpdateUserSubjectCacheHandler) ProcessTask(ctx context.Context, task
 		return fmt.Errorf("unmarshal [MsgUpdateUserSubjectRecordPayload] failed, err: %v", err)
 	}
 
-	userSubjectBytes, err := l.svcCtx.Rdb.Get(ctx,
+	userSubjectBytes, err := l.Rdb.Get(ctx,
 		fmt.Sprintf("user_subject_%d", payload.Id)).Bytes()
 	if err != nil {
 		return fmt.Errorf("get [user_subject] cache failed, err: %v", err)
@@ -213,7 +226,7 @@ func (l *MsgUpdateUserSubjectCacheHandler) ProcessTask(ctx context.Context, task
 		return fmt.Errorf("marshal [userSubjectProto] failed, err: %v", err)
 	}
 
-	err = l.svcCtx.Rdb.Set(ctx,
+	err = l.Rdb.Set(ctx,
 		fmt.Sprintf("user_subject_%d", userSubjectProto.Id),
 		userSubjectBytes,
 		time.Second*86400).Err()
@@ -231,7 +244,7 @@ func (l *MsgAddUserSubjectCacheHandler) ProcessTask(ctx context.Context, task *a
 	}
 
 	// TODO: 待使用分布式锁, 防止脏读
-	userSubjectBytes, err := l.svcCtx.Rdb.Get(ctx,
+	userSubjectBytes, err := l.Rdb.Get(ctx,
 		fmt.Sprintf("user_subject_%d", payload.Id)).Bytes()
 	if err != nil {
 		return fmt.Errorf("get [user_subject] cache failed, err: %v", err)
@@ -255,7 +268,7 @@ func (l *MsgAddUserSubjectCacheHandler) ProcessTask(ctx context.Context, task *a
 		return fmt.Errorf("marshal [userSubjectProto] failed, err: %v", err)
 	}
 
-	err = l.svcCtx.Rdb.Set(ctx,
+	err = l.Rdb.Set(ctx,
 		fmt.Sprintf("user_subject_%d", userSubjectProto.Id),
 		userSubjectBytes,
 		time.Second*86400).Err()
