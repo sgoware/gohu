@@ -164,6 +164,9 @@ service user {
 	
 	@handler GetPersonalInfo
 	get /api/user/profile/:user_id (GetPersonalInfoReq) returns (GetPersonalInfoRes)
+	
+	@handler GetFollowerIds
+	get /api/user/follower/:user_id (GetFollowerIdsReq) returns (GetFollowerIdsRes)
 }
 
 @server(
@@ -184,9 +187,6 @@ service user {
 	
 	@handler GetNotificationInfo
 	get /api/user/notification/:message_type (GetNotificationInfoReq) returns (GetNotificationInfoRes)
-	
-	@handler GetFollowerIds
-	get /api/user/follower/:user_id (GetFollowerIdsReq) returns (GetFollowerIdsRes)
 	
 	@handler VipUpgrade
 	post /api/user/vip/upgrade (VipUpgradeReq) returns (VipUpgradeRes)

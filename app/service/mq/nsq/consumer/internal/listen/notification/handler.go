@@ -10,6 +10,7 @@ import (
 	"github.com/tidwall/gjson"
 	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
 	"main/app/service/notification/rpc/crud/crud"
+	"sync"
 )
 
 type PublishNotificationHandler struct {
@@ -258,21 +259,29 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 			followers := followersRes.Get("data.user_ids").Array()
 
+			wg := sync.WaitGroup{}
+
+			wg.Add(len(followers))
+
 			for _, follower := range followers {
-				rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
-					UserId:      follower.Int(),
-					MessageType: 4,
-					Title: fmt.Sprintf("你关注的用户 %s 提出了问题 %s",
-						userInfoRes.Get("data.nickname"),
-						questionInfoRes.Get("data.question_subject.title")),
-					Content: "",
-					Url:     fmt.Sprintf("https://%s/question/%d", m.Domain, data.ObjId),
-				})
-				if !rpcRes.Ok {
-					return fmt.Errorf("publish subscription notification failed, err: %v", err)
-				}
+				go func(follower gjson.Result) {
+					defer wg.Done()
+
+					_, _ = m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+						UserId:      follower.Int(),
+						MessageType: 4,
+						Title: fmt.Sprintf("你关注的用户 %s 提出了问题 %s",
+							userInfoRes.Get("data.nickname"),
+							questionInfoRes.Get("data.question_subject.title")),
+						Content: "",
+						Url:     fmt.Sprintf("https://%s/question/%d", m.Domain, data.ObjId),
+					})
+				}(follower)
 			}
 
+			wg.Wait()
+
+			return nil
 		}
 
 	case 5:

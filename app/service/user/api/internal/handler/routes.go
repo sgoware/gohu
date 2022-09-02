@@ -27,6 +27,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/api/user/profile/:user_id",
 				Handler: GetPersonalInfoHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/user/follower/:user_id",
+				Handler: GetFollowerIdsHandler(serverCtx),
+			},
 		},
 	)
 
@@ -58,11 +63,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/api/user/notification/:message_type",
 					Handler: GetNotificationInfoHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/api/user/follower/:user_id",
-					Handler: GetFollowerIdsHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

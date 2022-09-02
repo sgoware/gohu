@@ -2,13 +2,18 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 	"main/app/common/log"
 	"main/app/service/question/dao/model"
+	modelpb "main/app/service/question/dao/pb"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
 	"net/http"
+	"time"
 )
 
 type UpdateQuestionLogic struct {
@@ -28,6 +33,32 @@ func NewUpdateQuestionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 func (l *UpdateQuestionLogic) UpdateQuestion(in *pb.UpdateQuestionReq) (res *pb.UpdateQuestionRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
+
+	questionSubjectBytes, err := l.svcCtx.Rdb.Get(l.ctx,
+		fmt.Sprintf("question_subject_%d", in.QuestionId)).Bytes()
+	if err == nil {
+		questionSubjectProto := &modelpb.QuestionSubject{}
+		err = proto.Unmarshal(questionSubjectBytes, questionSubjectProto)
+		if err != nil {
+			logger.Errorf("unmarshal [questionSubjectProto] failed, err: %v", err)
+		} else {
+			questionSubjectProto.Tag = in.Tag
+			questionSubjectProto.Title = in.Title
+			questionSubjectProto.Topic = in.Topic
+		}
+	} else {
+		if err == redis.Nil {
+			err = l.svcCtx.Rdb.Set(l.ctx,
+				fmt.Sprintf("question_subject_%d", in.QuestionId),
+				0,
+				time.Second*86400).Err()
+			if err != nil {
+				logger.Errorf("set [question_subject] cache failed, err: %v", err)
+			}
+		} else {
+			logger.Errorf("get [question_subject] cache failed, err: %v", err)
+		}
+	}
 
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 	questionContentModel := l.svcCtx.QuestionModel.QuestionContent
