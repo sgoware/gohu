@@ -307,11 +307,6 @@ func (l *MsgAddUserSubjectCacheHandler) ProcessTask(ctx context.Context, task *a
 }
 
 func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
-	var payload job.ScheduleUpdateUserSubjectRecordPayload
-	if err = json.Unmarshal(task.Payload(), &payload); err != nil {
-		return fmt.Errorf("unmarshal [ScheduleUpdateUserSubjectRecordPayload] failed, err: %v", err)
-	}
-
 	members, err := l.Rdb.SMembers(ctx,
 		"user_follower").Result()
 	if err != nil {

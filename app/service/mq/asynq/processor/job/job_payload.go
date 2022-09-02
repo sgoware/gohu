@@ -31,9 +31,6 @@ type MsgAddUserSubjectCachePayload struct {
 	Follower int32 `json:"follower"`
 }
 
-type ScheduleUpdateUserSubjectRecordPayload struct {
-}
-
 type ScheduleUpdateQuestionRecordPayload struct {
 }
 
