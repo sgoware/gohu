@@ -1,13 +1,13 @@
 package config
 
 import (
-	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"main/app/common/mq/nsq"
 )
 
 type Config struct {
-	rest.RestConf
+	service.ServiceConf
 
 	NsqConsumerConf nsq.ConsumerConf
 
