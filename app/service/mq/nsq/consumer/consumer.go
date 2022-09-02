@@ -1,4 +1,4 @@
-package consumer
+package main
 
 import (
 	"github.com/zeromicro/go-zero/core/logx"
