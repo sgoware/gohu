@@ -83,6 +83,9 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	for _, userCollection := range userCollections {
 		res.Data.ObjType = append(res.Data.ObjType, userCollection.ObjType)
 		res.Data.ObjId = append(res.Data.ObjId, userCollection.ObjID)
+		l.svcCtx.Rdb.SAdd(l.ctx,
+			fmt.Sprintf("user_collect_%d_%d", in.UserId, in.CollectionType),
+			fmt.Sprintf("%d:%d", userCollection.ObjType, userCollection.ObjID))
 	}
 	logger.Debugf("send message: %v", res.String())
 	return res, nil

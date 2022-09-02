@@ -32,11 +32,15 @@ func (l *GetNotificationInfoLogic) GetNotificationInfo(in *pb.GetNotificationInf
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
+	var notificationIds []int64
+
 	notificationIdsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
 		fmt.Sprintf("notification_%d_%d", in.UserId, in.MessageType)).Result()
-
-	var notificationIds []int64
-	if err != nil {
+	if err == nil {
+		for _, notificationIdCache := range notificationIdsCache {
+			notificationIds = append(notificationIds, cast.ToInt64(notificationIdCache))
+		}
+	} else {
 		logger.Errorf("get notification ids cache %d failed, err: %v", in.UserId, err)
 
 		notificationSubjectModel := l.svcCtx.NotificationModel.NotificationSubject
@@ -76,10 +80,12 @@ func (l *GetNotificationInfoLogic) GetNotificationInfo(in *pb.GetNotificationInf
 		}
 		for _, notificationSubject := range notificationSubjects {
 			notificationIds = append(notificationIds, notificationSubject.ID)
-		}
-	} else {
-		for _, notificationIdCache := range notificationIdsCache {
-			notificationIds = append(notificationIds, cast.ToInt64(notificationIdCache))
+			l.svcCtx.Rdb.SAdd(l.ctx,
+				fmt.Sprintf("notification_%d_0", in.UserId),
+				notificationSubject.ID)
+			l.svcCtx.Rdb.SAdd(l.ctx,
+				fmt.Sprintf("notification_%d_%d", in.UserId, in.MessageType),
+				notificationSubject.ID)
 		}
 	}
 
