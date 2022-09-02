@@ -15,6 +15,9 @@ func SyncWithNoZero(src interface{}, dst interface{}) (err error) {
 		if vSrc.Field(i).IsZero() {
 			continue
 		}
+		if !tSrc.Field(i).IsExported() || !tDst.Field(i).IsExported() {
+			continue
+		}
 		if tSrc.Field(i).Type != tDst.Field(i).Type {
 			return fmt.Errorf("field: %s is not the same", tSrc.Field(i).Name)
 		}
