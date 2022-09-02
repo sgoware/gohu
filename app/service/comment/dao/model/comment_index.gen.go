@@ -12,7 +12,7 @@ const TableNameCommentIndex = "comment_index"
 
 // CommentIndex mapped from table <comment_index>
 type CommentIndex struct {
-	ID           int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 主键
+	ID           int64     `gorm:"column:id;primaryKey" json:"id"`                                // 主键
 	SubjectID    int64     `gorm:"column:subject_id;not null" json:"subject_id"`                  // 评论主题 id
 	UserID       int64     `gorm:"column:user_id;not null" json:"user_id"`                        // 评论者/回复者 id
 	IPLoc        string    `gorm:"column:ip_loc;not null" json:"ip_loc"`                          // 评论者/回复者 归属地

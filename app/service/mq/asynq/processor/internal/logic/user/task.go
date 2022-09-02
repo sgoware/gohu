@@ -198,26 +198,37 @@ func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asy
 		return fmt.Errorf("unmarshal [MsgCreateUserSubjectPayload] failed, err: %v", err)
 	}
 
+	idGenerator, err := apollo.NewIdGenerator("user.yaml")
+	if err != nil {
+		return fmt.Errorf("get idGenerator failed, err: %v", err)
+	}
+
+	userSubjectId := idGenerator.NewLong()
+
 	userSubjectModel := l.UserModel.UserSubject
 
-	userSubject, err := userSubjectModel.WithContext(ctx).
-		Where(userSubjectModel.Username.Eq(payload.Username),
-			userSubjectModel.Nickname.Eq(payload.Nickname),
-			userSubjectModel.Password.Eq(payload.Password),
-			userSubjectModel.CreateTime.Eq(payload.CreateTime),
-			userSubjectModel.UpdateTime.Eq(payload.UpdateTime)).
-		FirstOrCreate()
+	now := time.Now()
+
+	err = userSubjectModel.WithContext(ctx).
+		Create(&model.UserSubject{
+			ID:         userSubjectId,
+			Username:   payload.Username,
+			Password:   payload.Password,
+			Nickname:   payload.Nickname,
+			CreateTime: now,
+			UpdateTime: now,
+		})
 	if err != nil {
-		return fmt.Errorf("update [user_subject] record failed, err: %v", err)
+		return fmt.Errorf("create [user_subject] record failed, err: %v", err)
 	}
 
 	userSubjectProto := &pb.UserSubject{
-		Id:         userSubject.ID,
-		Username:   userSubject.Username,
-		Password:   userSubject.Password,
-		Nickname:   userSubject.Nickname,
-		CreateTime: userSubject.CreateTime.String(),
-		UpdateTime: userSubject.UpdateTime.String(),
+		Id:         userSubjectId,
+		Username:   payload.Username,
+		Password:   payload.Password,
+		Nickname:   payload.Nickname,
+		CreateTime: now.String(),
+		UpdateTime: now.String(),
 	}
 
 	userSubjectBytes, err := proto.Marshal(userSubjectProto)
@@ -226,7 +237,7 @@ func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asy
 	}
 
 	err = l.Rdb.Set(ctx,
-		fmt.Sprintf("user_subject_%d", userSubject.ID),
+		fmt.Sprintf("user_subject_%d", userSubjectId),
 		userSubjectBytes,
 		time.Second*86400).Err()
 	if err != nil {
@@ -234,8 +245,8 @@ func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asy
 	}
 
 	err = l.Rdb.Set(ctx,
-		fmt.Sprintf("user_login_%s", userSubject.Username),
-		fmt.Sprintf("%d:%s", userSubject.ID, userSubject.Password),
+		fmt.Sprintf("user_login_%d", userSubjectId),
+		fmt.Sprintf("%d:%s", userSubjectId, payload.Password),
 		time.Second*86400).Err()
 	if err != nil {
 		return fmt.Errorf("update [user_login] cache failed, err: %v", err)
@@ -444,8 +455,16 @@ func (l *ScheduleUpdateUserCollectRecordHandler) ProcessTask(ctx context.Context
 		objId := cast.ToInt64(output[4])
 		if output[0] == "0" {
 			// 创建操作
+			idGenerator, err := apollo.NewIdGenerator("user.yaml")
+			if err != nil {
+				return fmt.Errorf("get idGenerator failed, err: %v", err)
+			}
+
+			userCollectionId := idGenerator.NewLong()
+
 			err = userCollectionModel.WithContext(ctx).
 				Create(&model.UserCollection{
+					ID:          userCollectionId,
 					UserID:      userId,
 					CollectType: collectType,
 					ObjType:     objType,

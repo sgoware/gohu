@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/protobuf/proto"
+	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/notification/dao/model"
+	modelpb "main/app/service/notification/dao/pb"
 	"main/app/service/notification/rpc/crud/internal/svc"
 	"main/app/service/notification/rpc/crud/pb"
-	modelpb "main/app/service/question/dao/pb"
 	"net/http"
 	"time"
 
@@ -33,13 +34,31 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
+	idGenerator, err := apollo.NewIdGenerator("notification.yaml")
+	if err != nil {
+		logger.Errorf("get idGenerator failed, err: %v", err)
+		res = &pb.PublishNotificationRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
+
+	notificationSubjectId := idGenerator.NewLong()
+	nowTime := time.Now()
+
 	notificationSubjectModel := l.svcCtx.NotificationModel.NotificationSubject
 	notificationContentModel := l.svcCtx.NotificationModel.NotificationContent
 
 	err = notificationSubjectModel.WithContext(l.ctx).
 		Create(&model.NotificationSubject{
+			ID:          notificationSubjectId,
 			UserID:      in.UserId,
 			MessageType: in.MessageType,
+			CreateTime:  nowTime,
+			UpdateTime:  nowTime,
 		})
 	if err != nil {
 		logger.Errorf("publish notification failed, err: mysql err, %v", err)
@@ -52,17 +71,12 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 		return res, nil
 	}
 
-	notificationSubject, err := notificationSubjectModel.WithContext(l.ctx).
-		Where(notificationSubjectModel.UserID.Eq(in.UserId),
-			notificationSubjectModel.MessageType.Eq(in.MessageType)).
-		First()
-
 	notificationSubjectProto := &modelpb.NotificationSubject{
-		Id:          notificationSubject.ID,
-		UserId:      notificationSubject.UserID,
-		MessageType: notificationSubject.MessageType,
-		CreateTime:  notificationSubject.CreateTime.String(),
-		UpdateTime:  notificationSubject.UpdateTime.String(),
+		Id:          notificationSubjectId,
+		UserId:      in.UserId,
+		MessageType: in.MessageType,
+		CreateTime:  nowTime.String(),
+		UpdateTime:  nowTime.String(),
 	}
 	notificationSubjectBytes, err := proto.Marshal(notificationSubjectProto)
 	if err != nil {
@@ -77,24 +91,29 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 	}
 	// 设置缓存
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("notification_subject_%d", notificationSubject.ID),
+		fmt.Sprintf("notification_subject_%d", notificationSubjectId),
 		notificationSubjectBytes,
 		time.Second*86400)
 
 	// 设置用户所有的notification_id
 	l.svcCtx.Rdb.SAdd(l.ctx,
-		fmt.Sprintf("notification_%d_0", notificationSubject.UserID),
-		notificationSubject.ID)
+		fmt.Sprintf("notification_%d_0", in.UserId),
+		notificationSubjectId)
 	l.svcCtx.Rdb.SAdd(l.ctx,
-		fmt.Sprintf("notification_%d_%d", notificationSubject.UserID, notificationSubject.MessageType),
-		notificationSubject.ID)
+		fmt.Sprintf("notification_%d_%d", in.UserId, in.MessageType),
+		notificationSubjectId)
 
-	notificationContent, err := notificationContentModel.WithContext(l.ctx).
-		Where(notificationContentModel.SubjectID.Eq(notificationSubject.ID),
-			notificationContentModel.Title.Eq(in.Title),
-			notificationContentModel.Content.Eq(in.Content),
-			notificationContentModel.URL.Eq(in.Url)).
-		FirstOrCreate()
+	err = notificationContentModel.WithContext(l.ctx).
+		Create(&model.NotificationContent{
+			SubjectID:  notificationSubjectId,
+			Title:      in.Title,
+			Content:    in.Content,
+			URL:        in.Url,
+			Meta:       "",
+			Attrs:      0,
+			CreateTime: nowTime,
+			UpdateTime: nowTime,
+		})
 	if err != nil {
 		logger.Errorf("publish notification failed, err: mysql err, %v", err)
 		res = &pb.PublishNotificationRes{
@@ -106,13 +125,14 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 		return res, nil
 	}
 	notificationContentProto := &modelpb.NotificationContent{
-		SubjectId:  notificationContent.SubjectID,
-		Title:      notificationContent.Title,
-		Content:    notificationContent.Content,
-		Url:        notificationContent.URL,
-		Attrs:      notificationContent.Attrs,
-		CreateTime: notificationContent.CreateTime.String(),
-		UpdateTime: notificationContent.UpdateTime.String(),
+		SubjectId:  notificationSubjectId,
+		Title:      in.Title,
+		Content:    in.Content,
+		Url:        in.Url,
+		Meta:       "",
+		Attrs:      0,
+		CreateTime: nowTime.String(),
+		UpdateTime: nowTime.String(),
 	}
 	notificationContentBytes, err := proto.Marshal(notificationContentProto)
 	if err != nil {
@@ -126,7 +146,7 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("notification_content_%d", notificationContent.SubjectID),
+		fmt.Sprintf("notification_content_%d", notificationSubjectId),
 		notificationContentBytes,
 		time.Second*86400)
 

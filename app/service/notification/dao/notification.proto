@@ -15,7 +15,8 @@ message NotificationContent{
     string title=2;
     string content=3;
     string url=4;
-    int32 attrs=5;
-    string create_time=6;
-    string update_time=7;
+    string meta=5;
+    int32 attrs=6;
+    string create_time=7;
+    string update_time=8;
 }

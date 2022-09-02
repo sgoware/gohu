@@ -12,7 +12,7 @@ const TableNameCommentSubject = "comment_subject"
 
 // CommentSubject mapped from table <comment_subject>
 type CommentSubject struct {
-	ID         int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 主键
+	ID         int64     `gorm:"column:id;primaryKey" json:"id"`                                // 主键
 	ObjType    int32     `gorm:"column:obj_type;not null" json:"obj_type"`                      // 对象类型 (0-默认对象 1-回答 2-文章)
 	ObjID      int64     `gorm:"column:obj_id;not null" json:"obj_id"`                          // 对象 id
 	Count      int32     `gorm:"column:count;not null" json:"count"`                            // 评论+回复总数

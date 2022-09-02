@@ -12,7 +12,7 @@ const TableNameUserSubject = "user_subject"
 
 // UserSubject mapped from table <user_subject>
 type UserSubject struct {
-	ID         int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 主键
+	ID         int64     `gorm:"column:id;primaryKey" json:"id"`                                // 主键
 	Username   string    `gorm:"column:username;not null" json:"username"`                      // 用户名 (登陆用)
 	Password   string    `gorm:"column:password;not null" json:"password"`                      // 密码
 	Nickname   string    `gorm:"column:nickname;not null" json:"nickname"`                      // 昵称

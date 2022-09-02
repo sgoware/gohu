@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"github.com/yitter/idgenerator-go/idgen"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -40,6 +41,18 @@ func GetRedisClient(namespace string) (rdb *redis.Client, err error) {
 	}
 
 	return rdb, nil
+}
+
+func NewIdGenerator(namespace string) (idGenerator *idgen.DefaultIdGenerator, err error) {
+	if agolloClient == nil {
+		return nil, errEmptyConfigClient
+	}
+	options, err := agolloClient.newIdGeneratorOptions(namespace)
+	if err != nil {
+		return nil, fmt.Errorf("get options failed, %v", err)
+	}
+	idGenerator = idgen.NewDefaultIdGenerator(options)
+	return idGenerator, nil
 }
 
 // getMysqlDsn 返回 mysql DSN
@@ -89,4 +102,13 @@ func (c *Agollo) newRedisOptions(namespace string) (*redis.Options, error) {
 		Password: databaseViper.GetString(fmt.Sprintf("Redis.Server%d.Password", serverNum)),
 		DB:       v.GetInt("Database.Redis.DatabaseNum"), // 使用 redis 几号数据库
 	}, nil
+}
+
+func (c *Agollo) newIdGeneratorOptions(namespace string) (options *idgen.IdGeneratorOptions, err error) {
+	options = &idgen.IdGeneratorOptions{}
+	err = c.UnmarshalKey(namespace, "IdGeneratorOptions", options)
+	if err != nil {
+		return nil, err
+	}
+	return options, nil
 }

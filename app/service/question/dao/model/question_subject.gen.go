@@ -12,7 +12,7 @@ const TableNameQuestionSubject = "question_subject"
 
 // QuestionSubject mapped from table <question_subject>
 type QuestionSubject struct {
-	ID          int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 主键
+	ID          int64     `gorm:"column:id;primaryKey" json:"id"`                                // 主键
 	UserID      int64     `gorm:"column:user_id;not null" json:"user_id"`                        // 提问者 id
 	IPLoc       string    `gorm:"column:ip_loc;not null" json:"ip_loc"`                          // 提问者 IP 归属地
 	Title       string    `gorm:"column:title;not null" json:"title"`                            // 问题标题

@@ -12,7 +12,7 @@ const TableNameAnswerIndex = "answer_index"
 
 // AnswerIndex mapped from table <answer_index>
 type AnswerIndex struct {
-	ID           int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`             // 主键
+	ID           int64     `gorm:"column:id;primaryKey" json:"id"`                                // 主键
 	QuestionID   int64     `gorm:"column:question_id;not null" json:"question_id"`                // 问题 id
 	UserID       int64     `gorm:"column:user_id;not null" json:"user_id"`                        // 回答者 id
 	IPLoc        string    `gorm:"column:ip_loc;not null" json:"ip_loc"`                          // 回答者 IP 归属地
