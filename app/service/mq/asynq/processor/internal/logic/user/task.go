@@ -380,7 +380,7 @@ func (l *MsgAddUserSubjectCacheHandler) ProcessTask(ctx context.Context, task *a
 
 func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context, _ *asynq.Task) (err error) {
 	members, err := l.Rdb.SMembers(ctx,
-		"user_follower").Result()
+		"user_follower_cnt_set").Result()
 	if err != nil {
 		return fmt.Errorf("get [user_follower] member failed, err: %v", err)
 	}
@@ -390,13 +390,13 @@ func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context
 	userSubjectModel := l.UserModel.UserSubject
 	for _, member := range members {
 		followerCount, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("user_follower_%s", member)).Int()
+			fmt.Sprintf("user_follower_cnt_%s", member)).Int()
 		if err != nil {
 			return fmt.Errorf("get [user_follower] cnt failed, err: %v", err)
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("user_follower_%s", member)).Err()
+			fmt.Sprintf("user_follower_cnt_%s", member)).Err()
 		if err != nil {
 			return fmt.Errorf("del [user_follower] cnt failed, err: %v", err)
 		}
@@ -428,7 +428,7 @@ func (l *MsgUpdateUserCollectCacheHandler) ProcessTask(ctx context.Context, task
 func (l *ScheduleUpdateUserCollectRecordHandler) ProcessTask(ctx context.Context, _ *asynq.Task) (err error) {
 	userCollectionModel := l.UserModel.UserCollection
 	for {
-		cmd, err := l.Rdb.RPop(ctx, "user_collect").Result()
+		cmd, err := l.Rdb.RPop(ctx, "user_collection_list").Result()
 		switch err {
 		case redis.Nil:
 			return nil

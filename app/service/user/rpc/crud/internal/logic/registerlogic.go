@@ -50,11 +50,11 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 	}
 
 	ok, err := l.svcCtx.Rdb.SIsMember(l.ctx,
-		"user_register",
+		"user_register_set",
 		in.Username).Result()
 	if err == nil {
 		if !ok {
-			logger.Debugf("[user_register] cache not found")
+			logger.Debugf("[user_register_set] cache not found")
 		} else {
 			res = &crud.RegisterRes{
 				Code: http.StatusForbidden,
@@ -65,7 +65,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 			return res, nil
 		}
 	} else {
-		logger.Errorf("get [user_register] cache member failed, err: %v", err)
+		logger.Errorf("get [user_register_set] cache member failed, err: %v", err)
 	}
 
 	// 获取注册缓存失败, 看看数据库里有没有
@@ -95,7 +95,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (res *pb.RegisterRes, err e
 
 			// 添加注册缓存
 			err = l.svcCtx.Rdb.SAdd(l.ctx,
-				"user_register",
+				"user_register_set",
 				in.Username).Err()
 			if err != nil {
 				logger.Errorf("update user register cache failed, err: %v", err)

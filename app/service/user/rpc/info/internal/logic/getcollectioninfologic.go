@@ -31,7 +31,7 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	logger.Debugf("recv message: %v", in.String())
 
 	userCollectionsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
-		fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType)).Result()
+		fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType)).Result()
 	if err == nil {
 		if len(userCollectionsCache) > 1 {
 			objIds := make([]int64, 0)
@@ -55,7 +55,7 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	logger.Errorf("get [user_collect] cache failed, err: %v", err)
 
 	l.svcCtx.Rdb.SAdd(l.ctx,
-		fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType),
+		fmt.Sprintf("user_collect__set_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType),
 		0)
 
 	userCollectModel := l.svcCtx.UserModel.UserCollection
@@ -86,7 +86,7 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	for _, userCollection := range userCollections {
 		res.Data.ObjId = append(res.Data.ObjId, userCollection.ObjID)
 		l.svcCtx.Rdb.SAdd(l.ctx,
-			fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType),
+			fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType),
 			userCollection.ObjID)
 	}
 	logger.Debugf("send message: %v", res.String())

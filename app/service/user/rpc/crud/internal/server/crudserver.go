@@ -41,8 +41,3 @@ func (s *CrudServer) ChangeNickName(ctx context.Context, in *pb.ChangeNicknameRe
 	l := logic.NewChangeNickNameLogic(ctx, s.svcCtx)
 	return l.ChangeNickName(in)
 }
-
-func (s *CrudServer) ChangeFollower(ctx context.Context, in *pb.ChangeFollowerReq) (*pb.ChangeFollowerRes, error) {
-	l := logic.NewChangeFollowerLogic(ctx, s.svcCtx)
-	return l.ChangeFollower(in)
-}

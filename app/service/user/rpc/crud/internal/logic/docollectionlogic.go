@@ -83,7 +83,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 		case 4:
 			// 关注
 			ok, err := l.svcCtx.Rdb.SIsMember(l.ctx,
-				fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, 4, in.ObjType),
+				fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, 4, in.ObjType),
 				in.ObjId).Result()
 			if err == nil {
 				if !ok {
@@ -135,7 +135,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 
 						// 关注者计数器+1, 队列调度器定时更新数据库
 						err = l.svcCtx.Rdb.SAdd(l.ctx,
-							"user_follower",
+							"user_follower_cnt_set",
 							in.ObjId).Err()
 						if err != nil {
 							logger.Errorf("add [user_follower] member failed, err: %v", err)
@@ -148,7 +148,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 							return res, nil
 						}
 						err = l.svcCtx.Rdb.Incr(l.ctx,
-							fmt.Sprintf("user_follower_%d", in.ObjId)).Err()
+							fmt.Sprintf("user_follower_cnt_%d", in.ObjId)).Err()
 						if err != nil {
 							logger.Errorf("increase [user_follower] failed, err: %v", err)
 							res = &pb.DoCollectionRes{
@@ -209,7 +209,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 
 						// 关注者计数器-1, 队列调度器定时更新数据库
 						err = l.svcCtx.Rdb.SRem(l.ctx,
-							"user_follower",
+							"user_follower_cnt_set",
 							in.ObjId).Err()
 						if err != nil {
 							logger.Errorf("add [user_follower] member failed, err: %v", err)
@@ -222,7 +222,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 							return res, nil
 						}
 						err = l.svcCtx.Rdb.Decr(l.ctx,
-							fmt.Sprintf("user_follower_%d", in.UserId)).Err()
+							fmt.Sprintf("user_follower_cnt_%d", in.UserId)).Err()
 						if err != nil {
 							logger.Errorf("increase [user_follower] failed, err: %v", err)
 							res = &pb.DoCollectionRes{
@@ -338,14 +338,14 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 func createCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
 	// 更新 user_collect 缓存
 	err = svcCtx.Rdb.SAdd(ctx,
-		fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectType, in.ObjType),
+		fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, in.CollectType, in.ObjType),
 		in.ObjId).Err()
 	if err != nil {
 		return fmt.Errorf("add [user_collect] cache member failed, %v", err)
 	}
 
 	err = svcCtx.Rdb.LPush(ctx,
-		"user_collect",
+		"user_collection_list",
 		fmt.Sprintf("0_%d_%d_%d_%d", in.UserId, in.CollectType, in.ObjType, in.ObjId)).Err()
 	if err != nil {
 		return fmt.Errorf("push [user_collect] cache failed, %v", err)
@@ -357,14 +357,14 @@ func createCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *
 func deleteCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
 	// 更新 user_collect 缓存
 	err = svcCtx.Rdb.SRem(ctx,
-		fmt.Sprintf("user_collect_%d_%d_%d", in.UserId, in.CollectType, in.ObjType),
+		fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, in.CollectType, in.ObjType),
 	).Err()
 	if err != nil {
 		return fmt.Errorf("delete [user_collect] cache member failed, %v", err)
 	}
 
 	err = svcCtx.Rdb.LPush(ctx,
-		"user_collect",
+		"user_collection_list",
 		fmt.Sprintf("1_%d_%d_%d_%d", in.UserId, in.CollectType, in.ObjType, in.ObjId)).Err()
 	if err != nil {
 		return fmt.Errorf("push [user_collect] cache failed, %v", err)
