@@ -12,7 +12,7 @@
 
 ### 认证系统
 
-- 颁发 ``oauth2 token`  (包含 `access token` 和 `refresh token`)
+- 颁发 `oauth2 token`  (包含 `access token` 和 `refresh token`)
 - 对令牌进行解析获取认证信息与用户信息
 
 ### 用户系统
