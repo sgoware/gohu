@@ -141,8 +141,15 @@ func NewScheduleUpdateUserSubjectRecordHandler(c config.Config) *ScheduleUpdateU
 		logger.Fatalf("initialize redis failed, err: %v", err)
 	}
 
+	userDB, err := apollo.GetMysqlDB("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize user mysql failed, err: %v", err)
+	}
+
 	return &ScheduleUpdateUserSubjectRecordHandler{
 		Rdb: rdb,
+
+		UserModel: query.Use(userDB),
 	}
 }
 
@@ -380,7 +387,6 @@ func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context
 		fmt.Sprintf("user_follower"))
 
 	userSubjectModel := l.UserModel.UserSubject
-	return fmt.Errorf("eee")
 	for _, member := range members {
 		followerCount, err := l.Rdb.Get(ctx,
 			fmt.Sprintf("user_follower_%s", member)).Int()
