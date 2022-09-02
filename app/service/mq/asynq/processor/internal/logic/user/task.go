@@ -30,7 +30,8 @@ type MsgUpdateUserSubjectRecordHandler struct {
 }
 
 type MsgUpdateUserSubjectCacheHandler struct {
-	Rdb *redis.Client
+	Rdb       *redis.Client
+	UserModel *query.Query
 }
 
 type MsgAddUserSubjectCacheHandler struct {
@@ -89,8 +90,15 @@ func NewUpdateUserSubjectCacheHandler(c config.Config) *MsgUpdateUserSubjectCach
 		logger.Fatalf("initialize redis failed, err: %v", err)
 	}
 
+	userDB, err := apollo.GetMysqlDB("user.yaml")
+	if err != nil {
+		logger.Fatalf("initialize user mysql failed, err: %v", err)
+	}
+
 	return &MsgUpdateUserSubjectCacheHandler{
 		Rdb: rdb,
+
+		UserModel: query.Use(userDB),
 	}
 }
 
@@ -203,17 +211,36 @@ func (l *MsgUpdateUserSubjectCacheHandler) ProcessTask(ctx context.Context, task
 		return fmt.Errorf("unmarshal [UserSubjectPayload] failed, err: %v", err)
 	}
 
-	userSubjectBytes, err := l.Rdb.Get(ctx,
-		fmt.Sprintf("user_subject_%d", payload.Id)).Bytes()
-	if err != nil {
-		return fmt.Errorf("get [user_subject] cache failed, err: %v", err)
-	}
-
 	userSubjectProto := &pb.UserSubject{}
 
-	err = proto.Unmarshal(userSubjectBytes, userSubjectProto)
-	if err != nil {
-		return fmt.Errorf("unmarshal [userSubjectProto] failed, err: %v", err)
+	userSubjectBytes, err := l.Rdb.Get(ctx,
+		fmt.Sprintf("user_subject_%d", payload.Id)).Bytes()
+	switch err {
+	case redis.Nil:
+		// 没有缓存, 查找数据库更新缓存
+		userModelSubject := l.UserModel.UserSubject
+		userSubject, err := userModelSubject.WithContext(ctx).
+			Where(userModelSubject.ID.Eq(payload.Id)).
+			First()
+		if err != nil {
+			return fmt.Errorf("query [user_subject] record failed, err: %v", err)
+		}
+		userSubjectProto = &pb.UserSubject{}
+		err = structx.SyncWithNoZero(*userSubject, userSubjectProto)
+		if err != nil {
+			return fmt.Errorf("sync struct [userSubjectProto] failed, err: %v", err)
+		}
+
+	case nil:
+		err = proto.Unmarshal(userSubjectBytes, userSubjectProto)
+		if err != nil {
+			return fmt.Errorf("unmarshal [userSubjectProto] failed, err: %v", err)
+		}
+
+	default:
+		if err != nil {
+			return fmt.Errorf("get [user_subject] cache failed, err: %v", err)
+		}
 	}
 
 	err = structx.SyncWithNoZero(payload, userSubjectProto)
