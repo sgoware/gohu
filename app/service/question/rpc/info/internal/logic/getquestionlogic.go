@@ -35,7 +35,7 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 	resData := &pb.GetQuestionRes_Data{}
 
 	questionSubjectBytes, err := l.svcCtx.Rdb.Get(l.ctx,
-		fmt.Sprintf("questionSubject_%d", in.QuestionId)).Bytes()
+		fmt.Sprintf("question_subject_%d", in.QuestionId)).Bytes()
 	if err != nil {
 		logger.Errorf("get questionSubject cache failed, err: %v", err)
 
@@ -78,7 +78,7 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 			logger.Errorf("marshal proto failed, err: %v", err)
 		} else {
 			l.svcCtx.Rdb.Set(l.ctx,
-				fmt.Sprintf("questionSubject_%d", questionSubject.ID),
+				fmt.Sprintf("question_subject_%d", questionSubject.ID),
 				questionSubjectBytes,
 				time.Second*86400)
 		}
@@ -99,7 +99,7 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 	}
 
 	questionContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
-		fmt.Sprintf("questionContent_%d", in.QuestionId)).Bytes()
+		fmt.Sprintf("question_content_%d", in.QuestionId)).Bytes()
 	if err != nil {
 		logger.Errorf("get questionContent cache failed, err: %v", err)
 
@@ -134,7 +134,7 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 			logger.Errorf("marshal proto failed, err: %v", err)
 		} else {
 			l.svcCtx.Rdb.Set(l.ctx,
-				fmt.Sprintf("questionContent_%d", questionContent.QuestionID),
+				fmt.Sprintf("question_content_%d", questionContent.QuestionID),
 				questionContentBytes,
 				time.Second*86400)
 		}
