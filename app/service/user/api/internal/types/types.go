@@ -71,11 +71,16 @@ type GetPersonalInfoReq struct {
 }
 
 type GetPersonalInfoResData struct {
-	Username string `json:"username"`
-	Nickname string `json:"nickname"`
-	Email    string `json:"email"`
-	Phone    string `json:"phone"`
-	Vip      int32  `json:"vip"`
+	Username   string `json:"username"`
+	Nickname   string `json:"nickname"`
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
+	LastIp     string `json:"last_ip"`
+	Vip        int32  `json:"vip"`
+	Follower   int32  `json:"follower"`
+	State      int32  `json:"state"`
+	CreateTime string `json:"create_time"`
+	UpdateTime string `json:"update_time"`
 }
 
 type GetPersonalInfoRes struct {
