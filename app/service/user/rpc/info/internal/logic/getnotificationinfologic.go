@@ -62,7 +62,7 @@ func (l *GetNotificationInfoLogic) GetNotificationInfo(in *pb.GetNotificationInf
 	notificationSubjects := make([]*model.NotificationSubject, 0)
 	if in.MessageType == 0 {
 		notificationSubjects, err = notificationSubjectModel.WithContext(l.ctx).
-			Select(notificationSubjectModel.UserID, notificationSubjectModel.ID).
+			Select(notificationSubjectModel.UserID, notificationSubjectModel.ID, notificationSubjectModel.MessageType).
 			Where(notificationSubjectModel.UserID.Eq(in.UserId)).
 			Find()
 		switch err {
