@@ -7,6 +7,50 @@ info(
 )
 
 type (
+	QuestionSubject {
+		Id          int64  `json:"id"`
+		UserId      int64  `json:"user_id"`
+		IpLoc       string `json:"ip_loc"`
+		Title       string `json:"title"`
+		Topic       string `json:"topic"`
+		Tag         string `json:"tag"`
+		SubCount    int32  `json:"sub_count"`
+		AnswerCount int32  `json:"answer_count"`
+		ViewCount   int64  `json:"view_count"`
+		State       int32  `json:"state"`
+		Attr        int32  `json:"attr"`
+		CreateTime  string `json:"create_time"`
+		UpdateTime  string `json:"update_time"`
+	}
+	QuestionContent {
+		QuestionId int64  `json:"question_id"`
+		Content    string `json:"content"`
+		Meta       string `json:"meta"`
+		CreateTime string `json:"create_time"`
+		UpdateTime string `json:"update_time"`
+	}
+
+	AnswerIndex {
+		Id           int64  `json:"id"`
+		QuestionId   int64  `json:"question_id"`
+		UserId       int64  `json:"user_id"`
+		IpLoc        string `json:"ip_loc"`
+		ApproveCount int32  `json:"approve_count"`
+		LikeCount    int32  `json:"like_count"`
+		CollectCount int32  `json:"collect_count"`
+		State        int32  `json:"state"`
+		Attrs        int32  `json:"attrs"`
+		CreateTime   string `json:"create_time"`
+		UpdateTime   string `json:"update_time"`
+	}
+	AnswerContent {
+		AnswerId   int64  `json:"answer_id"`
+		Content    string `json:"content"`
+		Meta       string `json:"meta"`
+		CreateTime string `json:"create_time"`
+		UpdateTime string `json:"update_time"`
+	}
+
 	CrudReq {
 		Object string `form:"object"`
 		Action string `form:"action"`
@@ -21,21 +65,29 @@ type (
 	GetQuestionReq {
 		Id int64 `path:"question_id"`
 	}
+	GetQuestionResData {
+		QuestionSubject QuestionSubject `json:"question_subject"`
+		QuestionContent QuestionContent `json:"question_content"`
+	}
 	GetQuestionRes {
-		Code int32  `json:"code"`
-		Msg  string `json:"msg"`
-		Ok   bool   `json:"ok"`
-		Data string `json:"data"`
+		Code int32              `json:"code"`
+		Msg  string             `json:"msg"`
+		Ok   bool               `json:"ok"`
+		Data GetQuestionResData `json:"data"`
 	}
 
 	GetAnswerReq {
 		Id int64 `path:"id"`
 	}
+	GetAnswerResData {
+		AnswerIndex   AnswerIndex   `json:"answer_index"`
+		AnswerContent AnswerContent `json:"answer_content"`
+	}
 	GetAnswerRes {
-		Code int32  `json:"code"`
-		Msg  string `json:"msg"`
-		Ok   bool   `json:"ok"`
-		Data string `json:"data"`
+		Code int32            `json:"code"`
+		Msg  string           `json:"msg"`
+		Ok   bool             `json:"ok"`
+		Data GetAnswerResData `json:"data"`
 	}
 )
 

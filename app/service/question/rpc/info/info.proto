@@ -13,8 +13,9 @@ message QuestionSubject{
     int32 answer_count=8;
     int64 view_count=9;
     int32 state=10;
-    string create_time=11;
-    string update_time=12;
+    int32 attr=11;
+    string create_time=12;
+    string update_time=13;
 }
 message QuestionContent{
     int64 question_id=1;

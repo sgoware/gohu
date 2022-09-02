@@ -203,9 +203,109 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 	case 4:
 		// 关注的人
+		data := &notificationMqProducer.SubscriptionData{}
+
+		bytesData, err := json.Marshal(msg.Data)
+		if err != nil {
+			return fmt.Errorf("marshal msg data failed, %v", err)
+		}
+
+		err = json.Unmarshal(bytesData, &data)
+		if err != nil {
+			return fmt.Errorf("unmarshal msg data failed, %v", err)
+		}
+
+		switch data.ObjType {
+		case 1:
+			// 发布问题
+			questionInfoResJson, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/question/question/%s", m.Domain, data.ObjId))
+			if err != nil {
+				return fmt.Errorf("query question info failed, err: %v", err)
+			}
+
+			questionInfoRes := gjson.Parse(questionInfoResJson.String())
+			if !questionInfoRes.Get("ok").Bool() {
+				return fmt.Errorf("query question info failed, err: %v", questionInfoRes.Get("msg"))
+			}
+
+			userInfoResJson, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/user/profile/%s", m.Domain, cast.ToString(data.UserId)))
+			if err != nil {
+				return fmt.Errorf("query user info failed, err: %v", err)
+			}
+
+			userInfoRes := gjson.Parse(userInfoResJson.String())
+			if !userInfoRes.Get("ok").Bool() {
+				return fmt.Errorf("query user info failed, err: %v", userInfoRes.Get("msg"))
+			}
+
+			rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+				UserId:      questionInfoRes.Get("data.user_id").Int(),
+				MessageType: 4,
+				Title: fmt.Sprintf("你关注的用户 %s 提出了问题 %s",
+					userInfoRes.Get("data.nickname"),
+					questionInfoRes.Get("data.question_subject.title")),
+				Content: "",
+				Url:     fmt.Sprintf("https://%s/question/%s", m.Domain, data.ObjId),
+			})
+			if !rpcRes.Ok {
+				return fmt.Errorf("publish subscription notification failed, err: %v", err)
+			}
+
+		}
 
 	case 5:
 		// 问题回答
+		data := &notificationMqProducer.AnswerData{}
+
+		bytesData, err := json.Marshal(msg.Data)
+		if err != nil {
+			return fmt.Errorf("marshal msg data failed, %v", err)
+		}
+
+		err = json.Unmarshal(bytesData, &data)
+		if err != nil {
+			return fmt.Errorf("unmarshal msg data failed, %v", err)
+		}
+
+		questionInfoResJson, err := req.NewRequest().Get(
+			fmt.Sprintf("https://%s/api/question/question/%s", m.Domain, data.QuestionId))
+		if err != nil {
+			return fmt.Errorf("query question info failed, err: %v", err)
+		}
+
+		questionInfoRes := gjson.Parse(questionInfoResJson.String())
+		if !questionInfoRes.Get("ok").Bool() {
+			return fmt.Errorf("query question info failed, err: %v", questionInfoRes.Get("msg"))
+		}
+
+		userInfoResJson, err := req.NewRequest().Get(
+			fmt.Sprintf("https://%s/api/user/profile/%s", m.Domain, cast.ToString(data.UserId)))
+		if err != nil {
+			return fmt.Errorf("query user info failed, err: %v", err)
+		}
+
+		userInfoRes := gjson.Parse(userInfoResJson.String())
+		if !userInfoRes.Get("ok").Bool() {
+			return fmt.Errorf("query user info failed, err: %v", userInfoRes.Get("msg"))
+		}
+
+		rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+			UserId:      questionInfoRes.Get("data.question_subject.user_id").Int(),
+			MessageType: 5,
+			Title: fmt.Sprintf("用户 %s 回答了你的问题 %s",
+				userInfoRes.Get("data.nickname"),
+				questionInfoRes.Get("data.question_subject.title")),
+			Content: "",
+			Url: fmt.Sprintf("https://%s/question/%d/answer/%d",
+				m.Domain,
+				data.QuestionId,
+				data.AnswerId),
+		})
+		if !rpcRes.Ok {
+			return fmt.Errorf("publish subscription notification failed, err: %v", rpcRes.Msg)
+		}
 
 	}
 	//msg := &questionMqProduce.AnswerSubjectMessage{}

@@ -66,6 +66,7 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 			AnswerCount: questionSubject.AnswerCount,
 			ViewCount:   questionSubject.ViewCount,
 			State:       questionSubject.State,
+			Attr:        questionSubject.Attrs,
 			CreateTime:  questionSubject.CreateTime.String(),
 			UpdateTime:  questionSubject.UpdateTime.String(),
 		}

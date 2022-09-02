@@ -30,6 +30,27 @@ func (l *GetAnswerLogic) GetAnswer(req *types.GetAnswerReq) (resp *types.GetAnsw
 		Code: res.Code,
 		Msg:  res.Msg,
 		Ok:   res.Ok,
-		Data: res.Data.String(), // TODO: 待测试
+		Data: types.GetAnswerResData{
+			AnswerIndex: types.AnswerIndex{
+				Id:           res.Data.AnswerIndex.Id,
+				QuestionId:   res.Data.AnswerIndex.QuestionId,
+				UserId:       res.Data.AnswerIndex.UserId,
+				IpLoc:        res.Data.AnswerIndex.IpLoc,
+				ApproveCount: res.Data.AnswerIndex.ApproveCount,
+				LikeCount:    res.Data.AnswerIndex.LikeCount,
+				CollectCount: res.Data.AnswerIndex.CollectCount,
+				State:        res.Data.AnswerIndex.State,
+				Attrs:        res.Data.AnswerIndex.Attrs,
+				CreateTime:   res.Data.AnswerIndex.CreateTime,
+				UpdateTime:   res.Data.AnswerIndex.UpdateTime,
+			},
+			AnswerContent: types.AnswerContent{
+				AnswerId:   res.Data.AnswerContent.AnswerId,
+				Content:    res.Data.AnswerContent.Content,
+				Meta:       res.Data.AnswerContent.Meta,
+				CreateTime: res.Data.AnswerContent.CreateTime,
+				UpdateTime: res.Data.AnswerContent.UpdateTime,
+			},
+		},
 	}, nil
 }

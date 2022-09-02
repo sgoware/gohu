@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"google.golang.org/protobuf/proto"
 	"main/app/common/log"
+	"main/app/common/mq/nsq"
+	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
 	modelpb "main/app/service/question/dao/pb"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
@@ -36,11 +38,13 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 
 	j := gjson.Parse(in.UserDetails)
 
+	userId := j.Get("user_id").Int()
+
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 	questionContentModel := l.svcCtx.QuestionModel.QuestionContent
 
 	questionSubject, err := questionSubjectModel.WithContext(l.ctx).
-		Where(questionSubjectModel.UserID.Eq(j.Get("user_id").Int()),
+		Where(questionSubjectModel.UserID.Eq(userId),
 			questionSubjectModel.IPLoc.Eq(ip.GetIpLocFromApi(j.Get("last_ip").String())),
 			questionSubjectModel.Title.Eq(in.Title),
 			questionSubjectModel.Topic.Eq(in.Topic),
@@ -124,6 +128,24 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		fmt.Sprintf("question_content_%d", questionContent.QuestionID),
 		bytes,
 		time.Second*86400)
+
+	producer, err := nsq.GetProducer()
+	if err != nil {
+		logger.Errorf("get nsq producer failed, err: %v", err)
+	} else {
+		err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+			MessageType: 4,
+			Data: notificationMqProducer.SubscriptionData{
+				UserId:  userId,
+				Action:  1,
+				ObjType: 1,
+				ObjId:   questionSubject.ID,
+			},
+		})
+		if err != nil {
+			logger.Errorf("publish msg to nsq failed, err: %v", err)
+		}
+	}
 
 	res = &pb.PublishQuestionRes{
 		Code: http.StatusOK,

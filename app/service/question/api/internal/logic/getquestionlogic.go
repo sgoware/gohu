@@ -30,6 +30,29 @@ func (l *GetQuestionLogic) GetQuestion(req *types.GetQuestionReq) (resp *types.G
 		Code: res.Code,
 		Msg:  res.Msg,
 		Ok:   res.Ok,
-		Data: res.Data.String(), // TODO: 待测试
+		Data: types.GetQuestionResData{
+			QuestionSubject: types.QuestionSubject{
+				Id:          res.Data.QuestionSubject.Id,
+				UserId:      res.Data.QuestionSubject.UserId,
+				IpLoc:       res.Data.QuestionSubject.IpLoc,
+				Title:       res.Data.QuestionSubject.Title,
+				Topic:       res.Data.QuestionSubject.Topic,
+				Tag:         res.Data.QuestionSubject.Tag,
+				SubCount:    res.Data.QuestionSubject.SubCount,
+				AnswerCount: res.Data.QuestionSubject.AnswerCount,
+				ViewCount:   res.Data.QuestionSubject.ViewCount,
+				State:       res.Data.QuestionSubject.State,
+				Attr:        res.Data.QuestionSubject.Attr,
+				CreateTime:  res.Data.QuestionSubject.CreateTime,
+				UpdateTime:  res.Data.QuestionSubject.UpdateTime,
+			},
+			QuestionContent: types.QuestionContent{
+				QuestionId: res.Data.QuestionContent.QuestionId,
+				Content:    res.Data.QuestionContent.Content,
+				Meta:       res.Data.QuestionContent.Meta,
+				CreateTime: res.Data.QuestionContent.CreateTime,
+				UpdateTime: res.Data.QuestionContent.UpdateTime,
+			},
+		},
 	}, nil
 }

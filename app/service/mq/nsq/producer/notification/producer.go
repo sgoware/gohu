@@ -24,17 +24,22 @@ type ApproveAndLikeData struct {
 }
 
 type CommentData struct {
-	UserId    int64 `json:"userId"`
-	SubjectId int64 `json:"subjectId"`
-	CommentId int64 `json:"commentId"`
+	UserId    int64 `json:"user_id"`
+	SubjectId int64 `json:"subject_id"`
+	CommentId int64 `json:"comment_id"`
 }
 
 type SubscriptionData struct {
+	UserId  int64 `json:"user_id"`  // 被关注者id
+	Action  int32 `json:"action"`   // 1: 创建 2: 更新
+	ObjType int32 `json:"obj_type"` // 1: 发布问题
+	ObjId   int64 `json:"obj_id"`
 }
 
 type AnswerData struct {
-	UserId     int64 `json:"userId"`     // 回答者用户id
-	QuestionId int64 `json:"questionId"` // 回答的问题id
+	UserId     int64 `json:"user_id"`     // 回答者用户id
+	QuestionId int64 `json:"question_id"` // 回答的问题id
+	AnswerId   int64 `json:"answer_id"`   // 回答id
 }
 
 func PublishNotification(producer *nsq.Producer,
