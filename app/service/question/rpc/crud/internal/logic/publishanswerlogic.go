@@ -11,6 +11,7 @@ import (
 	"main/app/common/mq/nsq"
 	commentMqProducer "main/app/service/comment/mq/producer"
 	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
+	"main/app/service/question/dao/model"
 	modelpb "main/app/service/question/dao/pb"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
@@ -40,6 +41,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	j := gjson.Parse(in.UserDetails)
 
 	userId := j.Get("user_id").Int()
+	ipLoc := ip.GetIpLocFromApi(j.Get("last_ip").String())
 
 	answerIndexModel := l.svcCtx.QuestionModel.AnswerIndex
 	answerContentModel := l.svcCtx.QuestionModel.AnswerContent
@@ -47,8 +49,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	_, err = answerIndexModel.WithContext(l.ctx).
 		Select(answerIndexModel.UserID, answerIndexModel.QuestionID).
 		Where(answerIndexModel.UserID.Eq(userId),
-			answerIndexModel.QuestionID.Eq(in.QuestionId),
-		).
+			answerIndexModel.QuestionID.Eq(in.QuestionId)).
 		First()
 	switch err {
 	case nil:
@@ -72,11 +73,18 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		return res, nil
 	}
 
-	answerIndex, err := answerIndexModel.WithContext(l.ctx).
-		Where(answerIndexModel.QuestionID.Eq(in.QuestionId),
-			answerIndexModel.UserID.Eq(j.Get("user_id").Int()),
-			answerIndexModel.IPLoc.Eq(ip.GetIpLocFromApi(j.Get("last_ip").String()))).
-		FirstOrCreate()
+	answerIndexId := l.svcCtx.IdGenerator.NewLong()
+	nowTime := time.Now()
+
+	err = answerIndexModel.WithContext(l.ctx).
+		Create(&model.AnswerIndex{
+			ID:         answerIndexId,
+			QuestionID: in.QuestionId,
+			UserID:     userId,
+			IPLoc:      ipLoc,
+			CreateTime: nowTime,
+			UpdateTime: nowTime,
+		})
 	if err != nil {
 		logger.Errorf("publish answer failed, err: %v", err)
 		res = &pb.PublishAnswerRes{
@@ -89,17 +97,12 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	}
 
 	answerIndexProto := &modelpb.AnswerIndex{
-		Id:           answerIndex.ID,
-		QuestionId:   answerIndex.QuestionID,
-		UserId:       answerIndex.UserID,
-		IpLoc:        answerIndex.IPLoc,
-		ApproveCount: answerIndex.ApproveCount,
-		LikeCount:    answerIndex.LikeCount,
-		CollectCount: answerIndex.CollectCount,
-		State:        answerIndex.State,
-		Attrs:        answerIndex.Attrs,
-		CreateTime:   answerIndex.CreateTime.String(),
-		UpdateTime:   answerIndex.UpdateTime.String(),
+		Id:         answerIndexId,
+		QuestionId: in.QuestionId,
+		UserId:     userId,
+		IpLoc:      ipLoc,
+		CreateTime: nowTime.String(),
+		UpdateTime: nowTime.String(),
 	}
 	answerIndexBytes, err := proto.Marshal(answerIndexProto)
 	if err != nil {
@@ -113,7 +116,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("answer_index_%d", answerIndex.ID),
+		fmt.Sprintf("answer_index_%d", answerIndexId),
 		answerIndexBytes,
 		time.Second*86400)
 
@@ -129,7 +132,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		logger.Debugf("send message: %v", err)
 		return res, nil
 	}
-	err = commentMqProducer.DoCommentSubject(producer, 1, answerIndex.ID, "init")
+	err = commentMqProducer.DoCommentSubject(producer, 1, answerIndexId, "init")
 	if err != nil {
 		logger.Errorf("publish answer info to nsq failed, err: %v", err)
 		res = &pb.PublishAnswerRes{
@@ -141,10 +144,13 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		return res, nil
 	}
 
-	answerContent, err := answerContentModel.WithContext(l.ctx).
-		Where(answerContentModel.AnswerID.Eq(answerIndex.ID),
-			answerContentModel.Content.Eq(in.Content)).
-		FirstOrCreate()
+	err = answerContentModel.WithContext(l.ctx).
+		Create(&model.AnswerContent{
+			AnswerID:   answerIndexId,
+			Content:    in.Content,
+			CreateTime: nowTime,
+			UpdateTime: nowTime,
+		})
 	if err != nil {
 		logger.Errorf("publish answer failed, err: mysql err, %v", err)
 		res = &pb.PublishAnswerRes{
@@ -157,11 +163,10 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 	}
 
 	answerContentProto := &modelpb.AnswerContent{
-		AnswerId:   answerContent.AnswerID,
-		Content:    answerContent.Content,
-		Meta:       answerContent.Meta,
-		CreateTime: answerIndex.CreateTime.String(),
-		UpdateTime: answerIndex.UpdateTime.String(),
+		AnswerId:   answerIndexId,
+		Content:    in.Content,
+		CreateTime: nowTime.String(),
+		UpdateTime: nowTime.String(),
 	}
 	answerContentBytes, err := proto.Marshal(answerContentProto)
 	if err != nil {
@@ -175,7 +180,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("answer_content_%d", answerContent.AnswerID),
+		fmt.Sprintf("answer_content_%d", answerIndexId),
 		answerContentBytes,
 		time.Second*86400)
 
@@ -184,7 +189,7 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		Data: notificationMqProducer.AnswerData{
 			UserId:     userId,
 			QuestionId: in.QuestionId,
-			AnswerId:   answerIndex.ID,
+			AnswerId:   answerIndexId,
 		},
 	})
 	if err != nil {

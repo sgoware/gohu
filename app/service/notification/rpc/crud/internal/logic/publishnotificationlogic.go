@@ -3,8 +3,6 @@ package logic
 import (
 	"context"
 	"fmt"
-	"google.golang.org/protobuf/proto"
-	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/notification/dao/model"
 	modelpb "main/app/service/notification/dao/pb"
@@ -14,6 +12,7 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 )
 
 type PublishNotificationLogic struct {
@@ -34,19 +33,7 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	idGenerator, err := apollo.NewIdGenerator("notification.yaml")
-	if err != nil {
-		logger.Errorf("get idGenerator failed, err: %v", err)
-		res = &pb.PublishNotificationRes{
-			Code: http.StatusInternalServerError,
-			Msg:  "internal err",
-			Ok:   false,
-		}
-		logger.Debugf("send message: %v", err)
-		return res, nil
-	}
-
-	notificationSubjectId := idGenerator.NewLong()
+	notificationSubjectId := l.svcCtx.IdGenerator.NewLong()
 	nowTime := time.Now()
 
 	notificationSubjectModel := l.svcCtx.NotificationModel.NotificationSubject

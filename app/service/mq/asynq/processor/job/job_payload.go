@@ -41,5 +41,18 @@ type UserCollectPayload struct {
 	UpdateTime  time.Time `json:"updateTime"`
 }
 
+type MsgCrudCommentSubjectPayload struct {
+	Action     int32     `json:"action"` // 1:创建 2:更新 3:删除
+	Id         int64     `json:"id"`
+	ObjType    int32     `json:"obj_type"`
+	ObjId      int64     `json:"obj_id"`
+	Count      int32     `json:"count"`
+	RootCount  int32     `json:"root_count"`
+	State      int32     `json:"state"`
+	Attrs      int32     `json:"attrs"`
+	CreateTime time.Time `json:"create_time"`
+	UpdateTime time.Time `json:"update_time"`
+}
+
 type ScheduleUpdateCommentRecordPayload struct {
 }

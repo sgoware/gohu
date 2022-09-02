@@ -7,6 +7,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
 	"github.com/spf13/cast"
+	"github.com/yitter/idgenerator-go/idgen"
 	"google.golang.org/protobuf/proto"
 	apollo "main/app/common/config"
 	"main/app/common/log"
@@ -21,8 +22,9 @@ import (
 )
 
 type MsgCreateUserSubjectHandler struct {
-	Rdb       *redis.Client
-	UserModel *query.Query
+	Rdb         *redis.Client
+	UserModel   *query.Query
+	IdGenerator *idgen.DefaultIdGenerator
 }
 
 type MsgUpdateUserSubjectRecordHandler struct {
@@ -51,8 +53,9 @@ type MsgUpdateUserCollectCacheHandler struct {
 }
 
 type ScheduleUpdateUserCollectRecordHandler struct {
-	Rdb       *redis.Client
-	UserModel *query.Query
+	Rdb         *redis.Client
+	UserModel   *query.Query
+	IdGenerator *idgen.DefaultIdGenerator
 }
 
 func NewCreateUserSubjectRecordHandler(c config.Config) *MsgCreateUserSubjectHandler {
@@ -68,10 +71,17 @@ func NewCreateUserSubjectRecordHandler(c config.Config) *MsgCreateUserSubjectHan
 		logger.Fatalf("initialize user mysql failed, err: %v", err)
 	}
 
+	idGenerator, err := apollo.NewIdGenerator("user.yaml")
+	if err != nil {
+		logger.Fatalf("get idGenerator failed, err: %v", err)
+	}
+
 	return &MsgCreateUserSubjectHandler{
 		Rdb: rdb,
 
 		UserModel: query.Use(userDB),
+
+		IdGenerator: idGenerator,
 	}
 }
 
@@ -185,10 +195,17 @@ func NewScheduleUpdateUserCollectRecordHandler(c config.Config) *ScheduleUpdateU
 		logger.Fatalf("initialize user mysql failed, err: %v", err)
 	}
 
+	idGenerator, err := apollo.NewIdGenerator("user.yaml")
+	if err != nil {
+		logger.Errorf("get idGenerator failed, err: %v", err)
+	}
+
 	return &ScheduleUpdateUserCollectRecordHandler{
 		Rdb: rdb,
 
 		UserModel: query.Use(userDB),
+
+		IdGenerator: idGenerator,
 	}
 }
 
@@ -198,12 +215,7 @@ func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asy
 		return fmt.Errorf("unmarshal [MsgCreateUserSubjectPayload] failed, err: %v", err)
 	}
 
-	idGenerator, err := apollo.NewIdGenerator("user.yaml")
-	if err != nil {
-		return fmt.Errorf("get idGenerator failed, err: %v", err)
-	}
-
-	userSubjectId := idGenerator.NewLong()
+	userSubjectId := l.IdGenerator.NewLong()
 
 	userSubjectModel := l.UserModel.UserSubject
 
@@ -455,12 +467,8 @@ func (l *ScheduleUpdateUserCollectRecordHandler) ProcessTask(ctx context.Context
 		objId := cast.ToInt64(output[4])
 		if output[0] == "0" {
 			// 创建操作
-			idGenerator, err := apollo.NewIdGenerator("user.yaml")
-			if err != nil {
-				return fmt.Errorf("get idGenerator failed, err: %v", err)
-			}
 
-			userCollectionId := idGenerator.NewLong()
+			userCollectionId := l.IdGenerator.NewLong()
 
 			err = userCollectionModel.WithContext(ctx).
 				Create(&model.UserCollection{

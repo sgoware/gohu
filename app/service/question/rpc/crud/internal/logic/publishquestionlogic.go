@@ -7,6 +7,7 @@ import (
 	"main/app/common/log"
 	"main/app/common/mq/nsq"
 	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
+	"main/app/service/question/dao/model"
 	modelpb "main/app/service/question/dao/pb"
 	"main/app/service/question/rpc/crud/internal/svc"
 	"main/app/service/question/rpc/crud/pb"
@@ -40,16 +41,26 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 
 	userId := j.Get("user_id").Int()
 
+	questionSubjectId := l.svcCtx.IdGenerator.NewLong()
+
+	nowTime := time.Now()
+
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 	questionContentModel := l.svcCtx.QuestionModel.QuestionContent
 
-	questionSubject, err := questionSubjectModel.WithContext(l.ctx).
-		Where(questionSubjectModel.UserID.Eq(userId),
-			questionSubjectModel.IPLoc.Eq(ip.GetIpLocFromApi(j.Get("last_ip").String())),
-			questionSubjectModel.Title.Eq(in.Title),
-			questionSubjectModel.Topic.Eq(in.Topic),
-			questionSubjectModel.Tag.Eq(in.Tag)).
-		FirstOrCreate()
+	ipLoc := ip.GetIpLocFromApi(j.Get("last_ip").String())
+
+	err = questionSubjectModel.WithContext(l.ctx).
+		Create(&model.QuestionSubject{
+			ID:         questionSubjectId,
+			UserID:     userId,
+			IPLoc:      ipLoc,
+			Title:      in.Title,
+			Topic:      in.Topic,
+			Tag:        in.Tag,
+			CreateTime: nowTime,
+			UpdateTime: nowTime,
+		})
 	if err != nil {
 		logger.Errorf("publish question failed, err: %v", err)
 		res = &pb.PublishQuestionRes{
@@ -62,18 +73,14 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 	}
 
 	questionSubjectProto := &modelpb.QuestionSubject{
-		Id:          questionSubject.ID,
-		UserId:      questionSubject.UserID,
-		IpLoc:       questionSubject.IPLoc,
-		Title:       questionSubject.Title,
-		Topic:       questionSubject.Topic,
-		Tag:         questionSubject.Tag,
-		SubCount:    questionSubject.SubCount,
-		AnswerCount: questionSubject.AnswerCount,
-		ViewCount:   questionSubject.ViewCount,
-		State:       questionSubject.State,
-		CreateTime:  questionSubject.CreateTime.String(),
-		UpdateTime:  questionSubject.UpdateTime.String(),
+		Id:         questionSubjectId,
+		UserId:     userId,
+		IpLoc:      ipLoc,
+		Title:      in.Title,
+		Topic:      in.Topic,
+		Tag:        in.Tag,
+		CreateTime: nowTime.String(),
+		UpdateTime: nowTime.String(),
 	}
 	bytes, err := proto.Marshal(questionSubjectProto)
 	if err != nil {
@@ -87,14 +94,18 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("question_subject_%d", questionSubject.ID),
+		fmt.Sprintf("question_subject_%d", questionSubjectId),
 		bytes,
 		time.Second*86400)
 
-	questionContent, err := questionContentModel.WithContext(l.ctx).
-		Where(questionContentModel.QuestionID.Eq(questionSubject.ID),
-			questionContentModel.Content.Eq(in.Content)).
-		FirstOrCreate()
+	err = questionContentModel.WithContext(l.ctx).
+		Create(&model.QuestionContent{
+			QuestionID: questionSubjectId,
+			Content:    in.Content,
+			Meta:       "",
+			CreateTime: nowTime,
+			UpdateTime: nowTime,
+		})
 	if err != nil {
 		logger.Errorf("publish question failed, err: %v", err)
 		res = &pb.PublishQuestionRes{
@@ -107,11 +118,11 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 	}
 
 	questionContentProto := &modelpb.QuestionContent{
-		QuestionId: questionContent.QuestionID,
-		Content:    questionContent.Content,
-		Meta:       questionContent.Meta,
-		CreateTime: questionContent.CreateTime.String(),
-		UpdateTime: questionContent.UpdateTime.String(),
+		QuestionId: questionSubjectId,
+		Content:    in.Content,
+		Meta:       "",
+		CreateTime: nowTime.String(),
+		UpdateTime: nowTime.String(),
 	}
 	bytes, err = proto.Marshal(questionContentProto)
 	if err != nil {
@@ -125,7 +136,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		return res, nil
 	}
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("question_content_%d", questionContent.QuestionID),
+		fmt.Sprintf("question_content_%d", questionSubjectId),
 		bytes,
 		time.Second*86400)
 
@@ -139,7 +150,7 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 				UserId:  userId,
 				Action:  1,
 				ObjType: 1,
-				ObjId:   questionSubject.ID,
+				ObjId:   questionSubjectId,
 			},
 		})
 		if err != nil {
