@@ -51,7 +51,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/api/user/collection",
+					Path:    "/api/user/collection/:collection_type",
 					Handler: GetCollectionInfoHandler(serverCtx),
 				},
 				{
