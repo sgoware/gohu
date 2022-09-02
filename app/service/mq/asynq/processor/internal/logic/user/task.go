@@ -395,7 +395,7 @@ func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("user_follwer_%s", member)).Err()
+			fmt.Sprintf("user_follower_%s", member)).Err()
 		if err != nil {
 			return fmt.Errorf("del [user_follower] cnt failed, err: %v", err)
 		}
