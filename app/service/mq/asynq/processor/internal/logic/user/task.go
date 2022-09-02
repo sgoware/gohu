@@ -376,12 +376,11 @@ func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context
 	if err != nil {
 		return fmt.Errorf("get [user_follower] member failed, err: %v", err)
 	}
-	return fmt.Errorf("eee")
 	l.Rdb.Del(ctx,
 		fmt.Sprintf("user_follower"))
 
 	userSubjectModel := l.UserModel.UserSubject
-
+	return fmt.Errorf("eee")
 	for _, member := range members {
 		followerCount, err := l.Rdb.Get(ctx,
 			fmt.Sprintf("user_follower_%s", member)).Int()
