@@ -43,7 +43,7 @@ func main() {
 	// 初始化log、trace
 	err = c.SetUp()
 	if err != nil {
-		logger.Fatalf("initialize go-zero internal service failed, err: %v")
+		logger.Fatalf("initialize go-zero internal service failed, err: %v", err)
 	}
 
 	serviceGroup := service.NewServiceGroup()
@@ -51,7 +51,7 @@ func main() {
 
 	consumerServices, err := listen.NewServices(c)
 	if err != nil {
-		logger.Fatalf("initialize nsq consumer services failed, err: %v")
+		logger.Fatalf("initialize nsq consumer services failed, err: %v", err)
 	}
 
 	for _, consumerService := range consumerServices {

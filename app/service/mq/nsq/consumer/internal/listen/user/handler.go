@@ -13,8 +13,8 @@ import (
 )
 
 type PublishNotificationHandler struct {
-	Domain        string
-	CrudRpcClient crud.Crud
+	Domain                    string
+	NotificationCrudRpcClient crud.Crud
 }
 
 func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err error) {
@@ -49,7 +49,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			return fmt.Errorf("query user info failed, %v", j.Get("msg").String())
 		}
 
-		rpcRes, _ := m.CrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+		rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
 			UserId:      data.UserId,
 			MessageType: 1,
 			Title:       fmt.Sprintf("用户 %s 关注了你", j.Get("data.nickname").String()),
@@ -109,7 +109,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 					userInfoJson.Get("data.nickname").String(),
 					answerJson.Get("data.question_subject.title"))
 			}
-			rpcRes, _ := m.CrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+			rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
 				UserId:      answerJson.Get("data.answer_index.id").Int(),
 				MessageType: 2,
 				Title:       title,
@@ -179,7 +179,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 				userInfoJson := gjson.Parse(userInfoRes.String())
 				userNickName := userInfoJson.Get("data.nickname").String()
 
-				rpcRes, _ := m.CrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+				rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
 					UserId:      userId,
 					MessageType: 3,
 					Title:       fmt.Sprintf("用户 %s 评论了你的回答 %s", userNickName, questionTitle),
@@ -213,7 +213,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 	//}
 	//switch msg.Action {
 	//case "init":
-	//	res, _ := m.CrudRpcClient.InitSubject(context.Background(), &crud.InitSubjectReq{
+	//	res, _ := m.NotificationCrudRpcClient.InitSubject(context.Background(), &crud.InitSubjectReq{
 	//		ObjType: msg.Data.ObjType,
 	//		ObjId:   msg.Data.ObjId,
 	//	})
@@ -222,7 +222,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 	//	}
 	//
 	//case "delete":
-	//	res, _ := m.CrudRpcClient.DeleteSubject(context.Background(), &crud.DeleteSubjectReq{
+	//	res, _ := m.NotificationCrudRpcClient.DeleteSubject(context.Background(), &crud.DeleteSubjectReq{
 	//		ObjType: msg.Data.ObjType,
 	//		ObjId:   msg.Data.ObjId,
 	//	})

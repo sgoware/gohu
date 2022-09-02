@@ -11,5 +11,6 @@ type Config struct {
 
 	PublishNotificationConsumerConf nsq.ConsumerConf
 
-	UserCrudRpcClientConf zrpc.RpcClientConf
+	UserCrudRpcClientConf         zrpc.RpcClientConf
+	NotificationCrudRpcClientConf zrpc.RpcClientConf
 }

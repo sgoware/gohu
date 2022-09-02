@@ -3,10 +3,12 @@ package user
 import (
 	"fmt"
 	"github.com/zeromicro/go-zero/core/service"
+	"github.com/zeromicro/go-zero/zrpc"
 	apollo "main/app/common/config"
 	"main/app/common/mq/nsq"
 	"main/app/service/mq/nsq/consumer/internal/config"
 	"main/app/service/mq/nsq/consumer/internal/svc"
+	"main/app/service/notification/rpc/crud/crud"
 )
 
 func NewService(c config.Config, svcContext *svc.ServiceContext) ([]service.Service, error) {
@@ -18,8 +20,8 @@ func NewService(c config.Config, svcContext *svc.ServiceContext) ([]service.Serv
 		c.PublishNotificationConsumerConf.Topic,
 		c.PublishNotificationConsumerConf.Channel,
 		&PublishNotificationHandler{
-			Domain:        domain,
-			CrudRpcClient: svcContext.NotificationCrudRpcClient,
+			Domain:                    domain,
+			NotificationCrudRpcClient: crud.NewCrud(zrpc.MustNewClient(c.NotificationCrudRpcClientConf)),
 		},
 	)
 
