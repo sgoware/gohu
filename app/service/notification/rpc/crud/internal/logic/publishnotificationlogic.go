@@ -70,7 +70,7 @@ func (l *PublishNotificationLogic) PublishNotification(in *pb.PublishNotificatio
 	}
 	// 设置缓存
 	l.svcCtx.Rdb.Set(l.ctx,
-		fmt.Sprintf("notificationSubject_%d", notificationSubject.ID),
+		fmt.Sprintf("notification_subject_%d", notificationSubject.ID),
 		notificationSubjectBytes,
 		time.Second*86400)
 
