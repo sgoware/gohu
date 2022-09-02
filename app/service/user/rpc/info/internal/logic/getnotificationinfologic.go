@@ -130,7 +130,7 @@ func (l *GetNotificationInfoLogic) GetNotificationInfo(in *pb.GetNotificationInf
 			fmt.Sprintf("notification_%d_0", in.UserId),
 			notificationSubject.ID)
 		l.svcCtx.Rdb.SAdd(l.ctx,
-			fmt.Sprintf("notification_%d_%d", in.UserId, in.MessageType),
+			fmt.Sprintf("notification_%d_%d", in.UserId, notificationSubject.MessageType),
 			notificationSubject.ID)
 	}
 
