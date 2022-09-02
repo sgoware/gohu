@@ -323,6 +323,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 				}
 				return res, nil
 			}
+			// TODO:
 			res = &pb.DoCollectionRes{
 				Code: http.StatusOK,
 				Msg:  "unfollow user successfully",
