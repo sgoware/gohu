@@ -219,7 +219,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 		case 1:
 			// 发布问题
 			questionInfoResJson, err := req.NewRequest().Get(
-				fmt.Sprintf("https://%s/api/question/question/%s", m.Domain, data.ObjId))
+				fmt.Sprintf("https://%s/api/question/question/%d", m.Domain, data.ObjId))
 			if err != nil {
 				return fmt.Errorf("query question info failed, err: %v", err)
 			}
@@ -266,7 +266,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 						userInfoRes.Get("data.nickname"),
 						questionInfoRes.Get("data.question_subject.title")),
 					Content: "",
-					Url:     fmt.Sprintf("https://%s/question/%s", m.Domain, data.ObjId),
+					Url:     fmt.Sprintf("https://%s/question/%d", m.Domain, data.ObjId),
 				})
 				if !rpcRes.Ok {
 					return fmt.Errorf("publish subscription notification failed, err: %v", err)
@@ -290,7 +290,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 		}
 
 		questionInfoResJson, err := req.NewRequest().Get(
-			fmt.Sprintf("https://%s/api/question/question/%s", m.Domain, data.QuestionId))
+			fmt.Sprintf("https://%s/api/question/question/%d", m.Domain, data.QuestionId))
 		if err != nil {
 			return fmt.Errorf("query question info failed, err: %v", err)
 		}
