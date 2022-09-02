@@ -1,12 +1,12 @@
 package config
 
 import (
+	"github.com/hibiken/asynq"
 	"github.com/zeromicro/go-zero/core/service"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type Config struct {
 	service.ServiceConf
 
-	Redis redis.RedisConf
+	RedisConf asynq.RedisClientOpt
 }
