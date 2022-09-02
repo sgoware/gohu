@@ -40,7 +40,8 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			return fmt.Errorf("unmarshal msg data failed, %v", err)
 		}
 
-		userInfoRes, err := req.NewRequest().Get(m.Domain + "/api/user/profile/" + cast.ToString(data.FollowerId))
+		userInfoRes, err := req.NewRequest().Get(
+			fmt.Sprintf("https://%s/api/user/profile/%s", m.Domain, cast.ToString(data.FollowerId)))
 		if err != nil {
 			return fmt.Errorf("query user info failed, %v", err)
 		}
