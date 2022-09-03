@@ -180,6 +180,13 @@ func (l *PublishQuestionLogic) PublishQuestion(in *pb.PublishQuestionReq) (res *
 		}
 	}
 
+	err = l.svcCtx.Rdb.SAdd(l.ctx,
+		fmt.Sprintf("question_id_user_set_%d", userId),
+		questionSubjectId).Err()
+	if err != nil {
+		logger.Errorf("update [question_id_user_set] failed, err: %v", err)
+	}
+
 	res = &pb.PublishQuestionRes{
 		Code: http.StatusOK,
 		Msg:  "publish question successfully",

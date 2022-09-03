@@ -246,6 +246,13 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		}
 	}
 
+	err = l.svcCtx.Rdb.SAdd(l.ctx,
+		fmt.Sprintf("answer_id_user_set_%d", userId),
+		answerIndexId).Err()
+	if err != nil {
+		logger.Errorf("update [answer_id_user_set] failed, err: %v", err)
+	}
+
 	res = &pb.PublishAnswerRes{
 		Code: http.StatusOK,
 		Msg:  "publish answer successfully",

@@ -127,6 +127,20 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 		return res, nil
 	}
 
+	err = l.svcCtx.Rdb.SRem(l.ctx,
+		fmt.Sprintf("answer_id_user_set_%v", answerIndex.UserID),
+		in.AnswerId).Err()
+	if err != nil {
+		logger.Errorf("update [answer_id_user_set] failed, err: %v", err)
+		res = &pb.DeleteAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
 	res = &pb.DeleteAnswerRes{
 		Code: http.StatusOK,
 		Msg:  "delete answer successfully",

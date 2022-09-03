@@ -59,6 +59,21 @@ func (l *DeleteQuestionLogic) DeleteQuestion(in *pb.DeleteQuestionReq) (res *pb.
 	// 删除question_subject后, 级联删除关联的回答和回答下的评论
 	questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
 
+	questionSubject, err := questionSubjectModel.WithContext(l.ctx).
+		Select(questionSubjectModel.ID, questionSubjectModel.UserID).
+		Where(questionSubjectModel.ID.Eq(in.QuestionId)).
+		First()
+	if err != nil {
+		logger.Errorf("query [question_subject] record failed, err: %v", err)
+		res = &pb.DeleteQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
 	_, err = questionSubjectModel.WithContext(l.ctx).Where(questionSubjectModel.ID.Eq(in.QuestionId)).Delete()
 	switch err {
 	case gorm.ErrRecordNotFound:
@@ -73,6 +88,20 @@ func (l *DeleteQuestionLogic) DeleteQuestion(in *pb.DeleteQuestionReq) (res *pb.
 
 	default:
 		logger.Errorf("update question failed, err: %v", err)
+		res = &pb.DeleteQuestionRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	err = l.svcCtx.Rdb.SRem(l.ctx,
+		fmt.Sprintf("question_id_user_set_%v", questionSubject.UserID),
+		in.QuestionId).Err()
+	if err != nil {
+		logger.Errorf("update [question_id_user_set] failed, err: %v", err)
 		res = &pb.DeleteQuestionRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",

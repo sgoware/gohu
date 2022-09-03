@@ -211,6 +211,13 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 		return res, nil
 	}
 
+	err = l.svcCtx.Rdb.SAdd(l.ctx,
+		fmt.Sprintf("comment_id_user_set_%v", userId),
+		commentId).Err()
+	if err != nil {
+		logger.Errorf("update [comment_id_user_set] failed, err: %v", err)
+	}
+
 	err = commentContentModel.WithContext(l.ctx).
 		Create(&model.CommentContent{
 			CommentID: commentId,

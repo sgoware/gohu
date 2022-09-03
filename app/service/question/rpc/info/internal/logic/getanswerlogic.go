@@ -33,10 +33,7 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	resData := &pb.GetAnswerRes_Data{
-		AnswerIndex:   &pb.AnswerIndex{},
-		AnswerContent: &pb.AnswerContent{},
-	}
+	resData := &pb.GetAnswerRes_Data{}
 
 	answerIndexBytes, err := l.svcCtx.Rdb.Get(l.ctx,
 		fmt.Sprintf("answer_index_%d", in.AnswerId)).Bytes()
@@ -53,6 +50,7 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 			logger.Debugf("send message: %v", err)
 			return res, nil
 		}
+		resData.AnswerIndex = answerIndexProto
 
 		approveCnt, err := l.svcCtx.Rdb.Get(l.ctx,
 			fmt.Sprintf("answer_index_approve_cnt_%d", in.AnswerId)).Int64()
@@ -104,8 +102,6 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 		} else {
 			resData.AnswerIndex.CollectCount += int32(collectCnt)
 		}
-
-		resData.AnswerIndex = answerIndexProto
 	} else {
 		logger.Errorf("get answerIndex cache failed, err: %v", err)
 

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"google.golang.org/protobuf/proto"
 	"main/app/common/log"
 	"net/http"
@@ -91,7 +92,29 @@ func (l *GetCommentSubjectInfoLogic) GetCommentSubjectInfo(in *pb.GetCommentSubj
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
 		}
+
 		resData.CommentSubject = commentSubject
+
+		commentCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("comment_subject_comment_cnt_%d", in.SubjectId)).Int()
+		if err != nil {
+			if err != redis.Nil {
+				logger.Errorf("get [comment_subject_comment_cnt] failed, err: %v", err)
+			}
+		} else {
+			resData.CommentSubject.Count += int32(commentCnt)
+		}
+
+		rootCommentCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("comment_subject_root_comment_cnt_%d", in.SubjectId)).Int()
+		if err != nil {
+			if err != redis.Nil {
+				logger.Errorf("get [comment_subject_root_comment_cnt] failed, err: %v", err)
+			}
+		} else {
+			resData.CommentSubject.RootCount += int32(rootCommentCnt)
+		}
+
 	}
 
 	res = &pb.GetCommentSubjectInfoRes{

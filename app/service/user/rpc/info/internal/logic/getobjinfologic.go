@@ -38,7 +38,7 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 		questionIds := make([]int64, 0)
 
 		questionIdsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
-			fmt.Sprintf("question_%d", in.UserId)).Result()
+			fmt.Sprintf("question_id_user_set_%d", in.UserId)).Result()
 		if err == nil {
 			if len(questionIdsCache) > 1 {
 				// 获取到缓存
@@ -57,7 +57,7 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 				return res, nil
 			}
 		} else {
-			logger.Errorf("get [question] cache failed, err: %v", err)
+			logger.Errorf("get [question_id_user_set] failed, err: %v", err)
 		}
 
 		questionSubjectModel := l.svcCtx.QuestionModel.QuestionSubject
@@ -69,13 +69,12 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 		case gorm.ErrRecordNotFound:
 			//设置空缓存
 			l.svcCtx.Rdb.SAdd(l.ctx,
-				fmt.Sprintf("question_%d", in.UserId),
+				fmt.Sprintf("question_id_user_set_%d", in.UserId),
 				0)
 			res = &pb.GetObjInfoRes{
-				Code: http.StatusForbidden,
+				Code: http.StatusNotFound,
 				Msg:  "question not found",
 				Ok:   false,
-				Data: nil,
 			}
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
@@ -104,7 +103,7 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 			res.Data.Ids = append(res.Data.Ids, questionSubject.ID)
 			// 设置缓存
 			l.svcCtx.Rdb.SAdd(l.ctx,
-				fmt.Sprintf("question_%d", in.UserId),
+				fmt.Sprintf("question_id_user_set_%d", in.UserId),
 				questionSubject.ID)
 		}
 
@@ -116,7 +115,7 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 		answerIds := make([]int64, 0)
 
 		answerIdsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
-			fmt.Sprintf("answer_%d", in.UserId)).Result()
+			fmt.Sprintf("answer_id_user_set_%d", in.UserId)).Result()
 		if err != nil {
 			if len(answerIdsCache) > 1 {
 				for _, answerIdCache := range answerIdsCache {
@@ -141,13 +140,12 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 		switch err {
 		case gorm.ErrRecordNotFound:
 			l.svcCtx.Rdb.SAdd(l.ctx,
-				fmt.Sprintf("answer_%d", in.UserId),
+				fmt.Sprintf("answer_id_user_set_%d", in.UserId),
 				0)
 			res = &pb.GetObjInfoRes{
-				Code: http.StatusForbidden,
+				Code: http.StatusNotFound,
 				Msg:  "question not found",
 				Ok:   false,
-				Data: nil,
 			}
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
@@ -174,7 +172,7 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 		for _, answerIndex := range answerIndices {
 			res.Data.Ids = append(res.Data.Ids, answerIndex.ID)
 			l.svcCtx.Rdb.SAdd(l.ctx,
-				fmt.Sprintf("answer_%d", in.UserId),
+				fmt.Sprintf("answer_id_user_set_%d", in.UserId),
 				answerIndex.ID)
 		}
 
@@ -182,8 +180,78 @@ func (l *GetObjInfoLogic) GetObjInfo(in *pb.GetObjInfoReq) (res *pb.GetObjInfoRe
 		return res, nil
 
 	case 2:
-		// 文章
-		return nil, nil
+		// 评论
+		commentIds := make([]int64, 0)
+
+		commentIdsCache, err := l.svcCtx.Rdb.SMembers(l.ctx,
+			fmt.Sprintf("comment_id_user_set_%d", in.UserId)).Result()
+		if err == nil {
+			if len(commentIdsCache) > 1 {
+				for _, commentIdCache := range commentIdsCache {
+					if commentIdCache != "0" {
+						commentIds = append(commentIds, cast.ToInt64(commentIdCache))
+					}
+				}
+				res = &pb.GetObjInfoRes{
+					Code: http.StatusOK,
+					Msg:  "get comment ids successfully",
+					Ok:   true,
+					Data: &pb.GetObjInfoRes_Data{Ids: commentIds},
+				}
+				logger.Debugf("send message: %v", err)
+				return res, nil
+			}
+		} else {
+			logger.Errorf("get [comment_id_user_set] failed, err: %v", err)
+		}
+
+		commentIndexModel := l.svcCtx.CommentModel.CommentIndex
+
+		commentIndices, err := commentIndexModel.WithContext(l.ctx).
+			Select(commentIndexModel.ID, commentIndexModel.UserID).
+			Where(commentIndexModel.UserID.Eq(in.UserId)).Find()
+		switch err {
+		case gorm.ErrRecordNotFound:
+			l.svcCtx.Rdb.SAdd(l.ctx,
+				fmt.Sprintf("comment_id_user_set_%d", in.UserId),
+				0)
+			res = &pb.GetObjInfoRes{
+				Code: http.StatusNotFound,
+				Msg:  "comment not fount",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+
+		case nil:
+
+		default:
+			logger.Debugf("query [comment_index] record failed, err: %v", err)
+			res = &pb.GetObjInfoRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+
+		res = &pb.GetObjInfoRes{
+			Code: http.StatusOK,
+			Msg:  "get comment ids successfully",
+			Ok:   true,
+			Data: &pb.GetObjInfoRes_Data{Ids: commentIds},
+		}
+
+		for _, commentIndex := range commentIndices {
+			res.Data.Ids = append(res.Data.Ids, commentIndex.ID)
+			l.svcCtx.Rdb.SAdd(l.ctx,
+				fmt.Sprintf("comment_id_user_set_%d", in.UserId),
+				commentIndex.ID)
+		}
+
+		logger.Debugf("send message: %v", err)
+		return res, nil
 
 	default:
 		res = &pb.GetObjInfoRes{

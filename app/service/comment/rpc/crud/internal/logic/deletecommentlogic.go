@@ -118,6 +118,20 @@ func (l *DeleteCommentLogic) DeleteComment(in *pb.DeleteCommentReq) (res *pb.Del
 		return res, nil
 	}
 
+	err = l.svcCtx.Rdb.SRem(l.ctx,
+		fmt.Sprintf("comment_id_user_set_%v", commentIndex.UserID),
+		commentIndex.ID).Err()
+	if err != nil {
+		logger.Errorf("update [comment_id_user_set] failed, err: %v", err)
+		res = &pb.DeleteCommentRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
 	res = &pb.DeleteCommentRes{
 		Code: http.StatusOK,
 		Msg:  "delete comment successfully",
