@@ -109,11 +109,11 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			if data.Action == 1 {
 				title = fmt.Sprintf("用户 %s 赞同了在问题 %s 下的回答",
 					userInfoJson.Get("data.nickname").String(),
-					answerJson.Get("data.question_subject.title"))
+					questionJson.Get("data.question_subject.title"))
 			} else {
 				title = fmt.Sprintf("用户 %s 喜欢了在问题 %s 下的回答",
 					userInfoJson.Get("data.nickname").String(),
-					answerJson.Get("data.question_subject.title"))
+					questionJson.Get("data.question_subject.title"))
 			}
 			rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
 				UserId:      answerJson.Get("data.answer_index.user_id").Int(),
