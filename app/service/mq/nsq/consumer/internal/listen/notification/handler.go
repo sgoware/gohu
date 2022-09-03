@@ -99,9 +99,10 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			if err != nil {
 				return fmt.Errorf("query user info failed, %v", err)
 			}
+
 			userInfoJson := gjson.Parse(userInfoRes.String())
 			if userInfoJson.Get("ok").Bool() {
-				return fmt.Errorf("query user info failed, %v", answerJson.Get("msg").String())
+				return fmt.Errorf("query user info failed, %v", userInfoJson.Get("msg"))
 			}
 
 			var title string
