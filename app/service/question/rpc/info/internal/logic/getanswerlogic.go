@@ -35,7 +35,7 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 	resData := &pb.GetAnswerRes_Data{}
 
 	answerIndexBytes, err := l.svcCtx.Rdb.Get(l.ctx,
-		fmt.Sprintf("anwerIndex_%d", in.AnswerId)).Bytes()
+		fmt.Sprintf("anwer_index_%d", in.AnswerId)).Bytes()
 	if err != nil {
 		logger.Errorf("get answerIndex cache failed, err: %v", err)
 
@@ -83,7 +83,7 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 	}
 
 	answerContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
-		fmt.Sprintf("answerContent_%d", in.AnswerId)).Bytes()
+		fmt.Sprintf("answer_content_%d", in.AnswerId)).Bytes()
 	if err != nil {
 		logger.Errorf("get answerContent cache failed, err: %v")
 
@@ -118,7 +118,7 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 			logger.Errorf("marshal proto failed, err: %v", err)
 		} else {
 			l.svcCtx.Rdb.Set(l.ctx,
-				fmt.Sprintf("answerContent_%d", answerContent.AnswerID),
+				fmt.Sprintf("answer_content_%d", answerContent.AnswerID),
 				answerContentBytes,
 				time.Second*86400)
 		}

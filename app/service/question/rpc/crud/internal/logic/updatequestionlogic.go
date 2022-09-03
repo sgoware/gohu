@@ -2,12 +2,15 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"github.com/hibiken/asynq"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 	"main/app/common/log"
+	"main/app/service/mq/asynq/processor/job"
 	"main/app/service/question/dao/model"
 	modelpb "main/app/service/question/dao/pb"
 	"main/app/service/question/rpc/crud/internal/svc"
@@ -69,6 +72,37 @@ func (l *UpdateQuestionLogic) UpdateQuestion(in *pb.UpdateQuestionReq) (res *pb.
 				time.Second*86400).Err()
 			if err != nil {
 				logger.Errorf("set [question_subject] cache failed, err: %v", err)
+				res = &pb.UpdateQuestionRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", err)
+				return res, nil
+			}
+
+			payload, err := json.Marshal(job.MsgCrudQuestionSubjectRecordPayload{
+				Action:     2,
+				Id:         in.QuestionId,
+				Title:      in.Title,
+				Topic:      in.Topic,
+				Tag:        in.Tag,
+				UpdateTime: nowTime,
+			})
+			if err != nil {
+				logger.Debugf("marshal [MsgCrudQuestionSubjectRecordPayload] failed, err: %v", err)
+				res = &pb.UpdateQuestionRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", err)
+				return res, nil
+			}
+
+			_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(job.MsgCrudQuestionSubjectRecordTask, payload))
+			if err != nil {
+				logger.Debugf("create [sgCrudQuestionSubjectRecordTask] insert queue failed, err: %v", err)
 				res = &pb.UpdateQuestionRes{
 					Code: http.StatusInternalServerError,
 					Msg:  "internal err",

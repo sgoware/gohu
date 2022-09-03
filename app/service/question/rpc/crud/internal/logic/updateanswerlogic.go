@@ -40,7 +40,7 @@ func (l *UpdateAnswerLogic) UpdateAnswer(in *pb.UpdateAnswerReq) (res *pb.Update
 	answerContentModel := l.svcCtx.QuestionModel.AnswerContent
 
 	answerContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
-		fmt.Sprintf("answer_content", in.AnswerId)).Bytes()
+		fmt.Sprintf("answer_content_%d", in.AnswerId)).Bytes()
 	if err == nil {
 		answerContentProto := &modelpb.AnswerContent{}
 		err = proto.Unmarshal(answerContentBytes, answerContentProto)
