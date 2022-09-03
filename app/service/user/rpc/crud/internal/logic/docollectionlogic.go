@@ -317,6 +317,13 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 							}
 						}
 
+						res = &pb.DoCollectionRes{
+							Code: http.StatusOK,
+							Msg:  "subscribe question successfully",
+							Ok:   true,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
 					}
 				} else {
 					// 存在收藏的缓存, 则是删除操作
@@ -424,6 +431,13 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 								return res, nil
 							}
 						}
+						res = &pb.DoCollectionRes{
+							Code: http.StatusOK,
+							Msg:  "unsubscribe question successfully",
+							Ok:   true,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
 					}
 				}
 			} else {
