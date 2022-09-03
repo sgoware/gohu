@@ -616,7 +616,7 @@ func createCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *
 
 func deleteCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
 	// 更新 user_collect 缓存
-	err = svcCtx.Rdb.SAdd(ctx,
+	err = svcCtx.Rdb.SRem(ctx,
 		fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, in.CollectType, in.ObjType),
 	).Err()
 	if err != nil {
