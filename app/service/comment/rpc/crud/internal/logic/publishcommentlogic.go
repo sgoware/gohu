@@ -100,6 +100,9 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 					CommentId: 0,
 				},
 			})
+			if err != nil {
+				logger.Errorf("publish mesg to nsq failed, err: %v", err)
+			}
 		}
 
 		err = l.svcCtx.Rdb.Incr(l.ctx,
