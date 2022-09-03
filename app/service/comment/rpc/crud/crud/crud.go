@@ -15,16 +15,10 @@ import (
 type (
 	DeleteCommentReq  = pb.DeleteCommentReq
 	DeleteCommentRes  = pb.DeleteCommentRes
-	DeleteSubjectReq  = pb.DeleteSubjectReq
-	DeleteSubjectRes  = pb.DeleteSubjectRes
-	InitSubjectReq    = pb.InitSubjectReq
-	InitSubjectRes    = pb.InitSubjectRes
 	PublishCommentReq = pb.PublishCommentReq
 	PublishCommentRes = pb.PublishCommentRes
 
 	Crud interface {
-		InitSubject(ctx context.Context, in *InitSubjectReq, opts ...grpc.CallOption) (*InitSubjectRes, error)
-		DeleteSubject(ctx context.Context, in *DeleteSubjectReq, opts ...grpc.CallOption) (*DeleteSubjectRes, error)
 		PublishComment(ctx context.Context, in *PublishCommentReq, opts ...grpc.CallOption) (*PublishCommentRes, error)
 		DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentRes, error)
 	}
@@ -38,16 +32,6 @@ func NewCrud(cli zrpc.Client) Crud {
 	return &defaultCrud{
 		cli: cli,
 	}
-}
-
-func (m *defaultCrud) InitSubject(ctx context.Context, in *InitSubjectReq, opts ...grpc.CallOption) (*InitSubjectRes, error) {
-	client := pb.NewCrudClient(m.cli.Conn())
-	return client.InitSubject(ctx, in, opts...)
-}
-
-func (m *defaultCrud) DeleteSubject(ctx context.Context, in *DeleteSubjectReq, opts ...grpc.CallOption) (*DeleteSubjectRes, error) {
-	client := pb.NewCrudClient(m.cli.Conn())
-	return client.DeleteSubject(ctx, in, opts...)
 }
 
 func (m *defaultCrud) PublishComment(ctx context.Context, in *PublishCommentReq, opts ...grpc.CallOption) (*PublishCommentRes, error) {

@@ -8,6 +8,7 @@ import (
 	"main/app/common/middleware"
 	"main/app/service/comment/api/internal/config"
 	"main/app/service/comment/rpc/crud/crud"
+	"main/app/service/comment/rpc/info/info"
 )
 
 type ServiceContext struct {
@@ -16,6 +17,7 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	CrudRpcClient crud.Crud
+	InfoRpcClient info.Info
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -42,5 +44,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AuthMiddleware: middleware.NewAuthMiddleware(domain, cookieConfig, rdb).Handle,
 
 		CrudRpcClient: crud.NewCrud(zrpc.MustNewClient(c.CrudRpcClientConf)),
+		InfoRpcClient: info.NewInfo(zrpc.MustNewClient(c.InfoRpcClientConf)),
 	}
 }

@@ -22,16 +22,6 @@ func NewCrudServer(svcCtx *svc.ServiceContext) *CrudServer {
 	}
 }
 
-func (s *CrudServer) InitSubject(ctx context.Context, in *pb.InitSubjectReq) (*pb.InitSubjectRes, error) {
-	l := logic.NewInitSubjectLogic(ctx, s.svcCtx)
-	return l.InitSubject(in)
-}
-
-func (s *CrudServer) DeleteSubject(ctx context.Context, in *pb.DeleteSubjectReq) (*pb.DeleteSubjectRes, error) {
-	l := logic.NewDeleteSubjectLogic(ctx, s.svcCtx)
-	return l.DeleteSubject(in)
-}
-
 func (s *CrudServer) PublishComment(ctx context.Context, in *pb.PublishCommentReq) (*pb.PublishCommentRes, error) {
 	l := logic.NewPublishCommentLogic(ctx, s.svcCtx)
 	return l.PublishComment(in)

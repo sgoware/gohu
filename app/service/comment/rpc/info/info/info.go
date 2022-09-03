@@ -16,9 +16,9 @@ type (
 	CommentContent                 = pb.CommentContent
 	CommentIndex                   = pb.CommentIndex
 	CommentSubject                 = pb.CommentSubject
-	GetCommentIndexReq             = pb.GetCommentIndexReq
-	GetCommentIndexRes             = pb.GetCommentIndexRes
-	GetCommentIndexRes_Data        = pb.GetCommentIndexRes_Data
+	GetCommentInfoReq              = pb.GetCommentInfoReq
+	GetCommentInfoRes              = pb.GetCommentInfoRes
+	GetCommentInfoRes_Data         = pb.GetCommentInfoRes_Data
 	GetCommentSubjectIndexReq      = pb.GetCommentSubjectIndexReq
 	GetCommentSubjectIndexRes      = pb.GetCommentSubjectIndexRes
 	GetCommentSubjectIndexRes_Data = pb.GetCommentSubjectIndexRes_Data
@@ -28,7 +28,7 @@ type (
 
 	Info interface {
 		GetCommentSubject(ctx context.Context, in *GetCommentSubjectReq, opts ...grpc.CallOption) (*GetCommentSubjectRes, error)
-		GetCommentIndex(ctx context.Context, in *GetCommentIndexReq, opts ...grpc.CallOption) (*GetCommentIndexRes, error)
+		GetCommentInfo(ctx context.Context, in *GetCommentInfoReq, opts ...grpc.CallOption) (*GetCommentInfoRes, error)
 		GetCommentSubjectIndex(ctx context.Context, in *GetCommentSubjectIndexReq, opts ...grpc.CallOption) (*GetCommentSubjectIndexRes, error)
 	}
 
@@ -48,9 +48,9 @@ func (m *defaultInfo) GetCommentSubject(ctx context.Context, in *GetCommentSubje
 	return client.GetCommentSubject(ctx, in, opts...)
 }
 
-func (m *defaultInfo) GetCommentIndex(ctx context.Context, in *GetCommentIndexReq, opts ...grpc.CallOption) (*GetCommentIndexRes, error) {
+func (m *defaultInfo) GetCommentInfo(ctx context.Context, in *GetCommentInfoReq, opts ...grpc.CallOption) (*GetCommentInfoRes, error) {
 	client := pb.NewInfoClient(m.cli.Conn())
-	return client.GetCommentIndex(ctx, in, opts...)
+	return client.GetCommentInfo(ctx, in, opts...)
 }
 
 func (m *defaultInfo) GetCommentSubjectIndex(ctx context.Context, in *GetCommentSubjectIndexReq, opts ...grpc.CallOption) (*GetCommentSubjectIndexRes, error) {

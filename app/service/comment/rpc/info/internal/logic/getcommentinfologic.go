@@ -14,28 +14,28 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetCommentIndexLogic struct {
+type GetCommentInfoLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetCommentIndexLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCommentIndexLogic {
-	return &GetCommentIndexLogic{
+func NewGetCommentInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCommentInfoLogic {
+	return &GetCommentInfoLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetCommentIndexLogic) GetCommentIndex(in *pb.GetCommentIndexReq) (res *pb.GetCommentIndexRes, err error) {
+func (l *GetCommentInfoLogic) GetCommentInfo(in *pb.GetCommentInfoReq) (res *pb.GetCommentInfoRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	resData := &pb.GetCommentIndexRes_Data{}
+	resData := &pb.GetCommentInfoRes_Data{}
 
 	commentIndexBytes, err := l.svcCtx.Rdb.Get(l.ctx,
-		fmt.Sprintf("commentIndex_%d", in.IndexId)).Bytes()
+		fmt.Sprintf("comment_index_%d", in.IndexId)).Bytes()
 	if err != nil {
 		logger.Errorf("get commentIndex cache failed, err: %v")
 
@@ -46,7 +46,7 @@ func (l *GetCommentIndexLogic) GetCommentIndex(in *pb.GetCommentIndexReq) (res *
 			First()
 		if err != nil {
 			logger.Errorf("get commentIndex failed, err: mysql err, %v", err)
-			res = &pb.GetCommentIndexRes{
+			res = &pb.GetCommentInfoRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
 				Ok:   false,
@@ -78,7 +78,7 @@ func (l *GetCommentIndexLogic) GetCommentIndex(in *pb.GetCommentIndexReq) (res *
 			logger.Errorf("marshal proto failed, err: %v", err)
 		} else {
 			l.svcCtx.Rdb.Set(l.ctx,
-				fmt.Sprintf("commentIndex_%v", commentIndex.ID),
+				fmt.Sprintf("comment_index_%v", commentIndex.ID),
 				commentIndexBytes,
 				time.Second*86400)
 		}
@@ -87,7 +87,30 @@ func (l *GetCommentIndexLogic) GetCommentIndex(in *pb.GetCommentIndexReq) (res *
 		err = proto.Unmarshal(commentIndexBytes, commentIndex)
 		if err != nil {
 			logger.Errorf("unmarshal proto failed, err: %v", err)
-			res = &pb.GetCommentIndexRes{
+			res = &pb.GetCommentInfoRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+		}
+		resData.CommentIndex = commentIndex
+	}
+
+	commentContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
+		fmt.Sprintf("comment_content_%d", in.IndexId)).Bytes()
+	if err != nil {
+		logger.Errorf("get [comment_content] cache failed, err: %v")
+
+		commentContentModel := l.svcCtx.CommentModel.CommentContent
+
+		commentContent, err := commentContentModel.WithContext(l.ctx).
+			Where(commentContentModel.CommentID.Eq(in.IndexId)).
+			First()
+		if err != nil {
+			logger.Errorf("get [comment content] record failed, err: %v", err)
+			res = &pb.GetCommentInfoRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
 				Ok:   false,
@@ -96,12 +119,44 @@ func (l *GetCommentIndexLogic) GetCommentIndex(in *pb.GetCommentIndexReq) (res *
 			return res, nil
 		}
 
-		resData.CommentIndex = commentIndex
+		commentContentProto := &pb.CommentContent{
+			CommentId:  commentContent.CommentID,
+			Content:    commentContent.Content,
+			Meta:       commentContent.Meta,
+			CreateTime: commentContent.CreateTime.String(),
+			UpdateTime: commentContent.UpdateTime.String(),
+		}
+
+		res.Data.CommentContent = commentContentProto
+
+		commentContentBytes, err = proto.Marshal(commentContentProto)
+		if err != nil {
+			logger.Errorf("marshal proto failed, err: %v", err)
+		} else {
+			l.svcCtx.Rdb.Set(l.ctx,
+				fmt.Sprintf("comment_content_%d", commentContent.CommentID),
+				commentContentBytes,
+				time.Second*86400)
+		}
+	} else {
+		commentContent := &pb.CommentContent{}
+		err = proto.Unmarshal(commentContentBytes, commentContent)
+		if err != nil {
+			logger.Errorf("unmarshal proto failed, err: %v", err)
+			res = &pb.GetCommentInfoRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+		resData.CommentContent = commentContent
 	}
 
-	res = &pb.GetCommentIndexRes{
+	res = &pb.GetCommentInfoRes{
 		Code: http.StatusOK,
-		Msg:  "get comment index successfully",
+		Msg:  "get comment successfully",
 		Ok:   true,
 		Data: resData,
 	}

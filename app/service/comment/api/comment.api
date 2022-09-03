@@ -7,6 +7,42 @@ info(
 )
 
 type (
+	CommentSubject {
+		Id         int64  `json:"id"`
+		ObjType    int32  `json:"obj_type"`
+		ObjId      int64  `json:"obj_id"`
+		Count      int32  `json:"count"`
+		RootCount  int32  `json:"root_count"`
+		State      int32  `json:"state"`
+		Attrs      int32  `json:"attrs"`
+		CreateTime string `json:"create_time"`
+		UpdateTime string `json:"update_time"`
+	}
+
+	CommentIndex {
+		Id           int64  `json:"id"`
+		SubjectId    int64  `json:"subject_id"`
+		UserId       int64  `json:"user_id"`
+		IpLoc        string `json:"ip_loc"`
+		RootId       int64  `json:"root_id"`
+		CommentFloor int32  `json:"comment_floor"`
+		CommentId    int64  `json:"comment_id"`
+		ReplyFloor   int32  `json:"reply_floor"`
+		ApproveCount int32  `json:"approve_count"`
+		State        int32  `json:"state"`
+		Attrs        int32  `json:"attrs"`
+		CreateTime   string `json:"create_time"`
+		UpdateTime   string `json:"update_time"`
+	}
+
+	CommentContent {
+		CommentId  int64  `json:"comment_id"`
+		Content    string `json:"content"`
+		Meta       string `json:"meta"`
+		CreateTime string `json:"create_time"`
+		UpdateTime string `json:"update_time"`
+	}
+
 	CrudReq {
 		Action string `form:"action"`
 		Data   string `form:"data"`
@@ -20,21 +56,28 @@ type (
 	GetCommentSubjectReq {
 		SubjectId int64 `path:"subject_id"`
 	}
+	GetCommentSubjectResData {
+		CommentSubject CommentSubject `json:"comment_subject"`
+	}
 	GetCommentSubjectRes {
-		Code int32  `json:"code"`
-		Msg  string `json:"msg"`
-		Ok   bool   `json:"ok"`
-		Data string `json:"data"`
+		Code int32                    `json:"code"`
+		Msg  string                   `json:"msg"`
+		Ok   bool                     `json:"ok"`
+		Data GetCommentSubjectResData `json:"data"`
 	}
 
 	GetCommentIndexReq {
 		IndexId int64 `path:"index_id"`
 	}
+	GetCommentIndexResData {
+		CommentIndex   CommentIndex   `json:"comment_index"`
+		CommentContent CommentContent `json:"comment_content"`
+	}
 	GetCommentIndexRes {
-		Code int32  `json:"code"`
-		Msg  string `json:"msg"`
-		Ok   bool   `json:"ok"`
-		Data string `json:"data"`
+		Code int32                  `json:"code"`
+		Msg  string                 `json:"msg"`
+		Ok   bool                   `json:"ok"`
+		Data GetCommentIndexResData `json:"data"`
 	}
 
 	GetCommenSubjectIndexReq {

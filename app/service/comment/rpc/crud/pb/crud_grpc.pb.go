@@ -22,8 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CrudClient interface {
-	InitSubject(ctx context.Context, in *InitSubjectReq, opts ...grpc.CallOption) (*InitSubjectRes, error)
-	DeleteSubject(ctx context.Context, in *DeleteSubjectReq, opts ...grpc.CallOption) (*DeleteSubjectRes, error)
 	PublishComment(ctx context.Context, in *PublishCommentReq, opts ...grpc.CallOption) (*PublishCommentRes, error)
 	DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*DeleteCommentRes, error)
 }
@@ -34,24 +32,6 @@ type crudClient struct {
 
 func NewCrudClient(cc grpc.ClientConnInterface) CrudClient {
 	return &crudClient{cc}
-}
-
-func (c *crudClient) InitSubject(ctx context.Context, in *InitSubjectReq, opts ...grpc.CallOption) (*InitSubjectRes, error) {
-	out := new(InitSubjectRes)
-	err := c.cc.Invoke(ctx, "/crud.Crud/InitSubject", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *crudClient) DeleteSubject(ctx context.Context, in *DeleteSubjectReq, opts ...grpc.CallOption) (*DeleteSubjectRes, error) {
-	out := new(DeleteSubjectRes)
-	err := c.cc.Invoke(ctx, "/crud.Crud/DeleteSubject", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *crudClient) PublishComment(ctx context.Context, in *PublishCommentReq, opts ...grpc.CallOption) (*PublishCommentRes, error) {
@@ -76,8 +56,6 @@ func (c *crudClient) DeleteComment(ctx context.Context, in *DeleteCommentReq, op
 // All implementations must embed UnimplementedCrudServer
 // for forward compatibility
 type CrudServer interface {
-	InitSubject(context.Context, *InitSubjectReq) (*InitSubjectRes, error)
-	DeleteSubject(context.Context, *DeleteSubjectReq) (*DeleteSubjectRes, error)
 	PublishComment(context.Context, *PublishCommentReq) (*PublishCommentRes, error)
 	DeleteComment(context.Context, *DeleteCommentReq) (*DeleteCommentRes, error)
 	mustEmbedUnimplementedCrudServer()
@@ -87,12 +65,6 @@ type CrudServer interface {
 type UnimplementedCrudServer struct {
 }
 
-func (UnimplementedCrudServer) InitSubject(context.Context, *InitSubjectReq) (*InitSubjectRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InitSubject not implemented")
-}
-func (UnimplementedCrudServer) DeleteSubject(context.Context, *DeleteSubjectReq) (*DeleteSubjectRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubject not implemented")
-}
 func (UnimplementedCrudServer) PublishComment(context.Context, *PublishCommentReq) (*PublishCommentRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublishComment not implemented")
 }
@@ -110,42 +82,6 @@ type UnsafeCrudServer interface {
 
 func RegisterCrudServer(s grpc.ServiceRegistrar, srv CrudServer) {
 	s.RegisterService(&Crud_ServiceDesc, srv)
-}
-
-func _Crud_InitSubject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InitSubjectReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CrudServer).InitSubject(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/crud.Crud/InitSubject",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CrudServer).InitSubject(ctx, req.(*InitSubjectReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Crud_DeleteSubject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteSubjectReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CrudServer).DeleteSubject(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/crud.Crud/DeleteSubject",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CrudServer).DeleteSubject(ctx, req.(*DeleteSubjectReq))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Crud_PublishComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -191,14 +127,6 @@ var Crud_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "crud.Crud",
 	HandlerType: (*CrudServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "InitSubject",
-			Handler:    _Crud_InitSubject_Handler,
-		},
-		{
-			MethodName: "DeleteSubject",
-			Handler:    _Crud_DeleteSubject_Handler,
-		},
 		{
 			MethodName: "PublishComment",
 			Handler:    _Crud_PublishComment_Handler,

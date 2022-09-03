@@ -27,9 +27,9 @@ func (s *InfoServer) GetCommentSubject(ctx context.Context, in *pb.GetCommentSub
 	return l.GetCommentSubject(in)
 }
 
-func (s *InfoServer) GetCommentIndex(ctx context.Context, in *pb.GetCommentIndexReq) (*pb.GetCommentIndexRes, error) {
-	l := logic.NewGetCommentIndexLogic(ctx, s.svcCtx)
-	return l.GetCommentIndex(in)
+func (s *InfoServer) GetCommentInfo(ctx context.Context, in *pb.GetCommentInfoReq) (*pb.GetCommentInfoRes, error) {
+	l := logic.NewGetCommentInfoLogic(ctx, s.svcCtx)
+	return l.GetCommentInfo(in)
 }
 
 func (s *InfoServer) GetCommentSubjectIndex(ctx context.Context, in *pb.GetCommentSubjectIndexReq) (*pb.GetCommentSubjectIndexRes, error) {

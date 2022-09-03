@@ -52,16 +52,17 @@ message GetCommentSubjectRes{
     }
 }
 
-message GetCommentIndexReq{
+message GetCommentInfoReq{
     int64 index_id=1;
 }
-message GetCommentIndexRes{
+message GetCommentInfoRes{
     int32 code=1;
     string msg=2;
     bool ok=3;
     Data data=4;
     message Data{
         CommentIndex comment_index=1;
+        CommentContent comment_content=2;
     }
 }
 
@@ -82,6 +83,6 @@ message GetCommentSubjectIndexRes{
 
 service Info{
     rpc GetCommentSubject(GetCommentSubjectReq) returns(GetCommentSubjectRes);
-    rpc GetCommentIndex(GetCommentIndexReq) returns(GetCommentIndexRes);
+    rpc GetCommentInfo(GetCommentInfoReq) returns(GetCommentInfoRes);
     rpc GetCommentSubjectIndex(GetCommentSubjectIndexReq) returns(GetCommentSubjectIndexRes);
 }

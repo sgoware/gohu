@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InfoClient interface {
 	GetCommentSubject(ctx context.Context, in *GetCommentSubjectReq, opts ...grpc.CallOption) (*GetCommentSubjectRes, error)
-	GetCommentIndex(ctx context.Context, in *GetCommentIndexReq, opts ...grpc.CallOption) (*GetCommentIndexRes, error)
+	GetCommentInfo(ctx context.Context, in *GetCommentInfoReq, opts ...grpc.CallOption) (*GetCommentInfoRes, error)
 	GetCommentSubjectIndex(ctx context.Context, in *GetCommentSubjectIndexReq, opts ...grpc.CallOption) (*GetCommentSubjectIndexRes, error)
 }
 
@@ -44,9 +44,9 @@ func (c *infoClient) GetCommentSubject(ctx context.Context, in *GetCommentSubjec
 	return out, nil
 }
 
-func (c *infoClient) GetCommentIndex(ctx context.Context, in *GetCommentIndexReq, opts ...grpc.CallOption) (*GetCommentIndexRes, error) {
-	out := new(GetCommentIndexRes)
-	err := c.cc.Invoke(ctx, "/info.Info/GetCommentIndex", in, out, opts...)
+func (c *infoClient) GetCommentInfo(ctx context.Context, in *GetCommentInfoReq, opts ...grpc.CallOption) (*GetCommentInfoRes, error) {
+	out := new(GetCommentInfoRes)
+	err := c.cc.Invoke(ctx, "/info.Info/GetCommentInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (c *infoClient) GetCommentSubjectIndex(ctx context.Context, in *GetCommentS
 // for forward compatibility
 type InfoServer interface {
 	GetCommentSubject(context.Context, *GetCommentSubjectReq) (*GetCommentSubjectRes, error)
-	GetCommentIndex(context.Context, *GetCommentIndexReq) (*GetCommentIndexRes, error)
+	GetCommentInfo(context.Context, *GetCommentInfoReq) (*GetCommentInfoRes, error)
 	GetCommentSubjectIndex(context.Context, *GetCommentSubjectIndexReq) (*GetCommentSubjectIndexRes, error)
 	mustEmbedUnimplementedInfoServer()
 }
@@ -79,8 +79,8 @@ type UnimplementedInfoServer struct {
 func (UnimplementedInfoServer) GetCommentSubject(context.Context, *GetCommentSubjectReq) (*GetCommentSubjectRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCommentSubject not implemented")
 }
-func (UnimplementedInfoServer) GetCommentIndex(context.Context, *GetCommentIndexReq) (*GetCommentIndexRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCommentIndex not implemented")
+func (UnimplementedInfoServer) GetCommentInfo(context.Context, *GetCommentInfoReq) (*GetCommentInfoRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCommentInfo not implemented")
 }
 func (UnimplementedInfoServer) GetCommentSubjectIndex(context.Context, *GetCommentSubjectIndexReq) (*GetCommentSubjectIndexRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCommentSubjectIndex not implemented")
@@ -116,20 +116,20 @@ func _Info_GetCommentSubject_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Info_GetCommentIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCommentIndexReq)
+func _Info_GetCommentInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfoServer).GetCommentIndex(ctx, in)
+		return srv.(InfoServer).GetCommentInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/info.Info/GetCommentIndex",
+		FullMethod: "/info.Info/GetCommentInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfoServer).GetCommentIndex(ctx, req.(*GetCommentIndexReq))
+		return srv.(InfoServer).GetCommentInfo(ctx, req.(*GetCommentInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -164,8 +164,8 @@ var Info_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Info_GetCommentSubject_Handler,
 		},
 		{
-			MethodName: "GetCommentIndex",
-			Handler:    _Info_GetCommentIndex_Handler,
+			MethodName: "GetCommentInfo",
+			Handler:    _Info_GetCommentInfo_Handler,
 		},
 		{
 			MethodName: "GetCommentSubjectIndex",

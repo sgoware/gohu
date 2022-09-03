@@ -80,7 +80,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 		case 1:
 			// 回答
 			answerRes, err := req.NewRequest().Get(
-				fmt.Sprintf("https%s/api/answer/%d", m.Domain, data.ObjId))
+				fmt.Sprintf("https://%s/api/answer/%d", m.Domain, data.ObjId))
 			if err != nil {
 				return fmt.Errorf("query answer info failed, %v", err)
 			}
@@ -128,8 +128,8 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			}
 
 		case 2:
-			// 文章
-			// TODO: 通知系统: 文章赞同与喜欢
+			// 评论
+
 		}
 
 	case 3:
