@@ -2,15 +2,13 @@ package handler
 
 import (
 	"context"
-	"main/app/common/log"
-	"main/app/utils/cookie"
-	"net/http"
-	"strings"
-
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"main/app/common/log"
 	"main/app/service/user/api/internal/logic"
 	"main/app/service/user/api/internal/svc"
 	"main/app/service/user/api/internal/types"
+	"main/app/utils/cookie"
+	"net/http"
 )
 
 func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
@@ -26,10 +24,9 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		logger.Debugf("recv args: %v", req)
 
 		ctx := context.Background()
-		if r.RemoteAddr != "" {
-			output := strings.Split(r.RemoteAddr, ":")
-			ctx = context.WithValue(r.Context(), "lastIp", output[0])
-		}
+		ip := r.Header.Get("X-Real-Ip")
+		ctx = context.WithValue(r.Context(), "lastIp", ip)
+
 		l := logic.NewLoginLogic(ctx, svcCtx)
 
 		res, err := l.Login(&req)
