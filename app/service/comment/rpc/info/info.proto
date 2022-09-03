@@ -82,7 +82,6 @@ message GetCommentSubjectIndexRes{
 
 
 service Info{
-    rpc GetCommentSubject(GetCommentSubjectReq) returns(GetCommentSubjectRes);
     rpc GetCommentInfo(GetCommentInfoReq) returns(GetCommentInfoRes);
     rpc GetCommentSubjectIndex(GetCommentSubjectIndexReq) returns(GetCommentSubjectIndexRes);
 }
