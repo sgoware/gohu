@@ -153,11 +153,10 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			if err != nil {
 				return fmt.Errorf("query comment info failed, err: %v", err)
 			}
-
 			commentInfoJson := gjson.Parse(commentInfoRes.String())
 			if !commentInfoJson.Get("ok").Bool() {
 				return fmt.Errorf("query comment info failed, err: %v",
-					commentInfoJson.Get("msg"))
+					commentInfoJson.Get("msg").String())
 			}
 
 			userId := commentInfoJson.Get("data.comment_index.user_id").Int()

@@ -100,18 +100,6 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 						Ok:   true,
 					}
 
-					err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
-						MessageType: 2,
-						Data: notificationMqProducer.ApproveAndLikeData{
-							UserId:  in.UserId,
-							Action:  1,
-							ObjType: in.ObjType,
-							ObjId:   in.ObjId,
-						}})
-					if err != nil {
-						logger.Errorf("publish msg to nsq failed, err: %v", err)
-					}
-
 					logger.Debugf("send message: %v", err)
 					return res, nil
 				}
@@ -146,18 +134,6 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 					}
 					logger.Debugf("send message: %v", err)
 					return res, nil
-				}
-
-				err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
-					MessageType: 2,
-					Data: notificationMqProducer.ApproveAndLikeData{
-						UserId:  in.UserId,
-						Action:  1,
-						ObjType: in.ObjType,
-						ObjId:   in.ObjId,
-					}})
-				if err != nil {
-					logger.Errorf("publish msg to nsq failed, err: %v", err)
 				}
 
 				res = &pb.DoCollectionRes{
