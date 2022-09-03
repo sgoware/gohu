@@ -36,7 +36,7 @@ func (l *GetCommentSubjectInfoLogic) GetCommentSubjectInfo(req *types.GetComment
 			ObjType:    rpcRes.Data.CommentSubject.ObjType,
 			ObjId:      rpcRes.Data.CommentSubject.ObjId,
 			Count:      rpcRes.Data.CommentSubject.Count,
-			RootCount:  rpcRes.Data.CommentSubject.Count,
+			RootCount:  rpcRes.Data.CommentSubject.RootCount,
 			State:      rpcRes.Data.CommentSubject.State,
 			Attrs:      rpcRes.Data.CommentSubject.Attrs,
 			CreateTime: rpcRes.Data.CommentSubject.CreateTime,
