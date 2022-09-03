@@ -14,8 +14,8 @@ import (
 	"main/app/service/mq/asynq/processor/internal/config"
 	"main/app/service/mq/asynq/processor/job"
 	"main/app/service/question/dao/model"
+	"main/app/service/question/dao/pb"
 	"main/app/service/question/dao/query"
-	"main/app/service/question/rpc/info/pb"
 	"main/app/utils/structx"
 )
 
