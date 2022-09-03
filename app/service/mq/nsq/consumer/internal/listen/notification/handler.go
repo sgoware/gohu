@@ -220,7 +220,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			}
 
 			userInfoRes, err := req.NewRequest().Get(
-				fmt.Sprintf("https://%s/api/user/profile/%s",
+				fmt.Sprintf("https://%s/api/user/profile/%d",
 					m.Domain,
 					data.UserId))
 			if err != nil {
