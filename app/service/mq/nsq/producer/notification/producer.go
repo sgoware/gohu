@@ -32,7 +32,7 @@ type CommentData struct {
 type SubscriptionData struct {
 	UserId  int64 `json:"user_id"`  // 被关注者id
 	Action  int32 `json:"action"`   // 1: 创建 2: 更新
-	ObjType int32 `json:"obj_type"` // 1: 发布问题
+	ObjType int32 `json:"obj_type"` // 1: 发布问题 2: 回答问题
 	ObjId   int64 `json:"obj_id"`
 }
 

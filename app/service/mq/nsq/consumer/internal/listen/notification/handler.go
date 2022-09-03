@@ -367,6 +367,85 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			wg.Wait()
 
 			return nil
+
+		case 2:
+			answerInfoRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/question/answer/%d", data.ObjId))
+			if err != nil {
+				return fmt.Errorf("query answer info failed, err: %v", err)
+			}
+
+			answerInfoJson := gjson.Parse(answerInfoRes.String())
+			if !answerInfoJson.Get("ok").Bool() {
+				return fmt.Errorf("query answer info failed, err: %v", answerInfoJson.Get("msg").String())
+			}
+
+			questionId := answerInfoJson.Get("data.answer_index.question_id").Int()
+
+			questionInfoRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/question/question/%d", m.Domain, questionId))
+			if err != nil {
+				return fmt.Errorf("query question info failed, err: %v", err)
+			}
+
+			questionInfoResJson := gjson.Parse(questionInfoRes.String())
+			if !questionInfoResJson.Get("ok").Bool() {
+				return fmt.Errorf("query question info failed, err: %v", questionInfoResJson.Get("msg"))
+			}
+
+			questionTitle := questionInfoResJson.Get("data.question_subject.title").String()
+
+			userInfoRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/user/profile/%d", m.Domain, data.UserId))
+			if err != nil {
+				return fmt.Errorf("query user info failed, err: %v", err)
+			}
+
+			userInfoResJson := gjson.Parse(userInfoRes.String())
+			if !userInfoResJson.Get("ok").Bool() {
+				return fmt.Errorf("query user info failed, err: %v", err)
+			}
+
+			nickname := userInfoResJson.Get("data.nickname").String()
+
+			followerRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/user/follower/%d",
+					m.Domain,
+					data.UserId))
+			if err != nil {
+				return fmt.Errorf("query followers failed, err: %v", err)
+			}
+
+			followersResJson := gjson.Parse(followerRes.String())
+			if !followersResJson.Get("ok").Bool() {
+				return fmt.Errorf("query follower failed, err: %v",
+					followersResJson.Get("msg").String())
+			}
+
+			followers := followersResJson.Get("data.user_ids").Array()
+
+			wg := sync.WaitGroup{}
+
+			wg.Add(len(followers))
+
+			for _, follower := range followers {
+				go func(follower gjson.Result) {
+					defer wg.Done()
+
+					_, _ = m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+						UserId:      follower.Int(),
+						MessageType: 4,
+						Title: fmt.Sprintf("你关注的用户 %s 回答了问题 %s",
+							nickname,
+							questionTitle),
+						Content: "",
+						Url: fmt.Sprintf("https://%s/question/%d/answer/%d",
+							m.Domain, questionId, data.ObjId),
+					})
+				}(follower)
+			}
+
+			wg.Wait()
 		}
 
 	case 5:

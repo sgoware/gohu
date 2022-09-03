@@ -217,6 +217,19 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		logger.Errorf("publish msg to nsq failed, err: %v", err)
 	}
 
+	err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+		MessageType: 4,
+		Data: notificationMqProducer.SubscriptionData{
+			UserId:  userId,
+			Action:  1,
+			ObjType: 2,
+			ObjId:   answerIndexId,
+		},
+	})
+	if err != nil {
+		logger.Errorf("publish msg to nsq failed, err: %v", err)
+	}
+
 	err = l.svcCtx.Rdb.Incr(l.ctx,
 		fmt.Sprintf("question_subject_answer_cnt_%d", in.QuestionId)).Err()
 	if err != nil {
