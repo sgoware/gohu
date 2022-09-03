@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"google.golang.org/protobuf/proto"
 	"main/app/common/log"
 	"net/http"
@@ -100,40 +101,46 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 		subCnt, err := l.svcCtx.Rdb.Get(l.ctx,
 			fmt.Sprintf("question_subject_sub_cnt_%d", in.QuestionId)).Int()
 		if err != nil {
-			logger.Errorf("get [question_subject_sub_cnt] failed, err: %v", err)
-			res = &pb.GetQuestionRes{
-				Code: http.StatusInternalServerError,
-				Msg:  "internal err",
-				Ok:   false,
+			if err != redis.Nil {
+				logger.Errorf("get [question_subject_sub_cnt] failed, err: %v", err)
+				res = &pb.GetQuestionRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, nil
 			}
-			logger.Debugf("send message: %v", res.String())
-			return res, nil
 		}
 
 		answerCnt, err := l.svcCtx.Rdb.Get(l.ctx,
 			fmt.Sprintf("question_subject_answer_cnt_%d", in.QuestionId)).Int()
 		if err != nil {
-			logger.Errorf("get [question_subject_answer_cnt] failed, err: %v", err)
-			res = &pb.GetQuestionRes{
-				Code: http.StatusInternalServerError,
-				Msg:  "internal err",
-				Ok:   false,
+			if err != redis.Nil {
+				logger.Errorf("get [question_subject_answer_cnt] failed, err: %v", err)
+				res = &pb.GetQuestionRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, nil
 			}
-			logger.Debugf("send message: %v", res.String())
-			return res, nil
 		}
 
 		viewCnt, err := l.svcCtx.Rdb.Get(l.ctx,
 			fmt.Sprintf("question_subject_view_cnt_%d", in.QuestionId)).Int64()
 		if err != nil {
-			logger.Errorf("get [question_subject_view_cnt] failed, err: %v", err)
-			res = &pb.GetQuestionRes{
-				Code: http.StatusInternalServerError,
-				Msg:  "internal err",
-				Ok:   false,
+			if err != redis.Nil {
+				logger.Errorf("get [question_subject_view_cnt] failed, err: %v", err)
+				res = &pb.GetQuestionRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, nil
 			}
-			logger.Debugf("send message: %v", res.String())
-			return res, nil
 		}
 
 		resData.QuestionSubject.SubCount += int32(subCnt)
