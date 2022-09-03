@@ -240,7 +240,7 @@ func (l *ScheduleUpdateCommentSubjectHandler) ProcessTask(ctx context.Context, _
 		}
 
 		commentSubjectBytes, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("commentt_subject_%d", commentSubjectId)).Bytes()
+			fmt.Sprintf("comment_subject_%d", commentSubjectId)).Bytes()
 		if err == nil {
 			commentSubjectProto := &pb.CommentSubject{}
 			err = proto.Unmarshal(commentSubjectBytes, commentSubjectProto)
@@ -268,13 +268,13 @@ func (l *ScheduleUpdateCommentSubjectHandler) ProcessTask(ctx context.Context, _
 	for _, rootCommentMember := range rootCommentMembers {
 		commentSubjectId := cast.ToInt64(rootCommentMember)
 		rootCommentCnt, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("comment_subject_root_comment_cnt_%s", commentSubjectId)).Int()
+			fmt.Sprintf("comment_subject_root_comment_cnt_%d", commentSubjectId)).Int()
 		if err != nil {
 			return fmt.Errorf("get [comment_subject_root_comment_cnt] failed, err: %v", err)
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("comment_subject_root_comment_cnt_%s", commentSubjectId)).Err()
+			fmt.Sprintf("comment_subject_root_comment_cnt_%d", commentSubjectId)).Err()
 		if err != nil {
 			return fmt.Errorf("del [comment_subject_root_comment_cnt] failed, err: %v", err)
 		}
@@ -298,7 +298,7 @@ func (l *ScheduleUpdateCommentSubjectHandler) ProcessTask(ctx context.Context, _
 		}
 
 		commentSubjectBytes, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("commentt_subject_%d", commentSubjectId)).Bytes()
+			fmt.Sprintf("comment_subject_%d", commentSubjectId)).Bytes()
 		if err == nil {
 			commentSubjectProto := &pb.CommentSubject{}
 			err = proto.Unmarshal(commentSubjectBytes, commentSubjectProto)
@@ -373,7 +373,7 @@ func (l *ScheduleUpdateCommentIndexHandler) ProcessTask(ctx context.Context, _ *
 		}
 
 		commentIndexBytes, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("commentt_index_%d", commentIndexId)).Bytes()
+			fmt.Sprintf("comment_index_%d", commentIndexId)).Bytes()
 		if err == nil {
 			commentIndexProto := &pb.CommentIndex{}
 			err = proto.Unmarshal(commentIndexBytes, commentIndexProto)
