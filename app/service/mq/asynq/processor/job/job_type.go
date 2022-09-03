@@ -7,15 +7,19 @@ const (
 	MsgAddUserSubjectCacheTask          = "msg:user_subject_cache:add"
 	ScheduleUpdateUserSubjectRecordTask = "schedule:user_subject_record:update"
 
-	MsgCrudQuestionSubjectRecordTask = "msg:question_subject_record:crud"
-	MsgCrudQuestionContentRecordTask = "msg:question_content_record:crud"
+	MsgCrudQuestionSubjectRecordTask        = "msg:question_subject_record:crud"
+	MsgCrudQuestionContentRecordTask        = "msg:question_content_record:crud"
+	ScheduleUpdateQuestionSubjectRecordTask = "schedule:question_subject_record:update"
+	ScheduleUpdateAnswerIndexRecordTask     = "schedule:answer_index_record:update"
 
 	MsgUpdateUserCollectCacheTask       = "msg:user_collect_cache:update"
 	ScheduleUpdateUserCollectRecordTask = "schedule:user_collect_record:update"
 
-	MsgCrudCommentSubjectTask = "msg:comment_subject:crud"
+	MsgCrudCommentSubjectTask      = "msg:comment_subject:crud"
+	ScheduleUpdateCommentIndexTask = "schedule:comment_index:update"
 
-	ScheduleUpdateQuestionRecordTask = "schedule:question:update"
-	ScheduleUpdateCommentRecordTask  = "schedule:comment:record"
-	DeferTask                        = "defer:task:xx"
+	MsgAddQuestionSubjectCacheTask = "msg:question_subject:add"
+
+	ScheduleUpdateCommentRecordTask = "schedule:comment:record"
+	DeferTask                       = "defer:task:xx"
 )

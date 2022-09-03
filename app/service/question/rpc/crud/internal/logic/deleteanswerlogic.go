@@ -59,6 +59,51 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 	// 删除answer_index后, 级联删除关联的回答内容和评论
 	answerIndexModel := l.svcCtx.QuestionModel.AnswerIndex
 
+	answerIndex, err := answerIndexModel.WithContext(l.ctx).
+		Select(answerIndexModel.ID,
+			answerIndexModel.QuestionID).
+		Where(answerIndexModel.ID.Eq(in.AnswerId)).
+		First()
+	if err != nil {
+		logger.Errorf("query [answer_index] record failed, err: %v", err)
+		res = &pb.DeleteAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	err = l.svcCtx.Rdb.Decr(l.ctx,
+		fmt.Sprintf("question_subject_answer_cnt_%d", answerIndex.QuestionID)).Err()
+	if err != nil {
+		logger.Errorf("decrease [question_subject_answer_cnt] failed, err: %v", err)
+		res = &pb.DeleteAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
+
+	err = l.svcCtx.Rdb.SRem(l.ctx,
+		"question_subject_answer_cnt_set",
+		answerIndex.QuestionID).Err()
+	if err != nil {
+		if err != nil {
+			logger.Errorf("update [question_subject_sub_cnt_set] failed, err: %v", err)
+			res = &pb.DeleteAnswerRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+	}
+
 	_, err = answerIndexModel.WithContext(l.ctx).Where(answerIndexModel.ID.Eq(in.AnswerId)).Delete()
 	switch err {
 	case gorm.ErrRecordNotFound:

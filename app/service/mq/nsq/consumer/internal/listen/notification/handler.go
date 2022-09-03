@@ -128,6 +128,9 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			}
 
 		case 2:
+			// 文章
+
+		case 3:
 			// 评论
 
 		}

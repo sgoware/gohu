@@ -67,6 +67,9 @@ type MsgCrudQuestionContentRecordPayload struct {
 	UpdateTime time.Time `json:"update_time"`
 }
 
+type MsgAddQuestionSubjectCachePayload struct {
+}
+
 type MsgCrudCommentSubjectPayload struct {
 	Action     int32     `json:"action"` // 1:创建 2:更新 3:删除
 	Id         int64     `json:"id"`

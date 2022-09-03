@@ -18,7 +18,7 @@ type FollowerData struct {
 
 type ApproveAndLikeData struct {
 	UserId  int64 `json:"user_id"`
-	Action  int32 `json:"action"`
+	Action  int32 `json:"action"` // 1: 赞同 2: 喜欢
 	ObjType int32 `json:"obj_type"`
 	ObjId   int64 `json:"obj_id"`
 }

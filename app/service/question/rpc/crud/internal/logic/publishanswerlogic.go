@@ -217,6 +217,35 @@ func (l *PublishAnswerLogic) PublishAnswer(in *pb.PublishAnswerReq) (res *pb.Pub
 		logger.Errorf("publish msg to nsq failed, err: %v", err)
 	}
 
+	err = l.svcCtx.Rdb.Incr(l.ctx,
+		fmt.Sprintf("question_subject_answer_cnt_%d", in.QuestionId)).Err()
+	if err != nil {
+		logger.Errorf("increate [question_subject_answer_cnt] failed, err: %v", err)
+		res = &pb.PublishAnswerRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", err)
+		return res, nil
+	}
+
+	err = l.svcCtx.Rdb.SAdd(l.ctx,
+		"question_subject_answer_cnt_set",
+		in.QuestionId).Err()
+	if err != nil {
+		if err != nil {
+			logger.Errorf("update [question_subject_sub_cnt_set] failed, err: %v", err)
+			res = &pb.PublishAnswerRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+	}
+
 	res = &pb.PublishAnswerRes{
 		Code: http.StatusOK,
 		Msg:  "publish answer successfully",

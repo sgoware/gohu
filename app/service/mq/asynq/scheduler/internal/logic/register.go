@@ -19,4 +19,5 @@ func NewScheduler(ctx context.Context, svcCtx *svc.ServiceContext) *AsyNqSchedul
 
 func (l *AsyNqScheduler) Register() {
 	l.updateUserRecord()
+	l.updateQuestionRecord()
 }

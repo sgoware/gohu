@@ -96,6 +96,49 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 			return res, nil
 		}
 		resData.QuestionSubject = questionSubjectProto
+
+		subCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("question_subject_sub_cnt_%d", in.QuestionId)).Int()
+		if err != nil {
+			logger.Errorf("get [question_subject_sub_cnt] failed, err: %v", err)
+			res = &pb.GetQuestionRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+		}
+
+		answerCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("question_subject_answer_cnt_%d", in.QuestionId)).Int()
+		if err != nil {
+			logger.Errorf("get [question_subject_answer_cnt] failed, err: %v", err)
+			res = &pb.GetQuestionRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+		}
+
+		viewCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("question_subject_view_cnt_%d", in.QuestionId)).Int64()
+		if err != nil {
+			logger.Errorf("get [question_subject_view_cnt] failed, err: %v", err)
+			res = &pb.GetQuestionRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+		}
+
+		resData.QuestionSubject.SubCount += int32(subCnt)
+		resData.QuestionSubject.AnswerCount += int32(answerCnt)
+		resData.QuestionSubject.ViewCount += viewCnt
 	}
 
 	questionContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
@@ -152,6 +195,19 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 			return res, nil
 		}
 		resData.QuestionContent = questionContentProto
+	}
+
+	err = l.svcCtx.Rdb.Incr(l.ctx,
+		fmt.Sprintf("question_subject_view_cnt_%d", in.QuestionId)).Err()
+	if err != nil {
+		logger.Errorf("incr [question_subject_view_cnt] failed, err: %v", err)
+	} else {
+		err = l.svcCtx.Rdb.SAdd(l.ctx,
+			"question_subject_view_cnt_set",
+			in.QuestionId).Err()
+		if err != nil {
+			logger.Errorf("update [question_subject_view_cnt_set] failed, err: %v", err)
+		}
 	}
 
 	res = &pb.GetQuestionRes{

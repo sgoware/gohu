@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
+	"github.com/spf13/cast"
 	"github.com/yitter/idgenerator-go/idgen"
 	"google.golang.org/protobuf/proto"
 	apollo "main/app/common/config"
@@ -25,6 +26,11 @@ type MsgCrudCommentSubjectHandler struct {
 	IdGenerator  *idgen.DefaultIdGenerator
 }
 
+type ScheduleUpdateCommentIndexHandler struct {
+	Rdb          *redis.Client
+	CommentModel *query.Query
+}
+
 func NewMsgCrudCommentSubjectHandler(c config.Config) *MsgCrudCommentSubjectHandler {
 	logger := log.GetSugaredLogger()
 
@@ -33,7 +39,7 @@ func NewMsgCrudCommentSubjectHandler(c config.Config) *MsgCrudCommentSubjectHand
 		logger.Fatalf("initialize redis failed, err: %v", err)
 	}
 
-	userDB, err := apollo.GetMysqlDB("comment.yaml")
+	commentDB, err := apollo.GetMysqlDB("comment.yaml")
 	if err != nil {
 		logger.Fatalf("initialize user mysql failed, err: %v", err)
 	}
@@ -45,8 +51,27 @@ func NewMsgCrudCommentSubjectHandler(c config.Config) *MsgCrudCommentSubjectHand
 
 	return &MsgCrudCommentSubjectHandler{
 		Rdb:          rdb,
-		CommentModel: query.Use(userDB),
+		CommentModel: query.Use(commentDB),
 		IdGenerator:  idGenerator,
+	}
+}
+
+func NewScheduleUpdateCommentIndexHandler(c config.Config) *ScheduleUpdateCommentIndexHandler {
+	logger := log.GetSugaredLogger()
+
+	rdb, err := apollo.GetRedisClient("comment.yaml")
+	if err != nil {
+		logger.Fatalf("initialize redis failed, err: %v", err)
+	}
+
+	commentDB, err := apollo.GetMysqlDB("comment.yaml")
+	if err != nil {
+		logger.Fatalf("initialize user mysql failed, err: %v", err)
+	}
+
+	return &ScheduleUpdateCommentIndexHandler{
+		Rdb:          rdb,
+		CommentModel: query.Use(commentDB),
 	}
 }
 
@@ -131,5 +156,52 @@ func (l *MsgCrudCommentSubjectHandler) ProcessTask(ctx context.Context, task *as
 			return fmt.Errorf("delete [comment_subject] record failed, err: %v", err)
 		}
 	}
+	return nil
+}
+
+func (l *ScheduleUpdateCommentIndexHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
+	approveMembers, err := l.Rdb.SMembers(ctx,
+		"comment_index_approve_cnt_set").Result()
+	if err != nil {
+		return fmt.Errorf("get [comment_index_approve_cnt_set] failed, err: %v", err)
+	}
+	err = l.Rdb.Del(ctx,
+		fmt.Sprintf("comment_index_approve_cnt_set")).Err()
+	if err != nil {
+		return fmt.Errorf("del [comment_index_approve_cnt_set] failed ,err: %v", err)
+	}
+
+	commentIndexModel := l.CommentModel.CommentIndex
+
+	for _, approveMember := range approveMembers {
+		approveCnt, err := l.Rdb.Get(ctx,
+			fmt.Sprintf("comment_index_approve_cnt_%s", approveMember)).Int()
+		if err != nil {
+			return fmt.Errorf("get [comment_index_approve_cnt] failed, err: %d", err)
+		}
+
+		err = l.Rdb.Del(ctx,
+			fmt.Sprintf("comment_index_approve_cnt_%s", approveMember)).Err()
+		if err != nil {
+			return fmt.Errorf("del [comment_index_approve_cnt] failed, err: %v", err)
+		}
+
+		answerIndex, err := commentIndexModel.WithContext(ctx).
+			Select(commentIndexModel.ID, commentIndexModel.ApproveCount).
+			Where(commentIndexModel.ID.Eq(cast.ToInt64(approveMember))).
+			First()
+		if err != nil {
+			return fmt.Errorf("query [comment_index] record failed, err: %v", err)
+		}
+
+		_, err = commentIndexModel.WithContext(ctx).
+			Select(commentIndexModel.ID, commentIndexModel.ApproveCount).
+			Where(commentIndexModel.ID.Eq(cast.ToInt64(approveMember))).
+			Update(commentIndexModel.ApproveCount, int(answerIndex.ApproveCount)+approveCnt)
+		if err != nil {
+			return fmt.Errorf("update [comment_index] record failed, err: %v", err)
+		}
+	}
+
 	return nil
 }
