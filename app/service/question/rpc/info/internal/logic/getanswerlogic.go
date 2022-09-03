@@ -35,8 +35,22 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 	resData := &pb.GetAnswerRes_Data{}
 
 	answerIndexBytes, err := l.svcCtx.Rdb.Get(l.ctx,
-		fmt.Sprintf("anwer_index_%d", in.AnswerId)).Bytes()
-	if err != nil {
+		fmt.Sprintf("answer_index_%d", in.AnswerId)).Bytes()
+	if err == nil {
+		answerIndexProto := &pb.AnswerIndex{}
+		err = proto.Unmarshal(answerIndexBytes, answerIndexProto)
+		if err != nil {
+			logger.Errorf("unmarshal [answerIndexProto] failed, err: %v", err)
+			res = &pb.GetAnswerRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+		resData.AnswerIndex = answerIndexProto
+	} else {
 		logger.Errorf("get answerIndex cache failed, err: %v", err)
 
 		answerIndexModel := l.svcCtx.QuestionModel.AnswerIndex
@@ -76,7 +90,7 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 			logger.Errorf("marshal proto failed, err: %v")
 		} else {
 			l.svcCtx.Rdb.Set(l.ctx,
-				fmt.Sprintf("answerIndex_%d", answerIndex.ID),
+				fmt.Sprintf("answer_index_%d", answerIndex.ID),
 				answerIndexBytes,
 				time.Second*86400)
 		}
@@ -84,7 +98,21 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 
 	answerContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
 		fmt.Sprintf("answer_content_%d", in.AnswerId)).Bytes()
-	if err != nil {
+	if err == nil {
+		answerContentProto := &pb.AnswerContent{}
+		err = proto.Unmarshal(answerContentBytes, answerContentProto)
+		if err != nil {
+			logger.Errorf("unmarshal [answerContentProto] failed, err: %v", err)
+			res = &pb.GetAnswerRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", err)
+			return res, nil
+		}
+		resData.AnswerContent = answerContentProto
+	} else {
 		logger.Errorf("get answerContent cache failed, err: %v")
 
 		answerContentModel := l.svcCtx.QuestionModel.AnswerContent
