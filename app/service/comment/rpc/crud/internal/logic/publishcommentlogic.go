@@ -101,7 +101,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 				},
 			})
 			if err != nil {
-				logger.Errorf("publish mesg to nsq failed, err: %v", err)
+				logger.Errorf("publish msg to nsq failed, err: %v", err)
 			}
 		}
 
@@ -184,6 +184,9 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 					CommentId: in.CommentId,
 				},
 			})
+			if err != nil {
+				logger.Errorf("publish msg to nsq failed, err: %v", err)
+			}
 		}
 	}
 
