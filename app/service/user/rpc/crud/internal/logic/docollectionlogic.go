@@ -306,7 +306,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 						}
 
 						// 关注者计数器-1, 队列调度器定时更新数据库
-						err = l.svcCtx.Rdb.SRem(l.ctx,
+						err = l.svcCtx.Rdb.SAdd(l.ctx,
 							"user_follower_cnt_set",
 							in.ObjId).Err()
 						if err != nil {
@@ -364,7 +364,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 							return res, nil
 						}
 
-						err = l.svcCtx.Rdb.SRem(l.ctx,
+						err = l.svcCtx.Rdb.SAdd(l.ctx,
 							"question_subject_sub_cnt_set",
 							in.ObjId).Err()
 						if err != nil {
@@ -563,7 +563,7 @@ func unApprove(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollect
 			return fmt.Errorf("decr [answer_index_approve_cnt] failed, err: %v", err)
 		}
 
-		err = svcCtx.Rdb.SRem(ctx,
+		err = svcCtx.Rdb.SAdd(ctx,
 			"answer_index_approve_cnt_set",
 			in.ObjId).Err()
 		if err != nil {
@@ -583,7 +583,7 @@ func unApprove(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollect
 			return fmt.Errorf("decr [comment_index_approve_cnt] failed, err: %v", err)
 		}
 
-		err = svcCtx.Rdb.SRem(ctx,
+		err = svcCtx.Rdb.SAdd(ctx,
 			"comment_index_approve_cnt_set",
 			in.ObjId).Err()
 		if err != nil {
@@ -616,7 +616,7 @@ func createCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *
 
 func deleteCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *pb.DoCollectionReq) (err error) {
 	// 更新 user_collect 缓存
-	err = svcCtx.Rdb.SRem(ctx,
+	err = svcCtx.Rdb.SAdd(ctx,
 		fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, in.CollectType, in.ObjType),
 	).Err()
 	if err != nil {

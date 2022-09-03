@@ -88,7 +88,7 @@ func (l *DeleteAnswerLogic) DeleteAnswer(in *pb.DeleteAnswerReq) (res *pb.Delete
 		return res, nil
 	}
 
-	err = l.svcCtx.Rdb.SRem(l.ctx,
+	err = l.svcCtx.Rdb.SAdd(l.ctx,
 		"question_subject_answer_cnt_set",
 		answerIndex.QuestionID).Err()
 	if err != nil {

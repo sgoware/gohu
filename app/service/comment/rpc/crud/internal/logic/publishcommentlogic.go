@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/tidwall/gjson"
 	"github.com/zeromicro/go-zero/core/logx"
 	"main/app/common/log"
@@ -100,6 +101,33 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 				},
 			})
 		}
+
+		err = l.svcCtx.Rdb.Incr(l.ctx,
+			fmt.Sprintf("comment_subject_root_comment_%d", in.CommentId)).Err()
+		if err != nil {
+			logger.Errorf("incr [comment_subject_root_comment] failed, err: %v", err)
+			res = &pb.PublishCommentRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+		}
+
+		err = l.svcCtx.Rdb.SAdd(l.ctx,
+			"comment_subject_root_comment_set",
+			in.CommentId).Err()
+		if err != nil {
+			logger.Errorf("update [comment_subject_root_comment_set] failed, err: %v", err)
+			res = &pb.PublishCommentRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+		}
 	} else {
 		// 是回复评论的情况
 		count, err := commentIndexModel.WithContext(l.ctx).
@@ -154,6 +182,33 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 				},
 			})
 		}
+	}
+
+	err = l.svcCtx.Rdb.Incr(l.ctx,
+		fmt.Sprintf("comment_subject_comment_%d", in.CommentId)).Err()
+	if err != nil {
+		logger.Errorf("incr [comment_subject_comment] failed, err: %v", err)
+		res = &pb.PublishCommentRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	err = l.svcCtx.Rdb.SAdd(l.ctx,
+		"comment_subject_comment_set",
+		in.CommentId).Err()
+	if err != nil {
+		logger.Errorf("update [comment_subject_comment_set] failed, err: %v", err)
+		res = &pb.PublishCommentRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
 	}
 
 	err = commentContentModel.WithContext(l.ctx).

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"main/app/common/log"
 	"net/http"
 
@@ -31,6 +32,77 @@ func (l *DeleteCommentLogic) DeleteComment(in *pb.DeleteCommentReq) (res *pb.Del
 
 	// 级联删除commentContent
 	commentIndexModel := l.svcCtx.CommentModel.CommentIndex
+
+	commentIndex, err := commentIndexModel.WithContext(l.ctx).
+		Select(commentIndexModel.CommentID, commentIndexModel.SubjectID, commentIndexModel.RootID).
+		Where(commentIndexModel.CommentID.Eq(in.CommentId)).
+		First()
+	if err != nil {
+		logger.Errorf("query [comment_index] record failed, err: %v", err)
+		res = &pb.DeleteCommentRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	if commentIndex.RootID == 0 {
+		err = l.svcCtx.Rdb.Decr(l.ctx,
+			fmt.Sprintf("comment_subject_root_comment_%d", in.CommentId)).Err()
+		if err != nil {
+			logger.Errorf("incr [comment_subject_root_comment] failed, err: %v", err)
+			res = &pb.DeleteCommentRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+		}
+
+		err = l.svcCtx.Rdb.SAdd(l.ctx,
+			"comment_subject_root_comment_set",
+			in.CommentId).Err()
+		if err != nil {
+			logger.Errorf("update [comment_subject_root_comment_set] failed, err: %v", err)
+			res = &pb.DeleteCommentRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
+		}
+	}
+
+	err = l.svcCtx.Rdb.Decr(l.ctx,
+		fmt.Sprintf("comment_subject_comment_%d", in.CommentId)).Err()
+	if err != nil {
+		logger.Errorf("incr [comment_subject_comment] failed, err: %v", err)
+		res = &pb.DeleteCommentRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
+
+	err = l.svcCtx.Rdb.SAdd(l.ctx,
+		"comment_subject_comment_set",
+		in.CommentId).Err()
+	if err != nil {
+		logger.Errorf("update [comment_subject_comment_set] failed, err: %v", err)
+		res = &pb.DeleteCommentRes{
+			Code: http.StatusInternalServerError,
+			Msg:  "internal err",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	}
 
 	_, err = commentIndexModel.WithContext(l.ctx).
 		Where(commentIndexModel.ID.Eq(in.CommentId)).
