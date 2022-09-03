@@ -10,7 +10,7 @@ import (
 	"main/app/service/comment/api/internal/types"
 )
 
-func GetCommentSubjectIdResHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func GetCommentSubjectIdHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.GetCommentSubjectIdReq
 		logger := log.GetSugaredLogger()
@@ -22,9 +22,9 @@ func GetCommentSubjectIdResHandler(svcCtx *svc.ServiceContext) http.HandlerFunc 
 		}
 		logger.Debugf("recv args: %v", req)
 
-		l := logic.NewGetCommentSubjectIdResLogic(r.Context(), svcCtx)
+		l := logic.NewGetCommentSubjectIdLogic(r.Context(), svcCtx)
 
-		res, err := l.GetCommentSubjectIdRes(&req)
+		res, err := l.GetCommentSubjectId(&req)
 		if err != nil {
 			logger.Errorf("Process logic failed, err: %v", err)
 		}

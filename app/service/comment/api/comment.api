@@ -113,7 +113,7 @@ service comment {
 	@handler Crud
 	post /api/comment/crud (CrudReq) returns (CrudRes)
 	
-	@handler GetCommentSubjectIdRes
+	@handler GetCommentSubjectId
 	get /api/comment/subject/:obj_type/:obj_id (GetCommentSubjectIdReq) returns (GetCommentSubjectIdRes)
 	
 	@handler GetCommentSubjectInfo

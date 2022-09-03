@@ -10,21 +10,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetCommentSubjectIdResLogic struct {
+type GetCommentSubjectIdLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGetCommentSubjectIdResLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCommentSubjectIdResLogic {
-	return &GetCommentSubjectIdResLogic{
+func NewGetCommentSubjectIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCommentSubjectIdLogic {
+	return &GetCommentSubjectIdLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *GetCommentSubjectIdResLogic) GetCommentSubjectIdRes(req *types.GetCommentSubjectIdReq) (resp *types.GetCommentSubjectIdRes, err error) {
+func (l *GetCommentSubjectIdLogic) GetCommentSubjectId(req *types.GetCommentSubjectIdReq) (resp *types.GetCommentSubjectIdRes, err error) {
 	rpcRes, _ := l.svcCtx.InfoRpcClient.GetCommentSubjectId(l.ctx, &info.GetCommentSubjectIdReq{
 		ObjType: req.ObjType,
 		ObjId:   req.ObjId,
