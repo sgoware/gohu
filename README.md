@@ -10,7 +10,7 @@
 
 ## 🚀 功能
 
-<video src="https://typora.stellaris.wang/gohu-show-video.mp4" controls="controls" width="500" height="300">您的浏览器不支持播放该视频！</video>
+[演示视频](https://typora.stellaris.wang/gohu-show-video.mp4)
 
 ### 认证系统
 
@@ -49,6 +49,8 @@
 
 ### 技术栈
 
+![image-20220904045303624](./manifest/image/go-zero.png)
+
 - [go-zero](https://go-zero.dev/)
 
 > 一个集成了各种工程实践的包含 微服务框架
@@ -57,17 +59,23 @@
 
 ​     同时go-zero也是现在最流行的go微服务框架，所以本项目采用go-zero为主框架搭建知乎后端
 
+![](./manifest/image/mysql.svg)
+
 - [mysql](https://www.mysql.com/)
 
 > 一个关系型数据库管理系统，由瑞典MySQL AB 公司开发，属于 Oracle 旗下产品。MySQL 是最流行的关系型数据库管理系统关系型数据库管理系统之一，在 WEB 应用方面，MySQL是最好的 RDBMS (Relational Database Management System，关系数据库管理系统) 应用软件之一
 
-​    遇事不决还得是mysql，后续有空（有钱）会改进成 [TiDB](https://pingcap.com/zh/case/)，将其分布式化
+​    遇事不决还得是mysql，后续有空（有钱）会	改进成 [TiDB](https://pingcap.com/zh/case/)，将其分布式化
+
+![](./manifest/image/redis.svg)
 
 - [redis](https://redis.io/)
 
 > 一个开源的、使用C语言编写的、支持网络交互的、可基于内存也可持久化的Key-Value数据库
 
 ​    缓存存储还是选型最普遍的redis
+
+<img src="./manifest/image/nsq.png" width="15%">
 
 - [nsq](https://nsq.io/)
 
@@ -77,11 +85,15 @@
 
 ​    然后就看到了nsq，支持横向拓展，性能也很好，同时也是go语言原生开发的，因此选型nsq做发布订阅操作（通知系统里会用到）
 
+<img src="./manifest/image/asynq.png" width="15%">
+
 - [asynq](https://github.com/hibiken/asynq)
 
 > go语言实现的高性能分布式任务队列和异步处理库，基于redis，类似sidekiq和celery
 
 ​	asynq是一个分布式延迟消息队列，本项目用它进行异步定时任务处理（缓存与数据库之间的同步操作）
+
+<img src="./manifest/image/consul.svg" width="25%">
 
 - [consul](https://www.consul.io/)
 
@@ -89,17 +101,23 @@
 
 ​	在consul和etcd之间比较，consul的服务发现很方便，也有健康检查，多数据中心等功能，同时也是go云原生项目，因此选型consul
 
+<img src="./manifest/image/jaeger.svg" width="15%">
+
 - [jaeger](https://www.jaegertracing.io/)
 
 > 由Uber开源的分布式追踪系统
 
 ​	go-zero框架集成了对jaeger的支持，因此使用jaeger做追踪系统
 
+<img src="./manifest/image/apollo.svg" width="10%">
+
 - [apollo](https://www.apolloconfig.com/)
 
 > 一款可靠的分布式配置管理中心，诞生于携程框架研发部，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景
 
 ​	使用apollo做配置管理系统，可以有效的在认证系统，用户系统，问答系统等等不同的环境下进行配置的管理
+
+<img src="./manifest/image/traefik-logo.png" width="20%">
 
 - [traefik](https://www.jaegertracing.io/)
 
@@ -109,11 +127,15 @@
 
 ​	同时使用traefik中的http中间件，oauth proxy也很方便
 
+<img src="./manifest/image/docker.svg" width="15%">
+
 - [docker](https://www.docker.com/)
 
 > Google 公司推出的 Go 语言 进行开发实现，基于 Linux 内核的 cgroup，namespace，以及 AUFS 类的 Union FS 等技术的一个容器服务
 
 ​	容器用docker-compose部署
+
+<img src="./manifest/image/drone.svg" width="20%">
 
 - [drone](https://www.drone.io/)
 
@@ -131,11 +153,35 @@
 >
 > 提高了令牌的安全性, 同时也可以根据客户端信息自定义 Oauth2 token
 
+<!--app/service/oauth/model/token_granter.go-->
+
+```go
+clientId, clientSecret, userId, ok := parseBasicAuth(auth)
+if !ok || clientSecret != tokenGranter.ClientDetails[clientId].ClientSecret {
+   return nil, ErrInvalidAuthorizationRequest
+}
+```
+
+解析认证头，判断 `clientId` 和 `clientSecret` 是否在存储库中
+
+鉴权成功后向用户颁发 token
+
 - 令牌存储
 
 > token存储在redis中, 自动实现令牌的过期功能
 >
 > 加快用户的鉴权操作
+
+![](./manifest/image/jwt-store.png)
+
+<!--app/service/oauth/rpc/token/store/internal/logic/storetokenlogic.go-->
+
+```go
+l.svcCtx.Rdb.Set(l.ctx,
+   model.JwtToken+"_"+strconv.FormatInt(in.UserId, 10),
+   accessTokenString,
+   time.Unix(in.AccessToken.RefreshToken.ExpiresAt, 0).Sub(time.Now()))
+```
 
 - 令牌刷新
 
@@ -149,6 +195,50 @@
 >
 > 在认证中间件中(app/common/middware/authMiddleware.go)对cookie进行哈希校验，防止用户篡改，校验通过后解析cookie自动获取token的元信息
 
+<!--app/common/middleware/authMiddleware.go-->
+
+```go
+res, err := req.NewRequest().SetFormData(map[string]string{"oauth2_token": accessToken, "token_type": model.AccessToken}).
+   Post("https://" + m.Domain + "/api/oauth/token/check")
+if err != nil {
+   logx.Errorf("%v", err)
+   return
+}
+if res.StatusCode != http.StatusOK {
+   logx.Errorf("%v", res)
+   return
+}
+j := gjson.Parse(res.String())
+ok = j.Get("ok").Bool()
+if !ok {
+   //不ok则认证失败，包括刷新令牌
+   //认证的时候若认证令牌过期，则刷新令牌
+   msg := j.Get("msg").String()
+   // 认证令牌过期,用刷新令牌刷新
+   if msg == "accessToken is expired" {
+      ok = cookieWriter.Get("refresh-token", &refreshToken)
+      if accessToken == "" || !ok {
+         response.ResultWithData(w, http.StatusForbidden, "illegal access", map[string]interface{}{"reload": true})
+         return
+      }
+      res, err = req.NewRequest().SetPathParam("refresh-token", refreshToken).
+         Post("https://" + m.Domain + "/api/oauth/token/refresh")
+      if err != nil {
+         logx.Errorf("%v", err)
+         return
+      }
+      if res.StatusCode != http.StatusOK {
+         return
+      }
+      j = gjson.Parse(res.String())
+      accessToken = j.Get("data.access_token.token_value").String()
+      refreshToken = j.Get("data.access_token.refresh_token.token_value").String()
+      cookieWriter.Set("x-token", accessToken)
+      cookieWriter.Set("refresh-token", refreshToken)
+   }
+}
+```
+
 #### 用户系统
 
 - 登录与注册
@@ -157,19 +247,186 @@
 >
 > 在用户注册或登录后设置注册/登录缓存，同时特别针对登录设置了空缓存，防止大量无效请求造成缓存穿透
 
+<!--app/service/user/rpc/crud/internal/logic/registerlogic.go-->
+
+```go
+ok, err := l.svcCtx.Rdb.SIsMember(l.ctx,
+   "user_register_set",
+   in.Username).Result()
+```
+
+<!--app/service/user/rpc/crud/internal/logic/loginlogic.go-->
+
+```go
+	// 在数据库中查找用户
+	userSubjectModel := l.svcCtx.UserModel.UserSubject
+	userSubject, err := userSubjectModel.WithContext(l.ctx).Where(userSubjectModel.Username.Eq(in.Username)).First()
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		// 设置空缓存,防止大量非法请求造成缓存穿透
+		err = l.svcCtx.Rdb.Set(l.ctx,
+			fmt.Sprintf("user_login_%s", in.Username),
+			fmt.Sprintf("%d:%d", 0, 0),
+			time.Second*86400).Err()
+		if err != nil {
+			logger.Errorf("update [user_login] cache failed, err: %v", err)
+		}
+		res = &pb.LoginRes{
+			Code: http.StatusNotFound,
+			Msg:  "uid not exist",
+			Ok:   false,
+		}
+		logger.Debugf("send message: %v", res.String())
+		return res, nil
+	default:
+		{
+			logger.Errorf("query [user_subject] in mysql failed, err: %v", err)
+			res = &pb.LoginRes{
+				Code: http.StatusInternalServerError,
+				Msg:  "internal err",
+				Ok:   false,
+			}
+			logger.Debugf("send message: %v", res.String())
+			return res, err
+		}
+	}
+	
+	...
+	
+		err = l.svcCtx.Rdb.Set(l.ctx,
+		fmt.Sprintf("user_login_%s", in.Username),
+		fmt.Sprintf("%d:%s", userSubject.ID, userSubject.Password),
+		time.Second*86400).Err()
+	if err != nil {
+		logger.Errorf("set [user_login] cache failed, err: %v", err)
+	}
+```
+
 - IP 归属地
 
 > 对用户登录的IP进行解析（具体看我 [ip-parse](https://github.com/StellarisW/ip-parse) 仓库），在回答内容，评论内容中设置用户IP归属地
 
+<!--app/utils/net/ip/ip.go-->
+
+```go
+func GetIpLocFromApi(ip string) (loc string) {
+   var err error
+   if domain == "" {
+      domain, err = apollo.GetMainDomain()
+      if err != nil {
+         return "未知"
+      }
+   }
+   apiAddr := "http://ip." + domain + "/api/parse?ip=" + ip
+   res, err := req.NewRequest().Get(apiAddr)
+   j := gjson.Parse(res.String())
+   if j.Get("ok").Bool() == false {
+      return "未知"
+   }
+   locStr := j.Get("location").String()
+   output := strings.Split(locStr, "|")
+   if output[0] != "中国" {
+      return output[0]
+   }
+   strings.Trim(output[2], "省")
+   return output[2]
+}
+```
+
 - 用户信息缓存
 
 > 对`user-subject`,`user-collect`表进行缓存，针对高频更新的字段(如 `user-subject` 中的 `follower` ， `user-collect` 中的赞同操作)进行定时更新数据库的操作
+
+<!--app/service/mq/asynq/processor/internal/logic/user/task.go-->
+
+```go
+func (l *ScheduleUpdateUserSubjectRecordHandler) ProcessTask(ctx context.Context, _ *asynq.Task) (err error) {
+    // 获取缓存中需要更新用户 follower 字段的用户id
+   members, err := l.Rdb.SMembers(ctx,
+      "user_follower_cnt_set").Result()
+   if err != nil {
+      return fmt.Errorf("get [user_follower] member failed, err: %v", err)
+   }
+   l.Rdb.Del(ctx,
+      fmt.Sprintf("user_follower_cnt_set"))
+
+   userSubjectModel := l.UserModel.UserSubject
+   for _, member := range members {
+       // 获取缓存中 follower 的数量
+      followerCount, err := l.Rdb.Get(ctx,
+         fmt.Sprintf("user_follower_cnt_%s", member)).Int()
+      if err != nil {
+         return fmt.Errorf("get [user_follower] cnt failed, err: %v", err)
+      }
+
+      err = l.Rdb.Del(ctx,
+         fmt.Sprintf("user_follower_cnt_%s", member)).Err()
+      if err != nil {
+         return fmt.Errorf("del [user_follower] cnt failed, err: %v", err)
+      }
+	
+       // 更新数据库
+      userSubject, err := userSubjectModel.WithContext(ctx).
+         Select(userSubjectModel.ID, userSubjectModel.Follower).
+         Where(userSubjectModel.ID.Eq(cast.ToInt64(member))).
+         First()
+      if err != nil {
+         return fmt.Errorf("get [user_subject] record failed, err: %v", err)
+      }
+
+      _, err = userSubjectModel.WithContext(ctx).
+         Select(userSubjectModel.ID, userSubjectModel.Follower).
+         Where(userSubjectModel.ID.Eq(cast.ToInt64(member))).
+         Update(userSubjectModel.Follower, int(userSubject.Follower)+followerCount)
+      if err != nil {
+         return fmt.Errorf("update [user_subject] record failed, err: %v", err)
+      }
+   }
+
+   return nil
+}
+```
 
 #### 问答系统
 
 - 问题与回答信息缓存
 
 > 也是和上面一样的逻辑，对表进行缓存，高频字段定时数据库同步
+
+- 回答点赞
+
+<!--app/service/user/rpc/crud/internal/logic/docollectionlogin.go-->
+
+```go
+// 通知用户
+err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+   MessageType: 2,
+   Data: notificationMqProducer.ApproveAndLikeData{
+      UserId:  in.UserId,
+      Action:  1,
+      ObjType: in.ObjType,
+      ObjId:   in.ObjId,
+   },
+})
+if err != nil {
+   return fmt.Errorf("publish notificaion to nsq failed, %v", err)
+}
+
+// 更新缓存
+err = svcCtx.Rdb.Incr(ctx,
+   fmt.Sprintf("answer_index_approve_cnt_%d", in.ObjId)).Err()
+if err != nil {
+   return fmt.Errorf("incr [answer_index_approve_cnt] failed, %v", err)
+}
+
+err = svcCtx.Rdb.SAdd(ctx,
+   "answer_index_approve_cnt_set",
+   in.ObjId).Err()
+if err != nil {
+   return fmt.Errorf("update [answer_index_approve_cnt_set] failed, err: %v", err)
+}
+```
 
 #### 评论系统
 
@@ -187,17 +444,58 @@
 
 > 使用nsq对用户的各种操作(如关注，点赞等等)对操作的对象(被关注的人，被点赞回答的作者)进行通知
 
-- 缓存与数据库同步处理
+<!--app/service/mq/nsq/consumer/internal/listen/notification/handler.go-->
 
-> 因为通知是个高频操作，所以数据库进行定时同步
+```go
+func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err error) {
+   msg := &notificationMqProducer.PublishNotificationMessage{}
+   err = json.Unmarshal(nsqMsg.Body, &msg)
+   if err != nil {
+      return fmt.Errorf("unmarshal msg failed, %v", err)
+   }
 
-#### 缓存设计
+   ctx := context.Background()
+   switch msg.MessageType {
+   case 1:
+      // 关注我的
+      data := &notificationMqProducer.FollowerData{}
 
-- 表缓存
+      bytesData, err := json.Marshal(msg.Data)
+      if err != nil {
+         return fmt.Errorf("marshal msg data failed, %v", err)
+      }
 
-> 表记录的数据比字段得多，因此采用protobug进行序列化，而不是用json，
->
-> 因为在protobuf的编解码性能远远高出JSON的性能
+      err = json.Unmarshal(bytesData, &data)
+      if err != nil {
+         return fmt.Errorf("unmarshal msg data failed, %v", err)
+      }
+
+      userInfoRes, err := req.NewRequest().Get(
+         fmt.Sprintf("https://%s/api/user/profile/%s", m.Domain, cast.ToString(data.FollowerId)))
+      if err != nil {
+         return fmt.Errorf("query user info failed, %v", err)
+      }
+
+      j := gjson.Parse(userInfoRes.String())
+      if !j.Get("ok").Bool() {
+         return fmt.Errorf("query user info failed, %v", j.Get("msg").String())
+      }
+
+      rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+         UserId:      data.UserId,
+         MessageType: 1,
+         Title:       fmt.Sprintf("用户 %s 关注了你", j.Get("data.nickname").String()),
+         Content:     "",                                                              // 空
+         Url:         fmt.Sprintf("https://%s/profile/%d", m.Domain, data.FollowerId), // 用户主页
+      })
+      if !rpcRes.Ok {
+         return fmt.Errorf("publish notification failed, %v", rpcRes.Msg)
+      }
+      
+      ...
+      
+}
+```
 
 ### 运维
 
@@ -310,13 +608,157 @@ exec 3>&-
 
 ## 📂 存储设计
 
-### 数据库表
+### 表设计
 
 #### 用户系统
 
+##### `user_subject`
 
+![](./manifest/image/user_subject_record.png)
+
+![](./manifest/image/user_subject_record_index.png)
+
+##### `user_collection`
+
+
+
+#### 问答系统
+
+#### 评论系统
+
+#### 通知系统
 
 ### 缓存设计
+
+#### jwt 缓存
+
+缓存 Oauth2 Token，利用 redis 特性自动实现令牌过期功能
+
+![](./manifest/image/jwt_cache.png)
+
+#### 表缓存
+
+> 表记录的数据比较多，因此采用protobug进行序列化，而不是用json，
+>
+> 因为在protobuf的编解码性能远远高出JSON的性能。
+>
+> 同时占用空间也比json小很多，大大减少了缓存表的开销
+
+下面是 `user_subject` 表的缓存样例
+
+<!--app/service/mq/asynq/processor/internal/logic/user/task.go-->
+
+```go
+func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asynq.Task) (err error) {
+   var payload job.MsgCreateUserSubjectPayload
+   if err = json.Unmarshal(task.Payload(), &payload); err != nil {
+      return fmt.Errorf("unmarshal [MsgCreateUserSubjectPayload] failed, err: %v", err)
+   }
+
+   userSubjectId := l.IdGenerator.NewLong()
+
+   userSubjectModel := l.UserModel.UserSubject
+
+   now := time.Now()
+
+   err = userSubjectModel.WithContext(ctx).
+      Create(&model.UserSubject{
+         ID:         userSubjectId,
+         Username:   payload.Username,
+         Password:   payload.Password,
+         Nickname:   payload.Nickname,
+         CreateTime: now,
+         UpdateTime: now,
+      })
+   if err != nil {
+      return fmt.Errorf("create [user_subject] record failed, err: %v", err)
+   }
+
+   userSubjectProto := &pb.UserSubject{
+      Id:         userSubjectId,
+      Username:   payload.Username,
+      Password:   payload.Password,
+      Nickname:   payload.Nickname,
+      CreateTime: now.String(),
+      UpdateTime: now.String(),
+   }
+
+   userSubjectBytes, err := proto.Marshal(userSubjectProto)
+   if err != nil {
+      return fmt.Errorf("marshal [userSubjectProto] into proto failed, err: %v", err)
+   }
+
+   err = l.Rdb.Set(ctx,
+      fmt.Sprintf("user_subject_%d", userSubjectId),
+      userSubjectBytes,
+      time.Second*86400).Err()
+   if err != nil {
+      return fmt.Errorf("update [user_subject] cache failed, err: %v", err)
+   }
+
+   err = l.Rdb.Set(ctx,
+      fmt.Sprintf("user_login_%d", userSubjectId),
+      fmt.Sprintf("%d:%s", userSubjectId, payload.Password),
+      time.Second*86400).Err()
+   if err != nil {
+      return fmt.Errorf("update [user_login] cache failed, err: %v", err)
+   }
+
+   return nil
+}
+```
+
+key 格式： `[tableName]_[primaryId]`
+
+例如 `user_subject` 的缓存
+
+![](./manifest/image/user_subject_cache.png)
+
+#### 注册缓存
+
+使用集合存储已经注册的用户名（后续集合过大时，考虑随机删除集合中的用户名减小缓存压力）
+
+key 名称：`user_register_set`
+
+![](./manifest/image/user_register_set.png)
+
+#### 登录缓存
+
+使用 key 存储用户 id 与加盐后的密码
+
+key 格式：`user_login_[username]`
+
+![](./manifest/image/user_login_cache.png)
+
+#### 收藏缓存
+
+key 格式：`user_collect_set_[userId]_[collectType]_[objType]`
+
+![](./manifest/image/user_collect_set.png)
+
+#### 关注用户缓存
+
+key 格式：`user_follwer_cnt_set` `user_follower_cnt_[userId]`
+
+缓存关注用户的数量，然后根据这个数量数据库定时统一更新，大大减小数据库压力
+
+key 格式：`user_follower_member_set_[userId]`
+
+缓存用户下的关注者集合，方便发布通知
+
+![](./manifest/image/user_follower_member_set.png)
+
+#### 通知缓存
+
+key 格式：`notification_[userId]_[notificationType]`
+
+缓存用户通知下的一个 id 集合
+
+#### 发布缓存
+
+key 格式：`question_id_user_set_[userId]` `answer_id_user_set_[userId]` `comment_id_user_set_[userId]`
+
+缓存用户发布对象的的 id 集合
 
 ## 📖 API文档
 
