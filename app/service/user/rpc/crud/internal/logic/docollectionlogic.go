@@ -82,6 +82,38 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 					}
 					logger.Debugf("send message: %v", err)
 					return res, nil
+				} else {
+					err = doApprove(l.ctx, l.svcCtx, in)
+					if err != nil {
+						logger.Errorf("approve failed, err: %v", err)
+						res = &pb.DoCollectionRes{
+							Code: http.StatusInternalServerError,
+							Msg:  "internal err",
+							Ok:   false,
+						}
+						logger.Debugf("send message: %v", err)
+						return res, nil
+					}
+					res = &pb.DoCollectionRes{
+						Code: http.StatusOK,
+						Msg:  "do approve successfully",
+						Ok:   true,
+					}
+
+					err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
+						MessageType: 2,
+						Data: notificationMqProducer.ApproveAndLikeData{
+							UserId:  in.UserId,
+							Action:  1,
+							ObjType: in.ObjType,
+							ObjId:   in.ObjId,
+						}})
+					if err != nil {
+						logger.Errorf("publish msg to nsq failed, err: %v", err)
+					}
+
+					logger.Debugf("send message: %v", err)
+					return res, nil
 				}
 			} else {
 				logger.Errorf("get [user_collect] cache member failed, err: %v", err)
@@ -115,6 +147,7 @@ func (l *DoCollectionLogic) DoCollection(in *pb.DoCollectionReq) (res *pb.DoColl
 					logger.Debugf("send message: %v", err)
 					return res, nil
 				}
+
 				err = notificationMqProducer.PublishNotification(producer, notificationMqProducer.PublishNotificationMessage{
 					MessageType: 2,
 					Data: notificationMqProducer.ApproveAndLikeData{

@@ -80,14 +80,14 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 		case 1:
 			// 回答
 			answerRes, err := req.NewRequest().Get(
-				fmt.Sprintf("https://%s/api/answer/%d", m.Domain, data.ObjId))
+				fmt.Sprintf("https://%s/api/question/answer/%d", m.Domain, data.ObjId))
 			if err != nil {
 				return fmt.Errorf("query answer info failed, %v", err)
 			}
 			answerJson := gjson.Parse(answerRes.String())
 
 			questionRes, err := req.NewRequest().Get(
-				fmt.Sprintf("https://%s/api/question/%d",
+				fmt.Sprintf("https://%s/api/question/question/%d",
 					m.Domain, answerJson.Get("data.answer_index.question_id").Int()))
 			if err != nil {
 				return fmt.Errorf("query question info failed, %v", err)
@@ -95,7 +95,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			questionJson := gjson.Parse(questionRes.String())
 
 			userInfoRes, err := req.NewRequest().Get(
-				fmt.Sprintf("https://%s/api/user/prifile/%d", m.Domain, data.UserId))
+				fmt.Sprintf("https://%s/api/user/profile/%d", m.Domain, data.UserId))
 			if err != nil {
 				return fmt.Errorf("query user info failed, %v", err)
 			}
@@ -106,11 +106,11 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 			var title string
 			if data.Action == 1 {
-				title = fmt.Sprintf("用户 %s 喜欢了在问题 %s 下的回答",
+				title = fmt.Sprintf("用户 %s 赞同了在问题 %s 下的回答",
 					userInfoJson.Get("data.nickname").String(),
 					answerJson.Get("data.question_subject.title"))
 			} else {
-				title = fmt.Sprintf("用户 %s 赞同了在问题 %s 下的回答",
+				title = fmt.Sprintf("用户 %s 喜欢了在问题 %s 下的回答",
 					userInfoJson.Get("data.nickname").String(),
 					answerJson.Get("data.question_subject.title"))
 			}
