@@ -446,6 +446,8 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			}
 
 			wg.Wait()
+
+			return nil
 		}
 
 	case 5:
