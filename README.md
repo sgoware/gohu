@@ -10,9 +10,7 @@
 
 ## 🚀 功能
 
-
-
-<iframe height=498 width=510 src="https://typora.stellaris.wang/gohu-show-video.mp4">
+<video src="https://typora.stellaris.wang/gohu-show-video.mp4" controls="controls" width="500" height="300">您的浏览器不支持播放该视频！</video>
 
 ### 认证系统
 
