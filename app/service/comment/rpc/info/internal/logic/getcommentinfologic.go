@@ -97,6 +97,8 @@ func (l *GetCommentInfoLogic) GetCommentInfo(in *pb.GetCommentInfoReq) (res *pb.
 			return res, nil
 		}
 
+		resData.CommentIndex = commentIndex
+
 		approveCnt, err := l.svcCtx.Rdb.Get(l.ctx,
 			fmt.Sprintf("comment_index_approve_cnt_%d", in.IndexId)).Int()
 		if err != nil {
@@ -106,8 +108,6 @@ func (l *GetCommentInfoLogic) GetCommentInfo(in *pb.GetCommentInfoReq) (res *pb.
 		} else {
 			resData.CommentIndex.ApproveCount += int32(approveCnt)
 		}
-
-		resData.CommentIndex = commentIndex
 	}
 
 	commentContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
