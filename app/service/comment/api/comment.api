@@ -117,13 +117,13 @@ service comment {
 service comment {
 	@handler GetCommentSubjectId
 	get /api/comment/subject/:obj_type/:obj_id (GetCommentSubjectIdReq) returns (GetCommentSubjectIdRes)
-
+	
 	@handler GetCommentSubjectInfo
 	get /api/comment/subject/:subject_id (GetCommentSubjectInfoReq) returns (GetCommentSubjectInfoRes)
-
+	
 	@handler GetCommentInfo
 	get /api/comment/:comment_id (GetCommentInfoReq) returns (GetCommentInfoRes)
-
+	
 	// 使用redis sortedset
 	@handler GetCommentSubjectIndex
 	get /api/comment/subject/:subject_id/index/:index_id (GetCommenSubjectIndexReq) returns (GetCommenSubjectIndexRes)

@@ -19,27 +19,32 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/api/comment/crud",
 					Handler: CrudHandler(serverCtx),
 				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/api/comment/subject/:obj_type/:obj_id",
-					Handler: GetCommentSubjectIdHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/api/comment/subject/:subject_id",
-					Handler: GetCommentSubjectInfoHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/api/comment/:comment_id",
-					Handler: GetCommentInfoHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/api/comment/subject/:subject_id/index/:index_id",
-					Handler: GetCommentSubjectIndexHandler(serverCtx),
-				},
 			}...,
 		),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/comment/subject/:obj_type/:obj_id",
+				Handler: GetCommentSubjectIdHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/comment/subject/:subject_id",
+				Handler: GetCommentSubjectInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/comment/:comment_id",
+				Handler: GetCommentInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/comment/subject/:subject_id/index/:index_id",
+				Handler: GetCommentSubjectIndexHandler(serverCtx),
+			},
+		},
 	)
 }
