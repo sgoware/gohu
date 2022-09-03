@@ -33,7 +33,10 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	resData := &pb.GetAnswerRes_Data{}
+	resData := &pb.GetAnswerRes_Data{
+		AnswerIndex:   &pb.AnswerIndex{},
+		AnswerContent: &pb.AnswerContent{},
+	}
 
 	answerIndexBytes, err := l.svcCtx.Rdb.Get(l.ctx,
 		fmt.Sprintf("answer_index_%d", in.AnswerId)).Bytes()
@@ -64,6 +67,8 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 				logger.Debugf("send message: %v", res.String())
 				return res, nil
 			}
+		} else {
+			resData.AnswerIndex.ApproveCount += int32(approveCnt)
 		}
 
 		likeCnt, err := l.svcCtx.Rdb.Get(l.ctx,
@@ -79,6 +84,8 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 				logger.Debugf("send message: %v", res.String())
 				return res, nil
 			}
+		} else {
+			resData.AnswerIndex.LikeCount += int32(likeCnt)
 		}
 
 		collectCnt, err := l.svcCtx.Rdb.Get(l.ctx,
@@ -94,11 +101,9 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 				logger.Debugf("send message: %v", res.String())
 				return res, nil
 			}
+		} else {
+			resData.AnswerIndex.CollectCount += int32(collectCnt)
 		}
-
-		resData.AnswerIndex.ApproveCount += int32(approveCnt)
-		resData.AnswerIndex.LikeCount += int32(likeCnt)
-		resData.AnswerIndex.CollectCount += int32(collectCnt)
 
 		resData.AnswerIndex = answerIndexProto
 	} else {

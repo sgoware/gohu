@@ -111,6 +111,8 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 				logger.Debugf("send message: %v", res.String())
 				return res, nil
 			}
+		} else {
+			resData.QuestionSubject.SubCount += int32(subCnt)
 		}
 
 		answerCnt, err := l.svcCtx.Rdb.Get(l.ctx,
@@ -126,6 +128,8 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 				logger.Debugf("send message: %v", res.String())
 				return res, nil
 			}
+		} else {
+			resData.QuestionSubject.AnswerCount += int32(answerCnt)
 		}
 
 		viewCnt, err := l.svcCtx.Rdb.Get(l.ctx,
@@ -141,11 +145,10 @@ func (l *GetQuestionLogic) GetQuestion(in *pb.GetQuestionReq) (res *pb.GetQuesti
 				logger.Debugf("send message: %v", res.String())
 				return res, nil
 			}
+		} else {
+			resData.QuestionSubject.ViewCount += viewCnt
 		}
 
-		resData.QuestionSubject.SubCount += int32(subCnt)
-		resData.QuestionSubject.AnswerCount += int32(answerCnt)
-		resData.QuestionSubject.ViewCount += viewCnt
 	}
 
 	questionContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
