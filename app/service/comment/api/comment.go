@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/zeromicro/go-zero/core/logx"
-	_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/comment/api/internal/config"
@@ -10,7 +8,9 @@ import (
 	"main/app/service/comment/api/internal/svc"
 	"main/app/utils"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
+	_ "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 )
 
 const serviceName = "comment.api"

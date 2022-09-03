@@ -12,6 +12,7 @@ import (
 	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
 	"main/app/utils/net/ip"
 	"net/http"
+	"time"
 )
 
 type PublishCommentLogic struct {
@@ -35,10 +36,12 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 	j := gjson.Parse(in.UserDetails)
 	userId := j.Get("user_id").Int()
 
+	commentId := l.svcCtx.IdGenerator.NewLong()
+	nowTime := time.Now()
+	ipLoc := ip.GetIpLocFromApi(j.Get("last_ip").String())
+
 	commentIndexModel := l.svcCtx.CommentModel.CommentIndex
 	commentContentModel := l.svcCtx.CommentModel.CommentContent
-
-	commentIndex := &model.CommentIndex{}
 
 	if in.RootId == 0 {
 		// 是评论的情况
@@ -57,12 +60,21 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 			return res, nil
 		}
 
-		commentIndex, err = commentIndexModel.WithContext(l.ctx).
-			Where(commentIndexModel.SubjectID.Eq(in.SubjectId),
-				commentIndexModel.UserID.Eq(userId),
-				commentIndexModel.IPLoc.Eq(ip.GetIpLocFromApi(j.Get("last_ip").String())),
-				commentIndexModel.CommentFloor.Eq(int32(count+1))).
-			FirstOrCreate()
+		err = commentIndexModel.WithContext(l.ctx).
+			Create(&model.CommentIndex{
+				ID:           commentId,
+				SubjectID:    in.SubjectId,
+				UserID:       userId,
+				IPLoc:        ipLoc,
+				CommentFloor: int32(count + 1),
+				CommentID:    0,
+				ReplyFloor:   0,
+				ApproveCount: 0,
+				State:        0,
+				Attrs:        0,
+				CreateTime:   nowTime,
+				UpdateTime:   nowTime,
+			})
 		if err != nil {
 			logger.Errorf("publish comment failed, err: mysql err, %v", err)
 			res = &pb.PublishCommentRes{
@@ -105,14 +117,18 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 			return res, nil
 		}
 
-		commentIndex, err = commentIndexModel.WithContext(l.ctx).
-			Where(commentIndexModel.SubjectID.Eq(in.SubjectId),
-				commentIndexModel.UserID.Eq(j.Get("user_id").Int()),
-				commentIndexModel.IPLoc.Eq(ip.GetIpLocFromApi(j.Get("last_ip").String())),
-				commentIndexModel.RootID.Eq(in.RootId),
-				commentIndexModel.CommentID.Eq(in.CommentId),
-				commentIndexModel.ReplyFloor.Eq(int32(count+1))).
-			FirstOrCreate()
+		err = commentIndexModel.WithContext(l.ctx).
+			Create(&model.CommentIndex{
+				ID:         commentId,
+				SubjectID:  in.SubjectId,
+				UserID:     userId,
+				IPLoc:      ipLoc,
+				RootID:     in.RootId,
+				CommentID:  in.CommentId,
+				ReplyFloor: int32(count + 1),
+				CreateTime: nowTime,
+				UpdateTime: nowTime,
+			})
 		if err != nil {
 			logger.Errorf("publish comment failed, err: mysql err, %v", err)
 			res = &pb.PublishCommentRes{
@@ -142,7 +158,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 
 	err = commentContentModel.WithContext(l.ctx).
 		Create(&model.CommentContent{
-			CommentID: commentIndex.ID,
+			CommentID: commentId,
 			Content:   in.Content,
 		})
 	if err != nil {

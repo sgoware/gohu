@@ -3,6 +3,7 @@ package svc
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
+	"github.com/yitter/idgenerator-go/idgen"
 	apollo "main/app/common/config"
 	"main/app/common/log"
 	"main/app/service/comment/dao/query"
@@ -16,6 +17,8 @@ type ServiceContext struct {
 	Rdb          *redis.Client
 
 	AsynqClient *asynq.Client
+
+	IdGenerator *idgen.DefaultIdGenerator
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -31,6 +34,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		logger.Fatalf("initialize redis failed, err: %v", err)
 	}
 
+	idGenerator, err := apollo.NewIdGenerator("question.yaml")
+	if err != nil {
+		logger.Fatalf("initialize idGenerator failed, err: %v", err)
+	}
+
 	return &ServiceContext{
 		Config: c,
 
@@ -38,5 +46,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Rdb:          rdb,
 
 		AsynqClient: asynq.NewClient(c.AsynqClientConf),
+
+		IdGenerator: idGenerator,
 	}
 }
