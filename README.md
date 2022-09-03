@@ -2,11 +2,11 @@
 
 [![build](https://img.shields.io/badge/build-1.01-brightgreen)](https://github.com/StellarisW/StellarisW)[![go-version](https://img.shields.io/badge/go-%3E%3D1.8-30dff3?logo=go)](https://github.com/StellarisW/StellarisW)[![OpenTracing Badge](https://img.shields.io/badge/OpenTracing-enabled-blue.svg)](http://opentracing.io)[![PyPI](https://img.shields.io/badge/License-BSD_2--Clause-green.svg)](https://github.com/emirpasic/gods/blob/master/LICENSE)
 
-> go实现的知乎网站后端
+> Go 实现的知乎网站后端
 
 ## 💡  简介
 
-基于[go-zero](https://github.com/zeromicro/go-zero)微服务框架实现的一个简单知乎网站后端
+基于 [go-zero ](https://github.com/zeromicro/go-zero)微服务框架实现的一个简单知乎网站后端
 
 ## 🚀 功能
 

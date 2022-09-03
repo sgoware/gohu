@@ -139,7 +139,7 @@ func (l *GetCommentInfoLogic) GetCommentInfo(in *pb.GetCommentInfoReq) (res *pb.
 			UpdateTime: commentContent.UpdateTime.String(),
 		}
 
-		res.Data.CommentContent = commentContentProto
+		resData.CommentContent = commentContentProto
 
 		commentContentBytes, err = proto.Marshal(commentContentProto)
 		if err != nil {
