@@ -240,7 +240,7 @@ func (l *ScheduleUpdateQuestionSubjectRecordHandler) ProcessTask(ctx context.Con
 		return fmt.Errorf("get [question_subject_sub_cnt_set] failed ,err: %v", err)
 	}
 	err = l.Rdb.Del(ctx,
-		fmt.Sprintf("question_subject_sub_cnt_set")).Err()
+		"question_subject_sub_cnt_set").Err()
 	if err != nil {
 		return fmt.Errorf("delete [question_subject_sub_cnt_set] failed, err: %v", err)
 	}
@@ -251,7 +251,7 @@ func (l *ScheduleUpdateQuestionSubjectRecordHandler) ProcessTask(ctx context.Con
 		return fmt.Errorf("get [question_subject_answer_cnt_set] failed ,err: %v", err)
 	}
 	err = l.Rdb.Del(ctx,
-		fmt.Sprintf("question_subject_answer_cnt_set")).Err()
+		"question_subject_answer_cnt_set").Err()
 	if err != nil {
 		return fmt.Errorf("delete [question_subject_answer_cnt_set] failed, err: %v", err)
 	}
@@ -262,7 +262,7 @@ func (l *ScheduleUpdateQuestionSubjectRecordHandler) ProcessTask(ctx context.Con
 		return fmt.Errorf("get [question_subject_view_cnt_set] failed ,err: %v", err)
 	}
 	err = l.Rdb.Del(ctx,
-		fmt.Sprintf("question_subject_view_cnt_set")).Err()
+		"question_subject_view_cnt_set").Err()
 	if err != nil {
 		return fmt.Errorf("delete [question_subject_view_cnt_set] failed, err: %v", err)
 	}
@@ -369,7 +369,7 @@ func (l *ScheduleUpdateAnswerIndexRecordHandler) ProcessTask(ctx context.Context
 		return fmt.Errorf("get [answer_index_approve_cnt_set] failed ,err: %v", err)
 	}
 	err = l.Rdb.Del(ctx,
-		fmt.Sprintf("answer_index_approve_cnt_set")).Err()
+		"answer_index_approve_cnt_set").Err()
 	if err != nil {
 		return fmt.Errorf("delete [answer_index_approve_cnt_set] failed, err: %v", err)
 	}
@@ -380,7 +380,7 @@ func (l *ScheduleUpdateAnswerIndexRecordHandler) ProcessTask(ctx context.Context
 		return fmt.Errorf("get [answer_index_like_cnt_set] failed ,err: %v", err)
 	}
 	err = l.Rdb.Del(ctx,
-		fmt.Sprintf("answer_index_like_cnt_set")).Err()
+		"answer_index_like_cnt_set").Err()
 	if err != nil {
 		return fmt.Errorf("delete [answer_index_like_cnt_set] failed, err: %v", err)
 	}
@@ -391,7 +391,7 @@ func (l *ScheduleUpdateAnswerIndexRecordHandler) ProcessTask(ctx context.Context
 		return fmt.Errorf("get [answer_index_collect_cnt_set] failed ,err: %v", err)
 	}
 	err = l.Rdb.Del(ctx,
-		fmt.Sprintf("answer_index_collect_cnt_set")).Err()
+		"answer_index_collect_cnt_set").Err()
 	if err != nil {
 		return fmt.Errorf("delete [answer_index_collect_cnt_set] failed, err: %v", err)
 	}
