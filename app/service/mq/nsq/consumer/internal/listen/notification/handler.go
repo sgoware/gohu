@@ -94,7 +94,8 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			}
 			questionJson := gjson.Parse(questionRes.String())
 
-			userInfoRes, err := req.NewRequest().Get(m.Domain + "/api/user/profile/" + cast.ToString(data.UserId))
+			userInfoRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/user/prifile/%d", m.Domain, data.UserId))
 			if err != nil {
 				return fmt.Errorf("query user info failed, %v", err)
 			}
