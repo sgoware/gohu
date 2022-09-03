@@ -370,7 +370,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 		case 2:
 			answerInfoRes, err := req.NewRequest().Get(
-				fmt.Sprintf("https://%s/api/question/answer/%d", data.ObjId))
+				fmt.Sprintf("https://%s/api/question/answer/%d", m.Domain, data.ObjId))
 			if err != nil {
 				return fmt.Errorf("query answer info failed, err: %v", err)
 			}
