@@ -23,23 +23,23 @@ type GetCommentSubjectRes struct {
 	Data string `json:"data"`
 }
 
-type GetCommenSubjectIndexReq struct {
-	SubjectId int64 `path:"subject_id"`
-	IndexId   int64 `path:"index_id"`
+type GetCommentIndexReq struct {
+	IndexId int64 `path:"index_id"`
 }
 
-type GetCommenSubjectIndexRes struct {
+type GetCommentIndexRes struct {
 	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Ok   bool   `json:"ok"`
 	Data string `json:"data"`
 }
 
-type GetCommentIndexReq struct {
-	IndexId int64 `path:"index_id"`
+type GetCommenSubjectIndexReq struct {
+	SubjectId int64 `path:"subject_id"`
+	IndexId   int64 `path:"index_id"`
 }
 
-type GetCommentIndexRes struct {
+type GetCommenSubjectIndexRes struct {
 	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Ok   bool   `json:"ok"`

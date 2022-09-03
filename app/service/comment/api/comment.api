@@ -57,12 +57,12 @@ service comment {
 	post /api/comment/crud (CrudReq) returns (CrudRes)
 	
 	@handler GetCommentSubject
-	get /api/comment/subject/:subjectId (GetCommentSubjectReq) returns (GetCommentSubjectRes)
+	get /api/comment/subject/:subject_id (GetCommentSubjectReq) returns (GetCommentSubjectRes)
 	
 	@handler GetCommentIndex
-	get /api/comment/index/:indexId (GetCommentIndexReq) returns (GetCommentIndexRes)
-
+	get /api/comment/index/:index_id (GetCommentIndexReq) returns (GetCommentIndexRes)
+	
 	// 使用redis sortedset
 	@handler GetCommentSubjectIndex
-	get /api/comment/subject/:subjectIdid/index/:indexId (GetCommenSubjectIndexReq) returns (GetCommenSubjectIndexRes)
+	get /api/comment/subject/:subject_id/index/:index_id (GetCommenSubjectIndexReq) returns (GetCommenSubjectIndexRes)
 }

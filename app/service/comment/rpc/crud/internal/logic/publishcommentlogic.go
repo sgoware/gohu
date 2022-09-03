@@ -9,7 +9,7 @@ import (
 	"main/app/service/comment/dao/model"
 	"main/app/service/comment/rpc/crud/internal/svc"
 	"main/app/service/comment/rpc/crud/pb"
-	notificationMqProducer "main/app/service/notification/mq/producer"
+	notificationMqProducer "main/app/service/mq/nsq/producer/notification"
 	"main/app/utils/net/ip"
 	"net/http"
 )
