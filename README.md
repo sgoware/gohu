@@ -1,6 +1,6 @@
 # gohu
 
-[![build](https://img.shields.io/badge/build-1.01-brightgreen)](https://github.com/StellarisW/StellarisW)[![go-version](https://img.shields.io/badge/go-%3E%3D1.8-30dff3?logo=go)](https://github.com/StellarisW/StellarisW)[![OpenTracing Badge](https://img.shields.io/badge/OpenTracing-enabled-blue.svg)](http://opentracing.io)[![PyPI](https://img.shields.io/badge/License-BSD_2--Clause-green.svg)](https://github.com/emirpasic/gods/blob/master/LICENSE)
+[![build](https://img.shields.io/badge/build-1.01-brightgreen)](https://github.com/StellarisW/StellarisW)[![go-version](https://img.shields.io/badge/go-~%3D1.8-30dff3?logo=go)](https://github.com/StellarisW/StellarisW)[![OpenTracing Badge](https://img.shields.io/badge/OpenTracing-enabled-blue.svg)](http://opentracing.io)[![PyPI](https://img.shields.io/badge/License-BSD_2--Clause-green.svg)](https://github.com/emirpasic/gods/blob/master/LICENSE)
 
 > Go 实现的知乎网站后端
 
@@ -9,6 +9,10 @@
 基于 [go-zero ](https://github.com/zeromicro/go-zero)微服务框架实现的一个简单知乎网站后端
 
 ## 🚀 功能
+
+
+
+<iframe height=498 width=510 src="https://typora.stellaris.wang/gohu-show-video.mp4">
 
 ### 认证系统
 
@@ -318,7 +322,7 @@ exec 3>&-
 
 ## 📖 API文档
 
-
+[接口文档](https://documenter.getpostman.com/view/22490304/VUxStm2d)
 
 ## ⚙ 项目结构
 
@@ -351,6 +355,7 @@ exec 3>&-
 </code>
 </pre>
 </details>
+
 
 ## 🛠 环境要求
 
