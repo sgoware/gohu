@@ -158,6 +158,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			commentSubjectJson := gjson.Parse(commentSubjectRes.String())
 			objType := commentSubjectJson.Get("data.comment_subject.obj_type").Int()
 			objId := commentSubjectJson.Get("data.comment_subject.obj_id").Int()
+			return fmt.Errorf("1")
 			switch objType {
 			case 1:
 				// 评论回答
