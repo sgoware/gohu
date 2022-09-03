@@ -101,7 +101,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			}
 
 			userInfoJson := gjson.Parse(userInfoRes.String())
-			if userInfoJson.Get("ok").Bool() {
+			if !userInfoJson.Get("ok").Bool() {
 				return fmt.Errorf("query user info failed, %v", userInfoJson.Get("msg"))
 			}
 
