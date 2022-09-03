@@ -203,17 +203,17 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 		} else {
 			// 回复评论
-			commentIndexRes, err := req.NewRequest().Get(
-				fmt.Sprintf("https://%s/api/comment/index/%d", m.Domain, data.CommentId))
+			commentInfoRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/comment/%d", m.Domain, data.CommentId))
 			if err != nil {
 				return fmt.Errorf("query [commentIndex] failed, err: %v", err)
 			}
 
-			commentIndexJson := gjson.Parse(commentIndexRes.String())
+			commentInfoJson := gjson.Parse(commentInfoRes.String())
 
-			if !commentIndexJson.Get("ok").Bool() {
+			if !commentInfoJson.Get("ok").Bool() {
 				return fmt.Errorf("query [commentIndex] failed, err: %v",
-					commentIndexJson.Get("msg"))
+					commentInfoJson.Get("msg"))
 			}
 
 			userInfoRes, err := req.NewRequest().Get(
@@ -230,7 +230,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 			}
 
 			rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
-				UserId:      commentIndexJson.Get("data.user_id").Int(),
+				UserId:      commentInfoJson.Get("data.comment_index.user_id").Int(),
 				MessageType: 3,
 				Title: fmt.Sprintf("用户 %s 回复了你的评论",
 					userInfoResJson.Get("data.nickname"),

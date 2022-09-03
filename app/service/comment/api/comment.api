@@ -80,18 +80,18 @@ type (
 		Data GetCommentSubjectInfoResData `json:"data"`
 	}
 
-	GetCommentIndexReq {
-		IndexId int64 `path:"index_id"`
+	GetCommentInfoReq {
+		CommentId int64 `path:"comment_id"`
 	}
-	GetCommentIndexResData {
+	GetCommentInfoResData {
 		CommentIndex   CommentIndex   `json:"comment_index"`
 		CommentContent CommentContent `json:"comment_content"`
 	}
-	GetCommentIndexRes {
-		Code int32                  `json:"code"`
-		Msg  string                 `json:"msg"`
-		Ok   bool                   `json:"ok"`
-		Data GetCommentIndexResData `json:"data"`
+	GetCommentInfoRes {
+		Code int32                 `json:"code"`
+		Msg  string                `json:"msg"`
+		Ok   bool                  `json:"ok"`
+		Data GetCommentInfoResData `json:"data"`
 	}
 
 	GetCommenSubjectIndexReq {
@@ -119,8 +119,8 @@ service comment {
 	@handler GetCommentSubjectInfo
 	get /api/comment/subject/:subject_id (GetCommentSubjectInfoReq) returns (GetCommentSubjectInfoRes)
 	
-	@handler GetCommentIndex
-	get /api/comment/index/:index_id (GetCommentIndexReq) returns (GetCommentIndexRes)
+	@handler GetCommentInfo
+	get /api/comment/:comment_id (GetCommentInfoReq) returns (GetCommentInfoRes)
 	
 	// 使用redis sortedset
 	@handler GetCommentSubjectIndex

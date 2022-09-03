@@ -79,20 +79,20 @@ type GetCommentSubjectInfoRes struct {
 	Data GetCommentSubjectInfoResData `json:"data"`
 }
 
-type GetCommentIndexReq struct {
-	IndexId int64 `path:"index_id"`
+type GetCommentInfoReq struct {
+	CommentId int64 `path:"comment_id"`
 }
 
-type GetCommentIndexResData struct {
+type GetCommentInfoResData struct {
 	CommentIndex   CommentIndex   `json:"comment_index"`
 	CommentContent CommentContent `json:"comment_content"`
 }
 
-type GetCommentIndexRes struct {
-	Code int32                  `json:"code"`
-	Msg  string                 `json:"msg"`
-	Ok   bool                   `json:"ok"`
-	Data GetCommentIndexResData `json:"data"`
+type GetCommentInfoRes struct {
+	Code int32                 `json:"code"`
+	Msg  string                `json:"msg"`
+	Ok   bool                  `json:"ok"`
+	Data GetCommentInfoResData `json:"data"`
 }
 
 type GetCommenSubjectIndexReq struct {
