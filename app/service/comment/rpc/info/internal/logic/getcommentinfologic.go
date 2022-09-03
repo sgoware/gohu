@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"google.golang.org/protobuf/proto"
 	"main/app/common/log"
 	"net/http"
@@ -95,13 +96,24 @@ func (l *GetCommentInfoLogic) GetCommentInfo(in *pb.GetCommentInfoReq) (res *pb.
 			logger.Debugf("send message: %v", res.String())
 			return res, nil
 		}
+
+		approveCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("comment_index_approve_cnt_%d", in.IndexId)).Int()
+		if err != nil {
+			if err != redis.Nil {
+				logger.Errorf("get [comment_subject_root_comment_cnt] failed, err: %v", err)
+			}
+		} else {
+			resData.CommentIndex.ApproveCount += int32(approveCnt)
+		}
+
 		resData.CommentIndex = commentIndex
 	}
 
 	commentContentBytes, err := l.svcCtx.Rdb.Get(l.ctx,
 		fmt.Sprintf("comment_content_%d", in.IndexId)).Bytes()
 	if err != nil {
-		logger.Errorf("get [comment_content] cache failed, err: %v")
+		logger.Errorf("get [comment_content] cache failed, err: %v", err)
 
 		commentContentModel := l.svcCtx.CommentModel.CommentContent
 

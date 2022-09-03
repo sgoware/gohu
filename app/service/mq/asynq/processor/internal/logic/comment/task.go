@@ -252,6 +252,14 @@ func (l *ScheduleUpdateCommentSubjectHandler) ProcessTask(ctx context.Context, _
 			if err != nil {
 				return fmt.Errorf("marshal [commentSubjectProto] failed, err: %v")
 			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("comment_subject_%d", commentSubjectId),
+				commentSubjectBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [comment_subject] cache failed, err: %v", err)
+			}
 		} else {
 			return fmt.Errorf("get [comment_subject] cache failed, err: %v", err)
 		}
@@ -302,6 +310,14 @@ func (l *ScheduleUpdateCommentSubjectHandler) ProcessTask(ctx context.Context, _
 			if err != nil {
 				return fmt.Errorf("marshal [commentSubjectProto] failed, err: %v")
 			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("comment_subject_%d", commentSubjectId),
+				commentSubjectBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [comment_subject] cache failed, err: %v", err)
+			}
 		} else {
 			return fmt.Errorf("get [comment_subject] cache failed, err: %v", err)
 		}
@@ -324,33 +340,61 @@ func (l *ScheduleUpdateCommentIndexHandler) ProcessTask(ctx context.Context, _ *
 	commentIndexModel := l.CommentModel.CommentIndex
 
 	for _, approveMember := range approveMembers {
+		commentIndexId := cast.ToInt64(approveMember)
+
 		approveCnt, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("comment_index_approve_cnt_%s", approveMember)).Int()
+			fmt.Sprintf("comment_index_approve_cnt_%d", commentIndexId)).Int()
 		if err != nil {
 			return fmt.Errorf("get [comment_index_approve_cnt] failed, err: %d", err)
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("comment_index_approve_cnt_%s", approveMember)).Err()
+			fmt.Sprintf("comment_index_approve_cnt_%d", commentIndexId)).Err()
 		if err != nil {
 			return fmt.Errorf("del [comment_index_approve_cnt] failed, err: %v", err)
 		}
 
-		answerIndex, err := commentIndexModel.WithContext(ctx).
+		commentIndex, err := commentIndexModel.WithContext(ctx).
 			Select(commentIndexModel.ID, commentIndexModel.ApproveCount).
-			Where(commentIndexModel.ID.Eq(cast.ToInt64(approveMember))).
+			Where(commentIndexModel.ID.Eq(commentIndexId)).
 			First()
 		if err != nil {
 			return fmt.Errorf("query [comment_index] record failed, err: %v", err)
 		}
 
+		toCnt := commentIndex.ApproveCount + int32(approveCnt)
+
 		_, err = commentIndexModel.WithContext(ctx).
 			Select(commentIndexModel.ID, commentIndexModel.ApproveCount).
-			Where(commentIndexModel.ID.Eq(cast.ToInt64(approveMember))).
-			Update(commentIndexModel.ApproveCount, int(answerIndex.ApproveCount)+approveCnt)
+			Where(commentIndexModel.ID.Eq(commentIndexId)).
+			Update(commentIndexModel.ApproveCount, toCnt)
 		if err != nil {
 			return fmt.Errorf("update [comment_index] record failed, err: %v", err)
 		}
+
+		commentIndexBytes, err := l.Rdb.Get(ctx,
+			fmt.Sprintf("commentt_index_%d", commentIndexId)).Bytes()
+		if err == nil {
+			commentIndexProto := &pb.CommentIndex{}
+			err = proto.Unmarshal(commentIndexBytes, commentIndexProto)
+			if err != nil {
+				return fmt.Errorf("unmarshal proto failed, err: %v", err)
+			}
+			commentIndexProto.ApproveCount = toCnt
+			commentIndexBytes, err = proto.Marshal(commentIndexProto)
+			if err != nil {
+				return fmt.Errorf("marshal [commentIndexProto] failed, err: %v")
+			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("comment_index_%d", commentIndexId),
+				commentIndexBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [comment_index] cache failed, err: %v", err)
+			}
+		}
+
 	}
 
 	return nil

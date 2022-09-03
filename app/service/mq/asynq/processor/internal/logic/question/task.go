@@ -17,6 +17,7 @@ import (
 	"main/app/service/question/dao/pb"
 	"main/app/service/question/dao/query"
 	"main/app/utils/structx"
+	"time"
 )
 
 type MsgCrudQuestionSubjectHandler struct {
@@ -316,6 +317,14 @@ func (l *ScheduleUpdateQuestionSubjectHandler) ProcessTask(ctx context.Context, 
 			if err != nil {
 				return fmt.Errorf("marshal [questionSubjectProto] failed, err: %v")
 			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("question_subject_%d", questionSubjectId),
+				questionSubjectBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [question_subject] cache failed, err: %v", err)
+			}
 		} else {
 			return fmt.Errorf("get [question_subject] cache failed, err: %v", err)
 		}
@@ -366,6 +375,14 @@ func (l *ScheduleUpdateQuestionSubjectHandler) ProcessTask(ctx context.Context, 
 			if err != nil {
 				return fmt.Errorf("marshal [questionSubjectProto] failed, err: %v")
 			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("question_subject_%d", questionSubjectId),
+				questionSubjectBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [question_subject] cache failed, err: %v", err)
+			}
 		} else {
 			return fmt.Errorf("get [question_subject] cache failed, err: %v", err)
 		}
@@ -415,6 +432,14 @@ func (l *ScheduleUpdateQuestionSubjectHandler) ProcessTask(ctx context.Context, 
 			questionSubjectBytes, err = proto.Marshal(questionSubjectProto)
 			if err != nil {
 				return fmt.Errorf("marshal [questionSubjectProto] failed, err: %v")
+			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("question_subject_%d", questionSubjectId),
+				questionSubjectBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [question_subject] cache failed, err: %v", err)
 			}
 		} else {
 			return fmt.Errorf("get [question_subject] cache failed, err: %v", err)
@@ -505,6 +530,14 @@ func (l *ScheduleUpdateAnswerIndexRecordHandler) ProcessTask(ctx context.Context
 			if err != nil {
 				return fmt.Errorf("marshal [answerIndexProto] failed, err: %v")
 			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("answer_index_%d", answerIndexId),
+				answerIndexBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [answer_index] cache failed, err: %v", err)
+			}
 		} else {
 			return fmt.Errorf("get [answer_index] cache failed, err: %v", err)
 		}
@@ -555,6 +588,14 @@ func (l *ScheduleUpdateAnswerIndexRecordHandler) ProcessTask(ctx context.Context
 			if err != nil {
 				return fmt.Errorf("marshal [answerIndexProto] failed, err: %v")
 			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("answer_index_%d", answerIndexId),
+				answerIndexBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [answer_index] cache failed, err: %v", err)
+			}
 		} else {
 			return fmt.Errorf("get [answer_index] cache failed, err: %v", err)
 		}
@@ -604,6 +645,14 @@ func (l *ScheduleUpdateAnswerIndexRecordHandler) ProcessTask(ctx context.Context
 			answerIndexBytes, err = proto.Marshal(answerIndexProto)
 			if err != nil {
 				return fmt.Errorf("marshal [answerIndexProto] failed, err: %v")
+			}
+
+			err = l.Rdb.Set(ctx,
+				fmt.Sprintf("answer_index_%d", answerIndexId),
+				answerIndexBytes,
+				time.Second*86400).Err()
+			if err != nil {
+				return fmt.Errorf("set [answer_index] cache failed, err: %v", err)
 			}
 		} else {
 			return fmt.Errorf("get [answer_index] cache failed, err: %v", err)
