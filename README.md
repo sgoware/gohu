@@ -614,19 +614,151 @@ exec 3>&-
 
 ##### `user_subject`
 
+##### 记录
+
 ![](./manifest/image/user_subject_record.png)
+
+索引
 
 ![](./manifest/image/user_subject_record_index.png)
 
 ##### `user_collection`
 
+记录
 
+![](./manifest/image/user_collection_record.png)
+
+索引
+
+![](./manifest/image/user_collection_index.png)
+
+外键
+
+![](./manifest/image/user_collection_foreign_key.png)
 
 #### 问答系统
 
+##### `question_subject`
+
+记录
+
+![](./manifest/image/question_subject_record.png)
+
+索引
+
+![](./manifest/image/question_subject_index.png)
+
+
+
+##### `question_content`
+
+记录
+
+![](./manifest/image/question_content_record.png)
+
+外键
+
+![](./manifest/image/question_content_foreign_key.png)
+
+
+
+##### `answer_index`
+
+记录
+
+![](./manifest/image/answer_index_record.png)
+
+索引
+
+![](./manifest/image/answer_index_index.png)
+
+外键
+
+![](./manifest/image/answer_index_foreign_key.png)
+
+
+
+##### `answer_content`
+
+记录
+
+![](./manifest/image/answer_content_record.png)
+
+外键![](./manifest/image/answer_content_foreign_key.png)
+
 #### 评论系统
 
+##### `comment_subject`
+
+记录
+
+![](./manifest/image/comment_subject_record.png)
+
+索引
+
+![](./manifest/image/comment_subject_index.png)
+
+
+
+##### `comment_index`
+
+记录
+
+![](./manifest/image/comment_index_record.png)
+
+索引
+
+![](./manifest/image/comment_index_index.png)
+
+外键
+
+![](./manifest/image/comment_index_foreign_key.png)
+
+
+
+##### `comment_content`
+
+记录
+
+![](./manifest/image/comment_content_record.png)
+
+外键
+
+![](./manifest/image/comment_content_foreign_key.png)
+
 #### 通知系统
+
+##### `notification_subject`
+
+记录
+
+![](./manifest/image/notification_subject_record.png)
+
+索引
+
+![](./manifest/image/notification_subuject_index.png)
+
+外键
+
+![](./manifest/image/notification_subject_foreign_key.png)
+
+
+
+
+
+##### `notification_content`
+
+记录
+
+![](./manifest/image/notification_content_record.png)
+
+
+
+外键
+
+![](./manifest/image/notification_content_foreign_key.png)
+
+
 
 ### 缓存设计
 
@@ -819,6 +951,3 @@ key 格式：`question_id_user_set_[userId]` `answer_id_user_set_[userId]` `comm
 - [ ] 热榜
 - [ ] 盐选会员
 - [ ] 文章
-
-## 🎈 结语
-
