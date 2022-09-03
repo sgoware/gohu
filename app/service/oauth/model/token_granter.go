@@ -13,7 +13,6 @@ import (
 // parseBasicAuth parses an HTTP Basic Authentication string.
 // "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" returns ("default", "aertcerac", "744637972",ture).
 func parseBasicAuth(auth string) (clientId, clientSecret, userId string, ok bool) {
-	// TODO: 待测试 解码与字符串分割
 	const prefix = "Basic "
 	if len(auth) < len(prefix) || (auth[:len(prefix)] != prefix) {
 		return "", "", "", false

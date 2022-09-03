@@ -49,7 +49,6 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			response.ResultWithData(w, http.StatusForbidden, "login from a different location or accessToken exceeded", map[string]interface{}{"reload": true})
 			return
 		}
-		// TODO: 使用oauth2服务器认证,使用认证令牌认证,如果过期则使用刷新令牌
 		res, err := req.NewRequest().SetFormData(map[string]string{"oauth2_token": accessToken, "token_type": model.AccessToken}).
 			Post("https://" + m.Domain + "/api/oauth/token/check")
 		if err != nil {
