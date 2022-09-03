@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"google.golang.org/protobuf/proto"
 	"main/app/common/log"
 	"net/http"
@@ -49,6 +50,56 @@ func (l *GetAnswerLogic) GetAnswer(in *pb.GetAnswerReq) (res *pb.GetAnswerRes, e
 			logger.Debugf("send message: %v", err)
 			return res, nil
 		}
+
+		approveCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("answer_index_approve_cnt_%d", in.AnswerId)).Int64()
+		if err != nil {
+			if err != redis.Nil {
+				logger.Errorf("get [answer_index_approve_cnt] failed, err: %v", err)
+				res = &pb.GetAnswerRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, nil
+			}
+		}
+
+		likeCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("answer_index_like_cnt_%d", in.AnswerId)).Int64()
+		if err != nil {
+			if err != redis.Nil {
+				logger.Errorf("get [answer_index_like_cnt] failed, err: %v", err)
+				res = &pb.GetAnswerRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, nil
+			}
+		}
+
+		collectCnt, err := l.svcCtx.Rdb.Get(l.ctx,
+			fmt.Sprintf("answer_index_collect_cnt_%d", in.AnswerId)).Int64()
+		if err != nil {
+			if err != redis.Nil {
+				logger.Errorf("get [answer_index_collect_cnt] failed, err: %v", err)
+				res = &pb.GetAnswerRes{
+					Code: http.StatusInternalServerError,
+					Msg:  "internal err",
+					Ok:   false,
+				}
+				logger.Debugf("send message: %v", res.String())
+				return res, nil
+			}
+		}
+
+		resData.AnswerIndex.ApproveCount += int32(approveCnt)
+		resData.AnswerIndex.LikeCount += int32(likeCnt)
+		resData.AnswerIndex.CollectCount += int32(collectCnt)
+
 		resData.AnswerIndex = answerIndexProto
 	} else {
 		logger.Errorf("get answerIndex cache failed, err: %v", err)

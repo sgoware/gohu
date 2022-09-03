@@ -10,9 +10,9 @@ func (l *AsyNqScheduler) updateQuestionRecord() {
 	logger := log.GetSugaredLogger()
 
 	entryId, err := l.svcCtx.Scheduler.Register("*/1 * * * *",
-		asynq.NewTask(job.ScheduleUpdateQuestionSubjectRecordTask, nil))
+		asynq.NewTask(job.ScheduleUpdateQuestionSubjectTask, nil))
 	if err != nil {
-		logger.Errorf("register [ScheduleUpdateQuestionSubjectRecordTask] task to scheduler failed, err: %v", err)
+		logger.Errorf("register [ScheduleUpdateQuestionSubjectTask] task to scheduler failed, err: %v", err)
 	}
 
 	logger.Debugf("scheduler registered an entry: %v", entryId)

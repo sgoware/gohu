@@ -34,7 +34,7 @@ func (p *Processor) Register() *asynq.ServeMux {
 
 	mux.Handle(job.MsgCrudQuestionSubjectRecordTask, question.NewMsgCrudQuestionSubjectHandler(p.svcCtx.Config))
 	mux.Handle(job.MsgCrudQuestionContentRecordTask, question.NewMsgCrudQuestionContentHandler(p.svcCtx.Config))
-	mux.Handle(job.ScheduleUpdateQuestionSubjectRecordTask, question.NewScheduleUpdateQuestionSubjectRecordHandler(p.svcCtx.Config))
+	mux.Handle(job.ScheduleUpdateQuestionSubjectTask, question.NewScheduleUpdateQuestionSubjectHandler(p.svcCtx.Config))
 	mux.Handle(job.ScheduleUpdateAnswerIndexRecordTask, question.NewScheduleUpdateAnswerIndexRecordHandler(p.svcCtx.Config))
 
 	mux.Handle(job.MsgCrudCommentSubjectTask, comment.NewMsgCrudCommentSubjectHandler(p.svcCtx.Config))
