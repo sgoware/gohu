@@ -122,9 +122,9 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - go build -o ./app/service/question/api/gohu-question-api ./app/service/question/api/question.go
         - go build -o ./app/service/question/rpc/crud/gohu-question-rpc-crud ./app/service/question/rpc/crud/crud.go
         - go build -o ./app/service/question/rpc/info/gohu-question-rpc-info ./app/service/question/rpc/info/info.go
-#        - go build -o ./app/service/comment/api/gohu-comment-api ./app/service/comment/api/comment.go
-#        - go build -o ./app/service/comment/rpc/crud/gohu-comment-rpc-crud ./app/service/comment/rpc/crud/crud.go
-#        - go build -o ./app/service/comment/rpc/info/gohu-comment-rpc-info ./app/service/comment/rpc/info/info.go
+        - go build -o ./app/service/comment/api/gohu-comment-api ./app/service/comment/api/comment.go
+        - go build -o ./app/service/comment/rpc/crud/gohu-comment-rpc-crud ./app/service/comment/rpc/crud/crud.go
+        - go build -o ./app/service/comment/rpc/info/gohu-comment-rpc-info ./app/service/comment/rpc/info/info.go
         - go build -o ./app/service/notification/api/gohu-notification-api ./app/service/notification/api/notification.go
         - go build -o ./app/service/notification/rpc/crud/gohu-notification-rpc-crud ./app/service/notification/rpc/crud/crud.go
         - go build -o ./app/service/notification/rpc/info/gohu-notification-rpc-info ./app/service/notification/rpc/info/info.go
@@ -144,7 +144,7 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - docker-compose down --rmi all
         - echo '----------build docker image----------'
         - chmod 775 ./build.sh
-        - ./build.sh $PROJECT_NAME 16
+        - ./build.sh $PROJECT_NAME 19
         - echo '----------complete----------'
         - docker-compose up -d
         - echo '----------complete----------'

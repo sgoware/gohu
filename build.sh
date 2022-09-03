@@ -7,7 +7,8 @@ export THREAD=$2
 docker_names=('oauth-api' 'oauth-rpc-token-enhancer' 'oauth-rpc-token-store' \
 'user-api' 'user-rpc-crud' 'user-rpc-info' 'user-rpc-vip' 'notification-api' \
 'notification-rpc-crud' 'notification-rpc-info' 'mq-asynq-scheduler' 'mq-asynq-processor' \
-'mq-nsq-consumer' 'question-api' 'question-rpc-crud' 'question-rpc-info')
+'mq-nsq-consumer' 'question-api' 'question-rpc-crud' 'question-rpc-info' \
+'comment-api'  'comment-rpc-crud'  'comment-rpc-info')
 
 function docker_build() {
   if [ "$1" -ef "" ]; then
