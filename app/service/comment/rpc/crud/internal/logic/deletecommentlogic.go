@@ -50,9 +50,9 @@ func (l *DeleteCommentLogic) DeleteComment(in *pb.DeleteCommentReq) (res *pb.Del
 
 	if commentIndex.RootID == 0 {
 		err = l.svcCtx.Rdb.Decr(l.ctx,
-			fmt.Sprintf("comment_subject_root_comment_%d", in.CommentId)).Err()
+			fmt.Sprintf("comment_subject_root_comment_cnt_%d", commentIndex.SubjectID)).Err()
 		if err != nil {
-			logger.Errorf("incr [comment_subject_root_comment] failed, err: %v", err)
+			logger.Errorf("incr [comment_subject_root_comment_cnt] failed, err: %v", err)
 			res = &pb.DeleteCommentRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
@@ -63,10 +63,10 @@ func (l *DeleteCommentLogic) DeleteComment(in *pb.DeleteCommentReq) (res *pb.Del
 		}
 
 		err = l.svcCtx.Rdb.SAdd(l.ctx,
-			"comment_subject_root_comment_set",
-			in.CommentId).Err()
+			"comment_subject_root_comment_cnt_set",
+			commentIndex.SubjectID).Err()
 		if err != nil {
-			logger.Errorf("update [comment_subject_root_comment_set] failed, err: %v", err)
+			logger.Errorf("update [comment_subject_root_comment_cnt_set] failed, err: %v", err)
 			res = &pb.DeleteCommentRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
@@ -78,9 +78,9 @@ func (l *DeleteCommentLogic) DeleteComment(in *pb.DeleteCommentReq) (res *pb.Del
 	}
 
 	err = l.svcCtx.Rdb.Decr(l.ctx,
-		fmt.Sprintf("comment_subject_comment_%d", in.CommentId)).Err()
+		fmt.Sprintf("comment_subject_comment_cnt_%d", commentIndex.SubjectID)).Err()
 	if err != nil {
-		logger.Errorf("incr [comment_subject_comment] failed, err: %v", err)
+		logger.Errorf("incr [comment_subject_comment_cnt] failed, err: %v", err)
 		res = &pb.DeleteCommentRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
@@ -91,10 +91,10 @@ func (l *DeleteCommentLogic) DeleteComment(in *pb.DeleteCommentReq) (res *pb.Del
 	}
 
 	err = l.svcCtx.Rdb.SAdd(l.ctx,
-		"comment_subject_comment_set",
+		"comment_subject_comment_cnt_set",
 		in.CommentId).Err()
 	if err != nil {
-		logger.Errorf("update [comment_subject_comment_set] failed, err: %v", err)
+		logger.Errorf("update [comment_subject_comment_cnt_set] failed, err: %v", err)
 		res = &pb.DeleteCommentRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
