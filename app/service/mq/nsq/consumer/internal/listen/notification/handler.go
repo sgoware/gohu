@@ -156,8 +156,8 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 				return fmt.Errorf("query comment subject failed, err: %v", err)
 			}
 			commentSubjectJson := gjson.Parse(commentSubjectRes.String())
-			objType := commentSubjectJson.Get("data.obj_type").Int()
-			objId := commentSubjectJson.Get("data.obj_id").Int()
+			objType := commentSubjectJson.Get("data.comment_subject.obj_type").Int()
+			objId := commentSubjectJson.Get("data.comment_subject.obj_id").Int()
 			switch objType {
 			case 1:
 				// 评论回答
