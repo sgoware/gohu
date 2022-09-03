@@ -61,25 +61,6 @@ func NewMsgCrudCommentSubjectHandler(c config.Config) *MsgCrudCommentSubjectHand
 	}
 }
 
-func NewScheduleUpdateCommentIndexHandler(c config.Config) *ScheduleUpdateCommentIndexHandler {
-	logger := log.GetSugaredLogger()
-
-	rdb, err := apollo.GetRedisClient("comment.yaml")
-	if err != nil {
-		logger.Fatalf("initialize redis failed, err: %v", err)
-	}
-
-	commentDB, err := apollo.GetMysqlDB("comment.yaml")
-	if err != nil {
-		logger.Fatalf("initialize user mysql failed, err: %v", err)
-	}
-
-	return &ScheduleUpdateCommentIndexHandler{
-		Rdb:          rdb,
-		CommentModel: query.Use(commentDB),
-	}
-}
-
 func NewScheduleUpdateCommentSubjectHandler(c config.Config) *ScheduleUpdateCommentSubjectHandler {
 	logger := log.GetSugaredLogger()
 
@@ -94,6 +75,25 @@ func NewScheduleUpdateCommentSubjectHandler(c config.Config) *ScheduleUpdateComm
 	}
 
 	return &ScheduleUpdateCommentSubjectHandler{
+		Rdb:          rdb,
+		CommentModel: query.Use(commentDB),
+	}
+}
+
+func NewScheduleUpdateCommentIndexHandler(c config.Config) *ScheduleUpdateCommentIndexHandler {
+	logger := log.GetSugaredLogger()
+
+	rdb, err := apollo.GetRedisClient("comment.yaml")
+	if err != nil {
+		logger.Fatalf("initialize redis failed, err: %v", err)
+	}
+
+	commentDB, err := apollo.GetMysqlDB("comment.yaml")
+	if err != nil {
+		logger.Fatalf("initialize user mysql failed, err: %v", err)
+	}
+
+	return &ScheduleUpdateCommentIndexHandler{
 		Rdb:          rdb,
 		CommentModel: query.Use(commentDB),
 	}
@@ -208,62 +208,102 @@ func (l *ScheduleUpdateCommentSubjectHandler) ProcessTask(ctx context.Context, _
 	commentSubjectModel := l.CommentModel.CommentSubject
 
 	for _, commentMember := range commentMembers {
+		commentSubjectId := cast.ToInt64(commentMember)
 		commentCnt, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("comment_subject_comment_cnt_%s", commentMember)).Int()
+			fmt.Sprintf("comment_subject_comment_cnt_%d", commentSubjectId)).Int()
 		if err != nil {
 			return fmt.Errorf("get [comment_subject_comment_cnt] failed, err: %v", err)
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("comment_subject_comment_cnt_%s", commentMember)).Err()
+			fmt.Sprintf("comment_subject_comment_cnt_%d", commentSubjectId)).Err()
 		if err != nil {
 			return fmt.Errorf("del [comment_subject_comment_cnt] failed, err: %v", err)
 		}
 
 		commentSubject, err := commentSubjectModel.WithContext(ctx).
 			Select(commentSubjectModel.ID, commentSubjectModel.Count).
-			Where(commentSubjectModel.ID.Eq(cast.ToInt64(commentMember))).
+			Where(commentSubjectModel.ID.Eq(commentSubjectId)).
 			First()
 		if err != nil {
 			return fmt.Errorf("query [comment_subject] failed, err: %v", err)
 		}
 
+		toCnt := commentSubject.Count + int32(commentCnt)
+
 		_, err = commentSubjectModel.WithContext(ctx).
 			Select(commentSubjectModel.ID, commentSubjectModel.Count).
-			Where(commentSubjectModel.ID.Eq(cast.ToInt64(commentMember))).
-			Update(commentSubjectModel.Count, int(commentSubject.Count)+commentCnt)
+			Where(commentSubjectModel.ID.Eq(commentSubjectId)).
+			Update(commentSubjectModel.Count, toCnt)
 		if err != nil {
 			return fmt.Errorf("update [comment_subject] record failed, err: %v", err)
+		}
+
+		commentSubjectBytes, err := l.Rdb.Get(ctx,
+			fmt.Sprintf("commentt_subject_%d", commentSubjectId)).Bytes()
+		if err == nil {
+			commentSubjectProto := &pb.CommentSubject{}
+			err = proto.Unmarshal(commentSubjectBytes, commentSubjectProto)
+			if err != nil {
+				return fmt.Errorf("unmarshal proto failed, err: %v", err)
+			}
+			commentSubjectProto.Count = toCnt
+			commentSubjectBytes, err = proto.Marshal(commentSubjectProto)
+			if err != nil {
+				return fmt.Errorf("marshal [commentSubjectProto] failed, err: %v")
+			}
+		} else {
+			return fmt.Errorf("get [comment_subject] cache failed, err: %v", err)
 		}
 	}
 
 	for _, rootCommentMember := range rootCommentMembers {
+		commentSubjectId := cast.ToInt64(rootCommentMember)
 		rootCommentCnt, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("comment_subject_root_comment_cnt_%s", rootCommentMember)).Int()
+			fmt.Sprintf("comment_subject_root_comment_cnt_%s", commentSubjectId)).Int()
 		if err != nil {
 			return fmt.Errorf("get [comment_subject_root_comment_cnt] failed, err: %v", err)
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("comment_subject_root_comment_cnt_%s", rootCommentMember)).Err()
+			fmt.Sprintf("comment_subject_root_comment_cnt_%s", commentSubjectId)).Err()
 		if err != nil {
 			return fmt.Errorf("del [comment_subject_root_comment_cnt] failed, err: %v", err)
 		}
 
 		commentSubject, err := commentSubjectModel.WithContext(ctx).
 			Select(commentSubjectModel.ID, commentSubjectModel.RootCount).
-			Where(commentSubjectModel.ID.Eq(cast.ToInt64(rootCommentMember))).
+			Where(commentSubjectModel.ID.Eq(commentSubjectId)).
 			First()
 		if err != nil {
 			return fmt.Errorf("query [comment_subject] failed, err: %v", err)
 		}
 
+		toCnt := commentSubject.RootCount + int32(rootCommentCnt)
+
 		_, err = commentSubjectModel.WithContext(ctx).
 			Select(commentSubjectModel.ID, commentSubjectModel.RootCount).
-			Where(commentSubjectModel.ID.Eq(cast.ToInt64(rootCommentMember))).
-			Update(commentSubjectModel.RootCount, int(commentSubject.RootCount)+rootCommentCnt)
+			Where(commentSubjectModel.ID.Eq(commentSubjectId)).
+			Update(commentSubjectModel.RootCount, toCnt)
 		if err != nil {
 			return fmt.Errorf("update [comment_subject] record failed, err: %v", err)
+		}
+
+		commentSubjectBytes, err := l.Rdb.Get(ctx,
+			fmt.Sprintf("commentt_subject_%d", commentSubjectId)).Bytes()
+		if err == nil {
+			commentSubjectProto := &pb.CommentSubject{}
+			err = proto.Unmarshal(commentSubjectBytes, commentSubjectProto)
+			if err != nil {
+				return fmt.Errorf("unmarshal proto failed, err: %v", err)
+			}
+			commentSubjectProto.RootCount = toCnt
+			commentSubjectBytes, err = proto.Marshal(commentSubjectProto)
+			if err != nil {
+				return fmt.Errorf("marshal [commentSubjectProto] failed, err: %v")
+			}
+		} else {
+			return fmt.Errorf("get [comment_subject] cache failed, err: %v", err)
 		}
 	}
 	return nil
