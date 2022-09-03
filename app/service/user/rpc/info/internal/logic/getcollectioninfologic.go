@@ -55,7 +55,7 @@ func (l *GetCollectionInfoLogic) GetCollectionInfo(in *pb.GetCollectionInfoReq) 
 	logger.Errorf("get [user_collect] cache failed, err: %v", err)
 
 	l.svcCtx.Rdb.SAdd(l.ctx,
-		fmt.Sprintf("user_collect__set_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType),
+		fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, in.CollectionType, in.ObjType),
 		0)
 
 	userCollectModel := l.svcCtx.UserModel.UserCollection

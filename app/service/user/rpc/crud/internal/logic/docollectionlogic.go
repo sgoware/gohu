@@ -618,7 +618,7 @@ func deleteCollectionCache(ctx context.Context, svcCtx *svc.ServiceContext, in *
 	// 更新 user_collect 缓存
 	err = svcCtx.Rdb.SRem(ctx,
 		fmt.Sprintf("user_collect_set_%d_%d_%d", in.UserId, in.CollectType, in.ObjType),
-	).Err()
+		in.ObjId).Err()
 	if err != nil {
 		return fmt.Errorf("delete [user_collect] cache member failed, %v", err)
 	}
