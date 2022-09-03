@@ -134,6 +134,44 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 
 		case 3:
 			// 评论
+			userInfoRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/user/profile/%d", m.Domain, data.UserId))
+			if err != nil {
+				return fmt.Errorf("query user info failed, err: %v", err)
+			}
+
+			userInfoJson := gjson.Parse(userInfoRes.String())
+			if !userInfoJson.Get("ok").Bool() {
+				return fmt.Errorf("query user info failed, err: %v",
+					userInfoJson.Get("msg"))
+			}
+
+			nickname := userInfoJson.Get("data.nickname")
+
+			commentInfoRes, err := req.NewRequest().Get(
+				fmt.Sprintf("https://%s/api/comment/%d", m.Domain, data.ObjId))
+			if err != nil {
+				return fmt.Errorf("query comment info failed, err: %v", err)
+			}
+
+			commentInfoJson := gjson.Parse(commentInfoRes.String())
+			if !commentInfoJson.Get("ok").Bool() {
+				return fmt.Errorf("query comment info failed, err: %v",
+					commentInfoJson.Get("msg"))
+			}
+
+			userId := commentInfoJson.Get("data.comment_index.user_id").Int()
+
+			rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
+				UserId:      userId,
+				MessageType: 2,
+				Title:       fmt.Sprintf("用户 %s 赞同了你的评论", nickname),
+				Content:     "",
+				Url:         "",
+			})
+			if !rpcRes.Ok {
+				return fmt.Errorf("publish notification failed, %v", rpcRes.Msg)
+			}
 
 		}
 
