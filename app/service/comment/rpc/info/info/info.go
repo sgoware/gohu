@@ -19,15 +19,19 @@ type (
 	GetCommentInfoReq              = pb.GetCommentInfoReq
 	GetCommentInfoRes              = pb.GetCommentInfoRes
 	GetCommentInfoRes_Data         = pb.GetCommentInfoRes_Data
+	GetCommentSubjectIdReq         = pb.GetCommentSubjectIdReq
+	GetCommentSubjectIdRes         = pb.GetCommentSubjectIdRes
+	GetCommentSubjectIdRes_Data    = pb.GetCommentSubjectIdRes_Data
 	GetCommentSubjectIndexReq      = pb.GetCommentSubjectIndexReq
 	GetCommentSubjectIndexRes      = pb.GetCommentSubjectIndexRes
 	GetCommentSubjectIndexRes_Data = pb.GetCommentSubjectIndexRes_Data
-	GetCommentSubjectReq           = pb.GetCommentSubjectReq
-	GetCommentSubjectRes           = pb.GetCommentSubjectRes
-	GetCommentSubjectRes_Data      = pb.GetCommentSubjectRes_Data
+	GetCommentSubjectInfoReq       = pb.GetCommentSubjectInfoReq
+	GetCommentSubjectInfoRes       = pb.GetCommentSubjectInfoRes
+	GetCommentSubjectInfoRes_Data  = pb.GetCommentSubjectInfoRes_Data
 
 	Info interface {
-		GetCommentSubject(ctx context.Context, in *GetCommentSubjectReq, opts ...grpc.CallOption) (*GetCommentSubjectRes, error)
+		GetCommentSubjectId(ctx context.Context, in *GetCommentSubjectIdReq, opts ...grpc.CallOption) (*GetCommentSubjectIdRes, error)
+		GetCommentSubjectInfo(ctx context.Context, in *GetCommentSubjectInfoReq, opts ...grpc.CallOption) (*GetCommentSubjectInfoRes, error)
 		GetCommentInfo(ctx context.Context, in *GetCommentInfoReq, opts ...grpc.CallOption) (*GetCommentInfoRes, error)
 		GetCommentSubjectIndex(ctx context.Context, in *GetCommentSubjectIndexReq, opts ...grpc.CallOption) (*GetCommentSubjectIndexRes, error)
 	}
@@ -43,9 +47,14 @@ func NewInfo(cli zrpc.Client) Info {
 	}
 }
 
-func (m *defaultInfo) GetCommentSubject(ctx context.Context, in *GetCommentSubjectReq, opts ...grpc.CallOption) (*GetCommentSubjectRes, error) {
+func (m *defaultInfo) GetCommentSubjectId(ctx context.Context, in *GetCommentSubjectIdReq, opts ...grpc.CallOption) (*GetCommentSubjectIdRes, error) {
 	client := pb.NewInfoClient(m.cli.Conn())
-	return client.GetCommentSubject(ctx, in, opts...)
+	return client.GetCommentSubjectId(ctx, in, opts...)
+}
+
+func (m *defaultInfo) GetCommentSubjectInfo(ctx context.Context, in *GetCommentSubjectInfoReq, opts ...grpc.CallOption) (*GetCommentSubjectInfoRes, error) {
+	client := pb.NewInfoClient(m.cli.Conn())
+	return client.GetCommentSubjectInfo(ctx, in, opts...)
 }
 
 func (m *defaultInfo) GetCommentInfo(ctx context.Context, in *GetCommentInfoReq, opts ...grpc.CallOption) (*GetCommentInfoRes, error) {

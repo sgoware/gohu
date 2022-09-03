@@ -2,17 +2,17 @@ package handler
 
 import (
 	"main/app/common/log"
-	"main/app/service/comment/api/internal/logic"
-	"main/app/service/comment/api/internal/svc"
-	"main/app/service/comment/api/internal/types"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"main/app/service/comment/api/internal/logic"
+	"main/app/service/comment/api/internal/svc"
+	"main/app/service/comment/api/internal/types"
 )
 
-func GetCommentSubjectHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func GetCommentSubjectIdResHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.GetCommentSubjectReq
+		var req types.GetCommentSubjectIdReq
 		logger := log.GetSugaredLogger()
 
 		if err := httpx.Parse(r, &req); err != nil {
@@ -22,9 +22,9 @@ func GetCommentSubjectHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 		logger.Debugf("recv args: %v", req)
 
-		l := logic.NewGetCommentSubjectLogic(r.Context(), svcCtx)
+		l := logic.NewGetCommentSubjectIdResLogic(r.Context(), svcCtx)
 
-		res, err := l.GetCommentSubject(&req)
+		res, err := l.GetCommentSubjectIdRes(&req)
 		if err != nil {
 			logger.Errorf("Process logic failed, err: %v", err)
 		}

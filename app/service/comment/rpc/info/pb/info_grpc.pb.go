@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InfoClient interface {
-	GetCommentSubject(ctx context.Context, in *GetCommentSubjectReq, opts ...grpc.CallOption) (*GetCommentSubjectRes, error)
+	GetCommentSubjectId(ctx context.Context, in *GetCommentSubjectIdReq, opts ...grpc.CallOption) (*GetCommentSubjectIdRes, error)
+	GetCommentSubjectInfo(ctx context.Context, in *GetCommentSubjectInfoReq, opts ...grpc.CallOption) (*GetCommentSubjectInfoRes, error)
 	GetCommentInfo(ctx context.Context, in *GetCommentInfoReq, opts ...grpc.CallOption) (*GetCommentInfoRes, error)
 	GetCommentSubjectIndex(ctx context.Context, in *GetCommentSubjectIndexReq, opts ...grpc.CallOption) (*GetCommentSubjectIndexRes, error)
 }
@@ -35,9 +36,18 @@ func NewInfoClient(cc grpc.ClientConnInterface) InfoClient {
 	return &infoClient{cc}
 }
 
-func (c *infoClient) GetCommentSubject(ctx context.Context, in *GetCommentSubjectReq, opts ...grpc.CallOption) (*GetCommentSubjectRes, error) {
-	out := new(GetCommentSubjectRes)
-	err := c.cc.Invoke(ctx, "/info.Info/GetCommentSubject", in, out, opts...)
+func (c *infoClient) GetCommentSubjectId(ctx context.Context, in *GetCommentSubjectIdReq, opts ...grpc.CallOption) (*GetCommentSubjectIdRes, error) {
+	out := new(GetCommentSubjectIdRes)
+	err := c.cc.Invoke(ctx, "/info.Info/GetCommentSubjectId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *infoClient) GetCommentSubjectInfo(ctx context.Context, in *GetCommentSubjectInfoReq, opts ...grpc.CallOption) (*GetCommentSubjectInfoRes, error) {
+	out := new(GetCommentSubjectInfoRes)
+	err := c.cc.Invoke(ctx, "/info.Info/GetCommentSubjectInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +76,8 @@ func (c *infoClient) GetCommentSubjectIndex(ctx context.Context, in *GetCommentS
 // All implementations must embed UnimplementedInfoServer
 // for forward compatibility
 type InfoServer interface {
-	GetCommentSubject(context.Context, *GetCommentSubjectReq) (*GetCommentSubjectRes, error)
+	GetCommentSubjectId(context.Context, *GetCommentSubjectIdReq) (*GetCommentSubjectIdRes, error)
+	GetCommentSubjectInfo(context.Context, *GetCommentSubjectInfoReq) (*GetCommentSubjectInfoRes, error)
 	GetCommentInfo(context.Context, *GetCommentInfoReq) (*GetCommentInfoRes, error)
 	GetCommentSubjectIndex(context.Context, *GetCommentSubjectIndexReq) (*GetCommentSubjectIndexRes, error)
 	mustEmbedUnimplementedInfoServer()
@@ -76,8 +87,11 @@ type InfoServer interface {
 type UnimplementedInfoServer struct {
 }
 
-func (UnimplementedInfoServer) GetCommentSubject(context.Context, *GetCommentSubjectReq) (*GetCommentSubjectRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCommentSubject not implemented")
+func (UnimplementedInfoServer) GetCommentSubjectId(context.Context, *GetCommentSubjectIdReq) (*GetCommentSubjectIdRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCommentSubjectId not implemented")
+}
+func (UnimplementedInfoServer) GetCommentSubjectInfo(context.Context, *GetCommentSubjectInfoReq) (*GetCommentSubjectInfoRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCommentSubjectInfo not implemented")
 }
 func (UnimplementedInfoServer) GetCommentInfo(context.Context, *GetCommentInfoReq) (*GetCommentInfoRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCommentInfo not implemented")
@@ -98,20 +112,38 @@ func RegisterInfoServer(s grpc.ServiceRegistrar, srv InfoServer) {
 	s.RegisterService(&Info_ServiceDesc, srv)
 }
 
-func _Info_GetCommentSubject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCommentSubjectReq)
+func _Info_GetCommentSubjectId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentSubjectIdReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfoServer).GetCommentSubject(ctx, in)
+		return srv.(InfoServer).GetCommentSubjectId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/info.Info/GetCommentSubject",
+		FullMethod: "/info.Info/GetCommentSubjectId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfoServer).GetCommentSubject(ctx, req.(*GetCommentSubjectReq))
+		return srv.(InfoServer).GetCommentSubjectId(ctx, req.(*GetCommentSubjectIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Info_GetCommentSubjectInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentSubjectInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfoServer).GetCommentSubjectInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/info.Info/GetCommentSubjectInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfoServer).GetCommentSubjectInfo(ctx, req.(*GetCommentSubjectInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -160,8 +192,12 @@ var Info_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*InfoServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetCommentSubject",
-			Handler:    _Info_GetCommentSubject_Handler,
+			MethodName: "GetCommentSubjectId",
+			Handler:    _Info_GetCommentSubjectId_Handler,
+		},
+		{
+			MethodName: "GetCommentSubjectInfo",
+			Handler:    _Info_GetCommentSubjectInfo_Handler,
 		},
 		{
 			MethodName: "GetCommentInfo",

@@ -22,9 +22,14 @@ func NewInfoServer(svcCtx *svc.ServiceContext) *InfoServer {
 	}
 }
 
-func (s *InfoServer) GetCommentSubject(ctx context.Context, in *pb.GetCommentSubjectReq) (*pb.GetCommentSubjectRes, error) {
-	l := logic.NewGetCommentSubjectLogic(ctx, s.svcCtx)
-	return l.GetCommentSubject(in)
+func (s *InfoServer) GetCommentSubjectId(ctx context.Context, in *pb.GetCommentSubjectIdReq) (*pb.GetCommentSubjectIdRes, error) {
+	l := logic.NewGetCommentSubjectIdLogic(ctx, s.svcCtx)
+	return l.GetCommentSubjectId(in)
+}
+
+func (s *InfoServer) GetCommentSubjectInfo(ctx context.Context, in *pb.GetCommentSubjectInfoReq) (*pb.GetCommentSubjectInfoRes, error) {
+	l := logic.NewGetCommentSubjectInfoLogic(ctx, s.svcCtx)
+	return l.GetCommentSubjectInfo(in)
 }
 
 func (s *InfoServer) GetCommentInfo(ctx context.Context, in *pb.GetCommentInfoReq) (*pb.GetCommentInfoRes, error) {

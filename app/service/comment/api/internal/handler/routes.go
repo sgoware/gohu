@@ -21,8 +21,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
+					Path:    "/api/comment/subject/:obj_type/:obj_id",
+					Handler: GetCommentSubjectIdResHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
 					Path:    "/api/comment/subject/:subject_id",
-					Handler: GetCommentSubjectHandler(serverCtx),
+					Handler: GetCommentSubjectInfoHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

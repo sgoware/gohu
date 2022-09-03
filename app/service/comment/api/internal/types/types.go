@@ -48,19 +48,35 @@ type CrudRes struct {
 	Ok   bool   `json:"ok"`
 }
 
-type GetCommentSubjectReq struct {
+type GetCommentSubjectIdReq struct {
+	ObjType int32 `path:"obj_type"`
+	ObjId   int64 `path:"obj_id"`
+}
+
+type GetCommentSubjectIdResData struct {
+	SubjectId int64 `json:"subject_id"`
+}
+
+type GetCommentSubjectIdRes struct {
+	Code int32                      `json:"code"`
+	Msg  string                     `json:"msg"`
+	Ok   bool                       `json:"ok"`
+	Data GetCommentSubjectIdResData `json:"data"`
+}
+
+type GetCommentSubjectInfoReq struct {
 	SubjectId int64 `path:"subject_id"`
 }
 
-type GetCommentSubjectResData struct {
+type GetCommentSubjectInfoResData struct {
 	CommentSubject CommentSubject `json:"comment_subject"`
 }
 
-type GetCommentSubjectRes struct {
-	Code int32                    `json:"code"`
-	Msg  string                   `json:"msg"`
-	Ok   bool                     `json:"ok"`
-	Data GetCommentSubjectResData `json:"data"`
+type GetCommentSubjectInfoRes struct {
+	Code int32                        `json:"code"`
+	Msg  string                       `json:"msg"`
+	Ok   bool                         `json:"ok"`
+	Data GetCommentSubjectInfoResData `json:"data"`
 }
 
 type GetCommentIndexReq struct {

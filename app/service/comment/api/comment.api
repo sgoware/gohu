@@ -53,17 +53,31 @@ type (
 		Ok   bool   `json:"ok"`
 	}
 
-	GetCommentSubjectReq {
+	GetCommentSubjectIdReq {
+		ObjType int32 `path:"obj_type"`
+		ObjId   int64 `path:"obj_id"`
+	}
+	GetCommentSubjectIdResData {
+		SubjectId int64 `json:"subject_id"`
+	}
+	GetCommentSubjectIdRes {
+		Code int32                      `json:"code"`
+		Msg  string                     `json:"msg"`
+		Ok   bool                       `json:"ok"`
+		Data GetCommentSubjectIdResData `json:"data"`
+	}
+
+	GetCommentSubjectInfoReq {
 		SubjectId int64 `path:"subject_id"`
 	}
-	GetCommentSubjectResData {
+	GetCommentSubjectInfoResData {
 		CommentSubject CommentSubject `json:"comment_subject"`
 	}
-	GetCommentSubjectRes {
-		Code int32                    `json:"code"`
-		Msg  string                   `json:"msg"`
-		Ok   bool                     `json:"ok"`
-		Data GetCommentSubjectResData `json:"data"`
+	GetCommentSubjectInfoRes {
+		Code int32                        `json:"code"`
+		Msg  string                       `json:"msg"`
+		Ok   bool                         `json:"ok"`
+		Data GetCommentSubjectInfoResData `json:"data"`
 	}
 
 	GetCommentIndexReq {
@@ -99,8 +113,11 @@ service comment {
 	@handler Crud
 	post /api/comment/crud (CrudReq) returns (CrudRes)
 	
-	@handler GetCommentSubject
-	get /api/comment/subject/:subject_id (GetCommentSubjectReq) returns (GetCommentSubjectRes)
+	@handler GetCommentSubjectIdRes
+	get /api/comment/subject/:obj_type/:obj_id (GetCommentSubjectIdReq) returns (GetCommentSubjectIdRes)
+	
+	@handler GetCommentSubjectInfo
+	get /api/comment/subject/:subject_id (GetCommentSubjectInfoReq) returns (GetCommentSubjectInfoRes)
 	
 	@handler GetCommentIndex
 	get /api/comment/index/:index_id (GetCommentIndexReq) returns (GetCommentIndexRes)

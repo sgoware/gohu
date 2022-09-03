@@ -14,30 +14,30 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetCommentSubjectLogic struct {
+type GetCommentSubjectInfoLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetCommentSubjectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCommentSubjectLogic {
-	return &GetCommentSubjectLogic{
+func NewGetCommentSubjectInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCommentSubjectInfoLogic {
+	return &GetCommentSubjectInfoLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetCommentSubjectLogic) GetCommentSubject(in *pb.GetCommentSubjectReq) (res *pb.GetCommentSubjectRes, err error) {
+func (l *GetCommentSubjectInfoLogic) GetCommentSubjectInfo(in *pb.GetCommentSubjectInfoReq) (res *pb.GetCommentSubjectInfoRes, err error) {
 	logger := log.GetSugaredLogger()
 	logger.Debugf("recv message: %v", in.String())
 
-	resData := &pb.GetCommentSubjectRes_Data{}
+	resData := &pb.GetCommentSubjectInfoRes_Data{}
 
 	commentSubjectBytes, err := l.svcCtx.Rdb.Get(l.ctx,
-		fmt.Sprintf("commentSubject_%d", in.SubjectId)).Bytes()
+		fmt.Sprintf("comment_subject_%d", in.SubjectId)).Bytes()
 	if err != nil {
-		logger.Errorf("get commentSubject cache failed, err: %v", err)
+		logger.Errorf("get comment_subject cache failed, err: %v", err)
 
 		commentSubjectModel := l.svcCtx.CommentModel.CommentSubject
 
@@ -46,7 +46,7 @@ func (l *GetCommentSubjectLogic) GetCommentSubject(in *pb.GetCommentSubjectReq) 
 			First()
 		if err != nil {
 			logger.Errorf("get commentSubject failed, err: mysql err, %v", err)
-			res = &pb.GetCommentSubjectRes{
+			res = &pb.GetCommentSubjectInfoRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
 				Ok:   false,
@@ -74,7 +74,7 @@ func (l *GetCommentSubjectLogic) GetCommentSubject(in *pb.GetCommentSubjectReq) 
 			logger.Errorf("marshal proto failed, err: %v", err)
 		} else {
 			l.svcCtx.Rdb.Set(l.ctx,
-				fmt.Sprintf("commentSubject_%v", commentSubject.ID),
+				fmt.Sprintf("comment_subject_%v", commentSubject.ID),
 				commentSubjectBytes,
 				time.Second*86400)
 		}
@@ -83,7 +83,7 @@ func (l *GetCommentSubjectLogic) GetCommentSubject(in *pb.GetCommentSubjectReq) 
 		err = proto.Unmarshal(commentSubjectBytes, commentSubject)
 		if err != nil {
 			logger.Errorf("unmarshal proto failed, err: %v", err)
-			res = &pb.GetCommentSubjectRes{
+			res = &pb.GetCommentSubjectInfoRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
 				Ok:   false,
@@ -94,7 +94,7 @@ func (l *GetCommentSubjectLogic) GetCommentSubject(in *pb.GetCommentSubjectReq) 
 		resData.CommentSubject = commentSubject
 	}
 
-	res = &pb.GetCommentSubjectRes{
+	res = &pb.GetCommentSubjectInfoRes{
 		Code: http.StatusOK,
 		Msg:  "get comment subject successfully",
 		Ok:   true,

@@ -103,9 +103,9 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 		}
 
 		err = l.svcCtx.Rdb.Incr(l.ctx,
-			fmt.Sprintf("comment_subject_root_comment_%d", in.CommentId)).Err()
+			fmt.Sprintf("comment_subject_root_comment_cnt_%d", commentId)).Err()
 		if err != nil {
-			logger.Errorf("incr [comment_subject_root_comment] failed, err: %v", err)
+			logger.Errorf("incr [comment_subject_root_comment_cnt] failed, err: %v", err)
 			res = &pb.PublishCommentRes{
 				Code: http.StatusInternalServerError,
 				Msg:  "internal err",
@@ -117,7 +117,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 
 		err = l.svcCtx.Rdb.SAdd(l.ctx,
 			"comment_subject_root_comment_set",
-			in.CommentId).Err()
+			commentId).Err()
 		if err != nil {
 			logger.Errorf("update [comment_subject_root_comment_set] failed, err: %v", err)
 			res = &pb.PublishCommentRes{
@@ -185,9 +185,9 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 	}
 
 	err = l.svcCtx.Rdb.Incr(l.ctx,
-		fmt.Sprintf("comment_subject_comment_%d", in.CommentId)).Err()
+		fmt.Sprintf("comment_subject_comment_cnt_%d", commentId)).Err()
 	if err != nil {
-		logger.Errorf("incr [comment_subject_comment] failed, err: %v", err)
+		logger.Errorf("incr [comment_subject_comment_cnt] failed, err: %v", err)
 		res = &pb.PublishCommentRes{
 			Code: http.StatusInternalServerError,
 			Msg:  "internal err",
@@ -199,7 +199,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 
 	err = l.svcCtx.Rdb.SAdd(l.ctx,
 		"comment_subject_comment_set",
-		in.CommentId).Err()
+		commentId).Err()
 	if err != nil {
 		logger.Errorf("update [comment_subject_comment_set] failed, err: %v", err)
 		res = &pb.PublishCommentRes{

@@ -10,28 +10,28 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetCommentSubjectLogic struct {
+type GetCommentSubjectInfoLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGetCommentSubjectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCommentSubjectLogic {
-	return &GetCommentSubjectLogic{
+func NewGetCommentSubjectInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCommentSubjectInfoLogic {
+	return &GetCommentSubjectInfoLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *GetCommentSubjectLogic) GetCommentSubject(req *types.GetCommentSubjectReq) (resp *types.GetCommentSubjectRes, err error) {
-	rpcRes, _ := l.svcCtx.InfoRpcClient.GetCommentSubject(l.ctx, &info.GetCommentSubjectReq{SubjectId: req.SubjectId})
+func (l *GetCommentSubjectInfoLogic) GetCommentSubjectInfo(req *types.GetCommentSubjectInfoReq) (resp *types.GetCommentSubjectInfoRes, err error) {
+	rpcRes, _ := l.svcCtx.InfoRpcClient.GetCommentSubjectInfo(l.ctx, &info.GetCommentSubjectInfoReq{SubjectId: req.SubjectId})
 
-	return &types.GetCommentSubjectRes{
+	return &types.GetCommentSubjectInfoRes{
 		Code: rpcRes.Code,
 		Msg:  rpcRes.Msg,
 		Ok:   rpcRes.Ok,
-		Data: types.GetCommentSubjectResData{CommentSubject: types.CommentSubject{
+		Data: types.GetCommentSubjectInfoResData{CommentSubject: types.CommentSubject{
 			Id:         rpcRes.Data.CommentSubject.Id,
 			ObjType:    rpcRes.Data.CommentSubject.ObjType,
 			ObjId:      rpcRes.Data.CommentSubject.ObjId,
