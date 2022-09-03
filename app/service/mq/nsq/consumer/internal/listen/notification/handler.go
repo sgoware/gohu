@@ -116,7 +116,7 @@ func (m *PublishNotificationHandler) HandleMessage(nsqMsg *nsq.Message) (err err
 					answerJson.Get("data.question_subject.title"))
 			}
 			rpcRes, _ := m.NotificationCrudRpcClient.PublishNotification(ctx, &crud.PublishNotificationReq{
-				UserId:      answerJson.Get("data.answer_index.id").Int(),
+				UserId:      answerJson.Get("data.answer_index.user_id").Int(),
 				MessageType: 2,
 				Title:       title,
 				Content:     "",
