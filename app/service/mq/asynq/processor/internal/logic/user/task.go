@@ -257,7 +257,7 @@ func (l *MsgCreateUserSubjectHandler) ProcessTask(ctx context.Context, task *asy
 	}
 
 	err = l.Rdb.Set(ctx,
-		fmt.Sprintf("user_login_%d", userSubjectId),
+		fmt.Sprintf("user_login_%s", payload.Username),
 		fmt.Sprintf("%d:%s", userSubjectId, payload.Password),
 		time.Second*86400).Err()
 	if err != nil {
