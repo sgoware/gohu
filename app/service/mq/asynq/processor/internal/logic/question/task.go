@@ -271,15 +271,15 @@ func (l *ScheduleUpdateQuestionSubjectRecordHandler) ProcessTask(ctx context.Con
 
 	for _, subCntMember := range subCntMembers {
 		subCnt, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("question_sub_cnt_%s", subCntMember)).Int()
+			fmt.Sprintf("question_subejct_sub_cnt_%s", subCntMember)).Int()
 		if err != nil {
 			return fmt.Errorf("get [question_sub_cnt] failed, err: %d", err)
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("question_sub_cnt_%s", subCntMember)).Err()
+			fmt.Sprintf("question_subject_sub_cnt_%s", subCntMember)).Err()
 		if err != nil {
-			return fmt.Errorf("del [question_sub_cnt] failed, err: %v", err)
+			return fmt.Errorf("del [question_subject_sub_cnt] failed, err: %v", err)
 		}
 
 		questionSubject, err := questionSubjectModel.WithContext(ctx).
@@ -301,15 +301,15 @@ func (l *ScheduleUpdateQuestionSubjectRecordHandler) ProcessTask(ctx context.Con
 
 	for _, answerCntMember := range answerCntMembers {
 		answerCnt, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("question_answer_cnt_%s", answerCntMember)).Int()
+			fmt.Sprintf("question_subject_answer_cnt_%s", answerCntMember)).Int()
 		if err != nil {
 			return fmt.Errorf("get [question_answer_cnt] failed, err: %d", err)
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("question_answer_cnt_%s", answerCntMember)).Err()
+			fmt.Sprintf("question_subject_answer_cnt_%s", answerCntMember)).Err()
 		if err != nil {
-			return fmt.Errorf("del [question_answer_cnt] failed, err: %v", err)
+			return fmt.Errorf("del [question_subject_answer_cnt_] failed, err: %v", err)
 		}
 
 		questionSubject, err := questionSubjectModel.WithContext(ctx).
@@ -331,15 +331,15 @@ func (l *ScheduleUpdateQuestionSubjectRecordHandler) ProcessTask(ctx context.Con
 
 	for _, viewCntMember := range viewCntMembers {
 		viewCnt, err := l.Rdb.Get(ctx,
-			fmt.Sprintf("question_view_cnt_%s", viewCntMember)).Int()
+			fmt.Sprintf("question_subject_view_cnt_%s", viewCntMember)).Int()
 		if err != nil {
-			return fmt.Errorf("get [question_view_cnt] failed, err: %d", err)
+			return fmt.Errorf("get [question_subject_view_cnt] failed, err: %d", err)
 		}
 
 		err = l.Rdb.Del(ctx,
-			fmt.Sprintf("question_view_cnt_%s", viewCntMember)).Err()
+			fmt.Sprintf("question_subject_view_cnt_%s", viewCntMember)).Err()
 		if err != nil {
-			return fmt.Errorf("del [question_view_cnt] failed, err: %v", err)
+			return fmt.Errorf("del [question_subject_view_cnt] failed, err: %v", err)
 		}
 
 		questionSubject, err := questionSubjectModel.WithContext(ctx).
