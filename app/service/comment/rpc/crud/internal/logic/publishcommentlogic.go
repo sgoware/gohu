@@ -116,7 +116,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 		}
 
 		err = l.svcCtx.Rdb.SAdd(l.ctx,
-			"comment_subject_root_comment_set",
+			"comment_subject_root_comment_cnt_set",
 			commentId).Err()
 		if err != nil {
 			logger.Errorf("update [comment_subject_root_comment_set] failed, err: %v", err)
@@ -198,7 +198,7 @@ func (l *PublishCommentLogic) PublishComment(in *pb.PublishCommentReq) (res *pb.
 	}
 
 	err = l.svcCtx.Rdb.SAdd(l.ctx,
-		"comment_subject_comment_set",
+		"comment_subject_comment_cnt_set",
 		commentId).Err()
 	if err != nil {
 		logger.Errorf("update [comment_subject_comment_set] failed, err: %v", err)
