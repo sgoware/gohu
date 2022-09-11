@@ -10,8 +10,6 @@
 
 ## 🚀 功能
 
-[演示视频](https://typora.stellaris.wang/gohu-show-video.mp4)
-
 ### 认证系统
 
 - 颁发 `oauth2 token`  (包含 `access token` 和 `refresh token`)
