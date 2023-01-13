@@ -1,0 +1,84 @@
+Api:
+  Name: question-api
+  Host: 0.0.0.0
+  Port: 11130
+  
+  # 链路追踪配置
+  Telemetry:
+    Name: gohu-question-api
+    Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+    Sampler: 1.0
+    Batcher: jaeger
+
+  # consul://[user:passwd]@host/service?param=value'
+  # 类似这样的格式
+  CrudRpcClientConf:
+    Target: consul://xxx.xxx.xxx.xxx:9086/gohu-question-crud.rpc?wait=10s&token=<input consul token here>
+  InfoRpcClientConf:
+    Target: consul://xxx.xxx.xxx.xxx:9086/gohu-question-info.rpc?wait=10s&token=<input consul token here>
+
+Rpc:
+  Crud:
+    Name: gohu-question-crud-rpc
+    ListenOn: 0.0.0.0:11132 # 监听地址
+
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086 # consul endpoint
+      Key: gohu-question-crud.rpc # 注册到consul的服务名字
+      Token: <input consul token here>
+      Meta:
+        Protocol: grpc
+      Tag:
+        - tag
+        - rpc
+
+    # 链路追踪配置
+    Telemetry:
+      Name: gohu-question-crud-rpc
+      Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+    
+    AsynqClientConf:
+      Addr: <input redis addr here>
+      Password: <input redis password here>
+      DB: <input redis database num here>
+  
+  Info:
+    Name: gohu-question-info-rpc
+    ListenOn: 0.0.0.0:11133
+    
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086
+      Key: gohu-question-info.rpc
+      Token: <input consul token here>
+      Meta:
+        protocol: grpc
+      Tag:
+        - tag
+        - rpc
+    
+    Telemetry:
+      Name: gohu-question-info-rpc
+      Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+IdGeneratorOptions:
+  Method: 0
+  BaseTime: 1662142722414
+  WorkerId: 3
+  WorkerIdBitLength: 6
+  SeqBitLength: 6
+  MaxSeqNumber: 0
+  MinSeqNumber: 5
+  TopOverCostCount: 2000
+
+Database:
+  Mysql:
+    ServerNum: 1
+    DatabaseName: 'gohu'
+    DatabaseCharset: 'utf8mb4'
+  Redis:
+    ServerNum: 1
+    DatabaseNum: 2

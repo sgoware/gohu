@@ -1,0 +1,113 @@
+Api:
+  Name: user-api
+  Host: 0.0.0.0
+  Port: 11120
+  
+  # 链路追踪配置
+  Telemetry:
+    Name: gohu-user-api
+    Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+    Sampler: 1.0
+    Batcher: jaeger
+
+  # consul://[user:passwd]@host/service?param=value'
+  # 类似这样的格式
+  CrudRpcClientConf:
+    Target: consul://xxx.xxx.xxx.xxx:9086/gohu-user-crud.rpc?wait=10s&token=<input consul token here>
+  InfoRpcClientConf:
+    Target: consul://xxx.xxx.xxx.xxx:9086/gohu-user-info.rpc?wait=10s&token=<input consul token here>
+  VipRpcClientConf:
+    Target: consul://xxx.xxx.xxx.xxx:9086/gohu-user-vip.rpc?wait=10s&token=<input consul token here>
+
+Rpc:
+  Crud:
+    Name: gohu-user-crud-rpc
+    ListenOn: 0.0.0.0:11121 # 监听地址
+
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086 # consul endpoint
+      Key: gohu-user-crud.rpc # 注册到consul的服务名字
+      Token: <input consul token here>
+      Meta:
+        Protocol: grpc
+      Tag:
+        - tag
+        - rpc
+
+    # 链路追踪配置
+    Telemetry:
+      Name: gohu-user-crud-rpc
+      Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+    
+    AsynqClientConf:
+      Addr: <input redis addr here>
+      Password: <input redis password here>
+      DB: <input redis database num here>
+
+  Info:
+    Name: gohu-user-info-rpc
+    ListenOn: 0.0.0.0:11122 # 监听地址
+
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086 # consul endpoint
+      Key: gohu-user-info.rpc # 注册到consul的服务名字
+      Token: <input consul token here>
+      Meta:
+        Protocol: grpc
+      Tag:
+        - tag
+        - rpc
+
+    # 链路追踪配置
+    Telemetry:
+      Name: gohu-user-info-rpc
+      Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+    
+    AsynqClientConf:
+      Addr: <input redis addr here>
+      Password: <input redis password here>
+      DB: <input redis database num here>
+  
+  Vip:
+    Name: gohu-user-vip-rpc
+    ListenOn: 0.0.0.0:11123
+
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086
+      Key: gohu-user-vip.rpc
+      Token: <input consul token here>
+      Meta:
+        Protocol: grpc
+      Tag:
+        - tag
+        - rpc
+
+    Telemetry:
+      Name: gohu-user-vip-rpc
+      Endpoint: http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+
+IdGeneratorOptions:
+  Method: 0
+  BaseTime: 1662708842000
+  WorkerId: 2
+  WorkerIdBitLength: 6
+  SeqBitLength: 6
+  MaxSeqNumber: 0
+  MinSeqNumber: 5
+  TopOverCostCount: 2000
+
+Database:
+  Mysql:
+    ServerNum: 1
+    DatabaseName: 'gohu'
+    DatabaseCharset: 'utf8mb4'
+  Redis:
+    ServerNum: 1
+    DatabaseNum: 2

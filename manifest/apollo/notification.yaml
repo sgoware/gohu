@@ -1,0 +1,73 @@
+Api:
+  Name: notificaion-api
+  Host: 0.0.0.0
+  Port: 11150
+  
+  Telemetry:
+    Name: gohu-notification-api
+    Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+    Sampler: 1.0
+    Batcher: jaeger
+  
+  InfoRpcClientConf:
+    Target: consul://xxx.xxx.xxx.xxx:9086/gohu-notification-info.rpc?wait=10s&token=<input consul token here>
+
+Rpc:
+  Crud:
+    Name: gohu-notification-crud-rpc
+    ListenOn: 0.0.0.0:11151
+    
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086
+      Key: gohu-notification-crud.rpc
+      Token: <input consul token here>
+      Meta:
+        Protocol: grpc
+      Tag:
+        - tag
+        - rpc
+
+    Telemetry:
+      Name: gohu-notification-crud-rpc
+      Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+  
+  Info:
+    Name: gohu-notification-info-rpc
+    ListenOn: 0.0.0.0:11152
+    
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086
+      Key: gohu-notification-info.rpc
+      Token: <input consul token here>
+      Meta:
+        Protocol: grpc
+      Tag:
+        - tag
+        - rpc
+
+    Telemetry:
+      Name: gohu-notification-info-rpc
+      Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+IdGeneratorOptions:
+  Method: 0
+  BaseTime: 1662142722414
+  WorkerId: 5
+  WorkerIdBitLength: 6
+  SeqBitLength: 6
+  MaxSeqNumber: 0
+  MinSeqNumber: 5
+  TopOverCostCount: 2000
+
+Database:
+  Mysql:
+    ServerNum: 1
+    DatabaseName: 'gohu'
+    DatabaseCharset: 'utf8mb4'
+  Redis:
+    ServerNum: 1
+    DatabaseNum: 2

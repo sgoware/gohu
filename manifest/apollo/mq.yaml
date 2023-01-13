@@ -1,0 +1,59 @@
+asynq:
+  scheduler:
+    Name: mq-asynq-scheduler
+    Host: 0.0.0.0
+    Port: 11161
+    Mode: dev
+
+    RedisConf:
+      Addr: <input redis addr here>
+      Password: <input redis password here>
+      DB: <input redis database num here>
+
+
+    Telemetry:
+      Name: gohu-mq-asynq-scheduler
+      Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+  processor:
+    Name: mq-asynq-processor
+    Host: 0.0.0.0
+    Port: 11162
+    Mode: dev
+
+    RedisConf:
+      Addr: <input redis addr here>
+      Password: <input redis password here>
+      DB: <input redis database num here>
+
+    UserCrudRpcClientConf:
+      Target: consul://xxx.xxx.xxx.xxx:9086/gohu-user-crud.rpc?wait=10s&token=<input consul token here>
+    QuestionCrudRpcClientConf:
+      Target: consul://xxx.xxx.xxx.xxx:9086/gohu-question-crud.rpc?wait=10s&token=<input consul token here>
+    CommentCrudRpcClientConf:
+      Target: consul://xxx.xxx.xxx.xxx:9086/gohu-comment-crud.rpc?wait=10s&token=<input consul token here>
+
+nsq:
+  consumer:
+    Name: mq-nsq-consumer
+    Host: 0.0.0.0
+    Port: 11163
+    Mode: dev
+
+    Telemetry:
+      Name: mq-nsq-consumer
+      Endpoint:  http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+    PublishNotificationConsumerConf:
+      Topic: 'notification-publish'
+      Channel: '1'
+
+    UserCrudRpcClientConf:
+      Target: consul://xxx.xxx.xxx.xxx:9086/gohu-user-crud.rpc?wait=10s&token=<input consul token here>
+    NotificationCrudRpcClientConf:
+      Target: consul://xxx.xxx.xxx.xxx:9086/gohu-notification-crud.rpc?wait=10s&token=<input consul token here>
+

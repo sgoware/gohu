@@ -1,0 +1,94 @@
+Api:
+  Name: oauth-api
+  Host: 0.0.0.0
+  Port: 11110
+
+  Telemetry:
+    Name: gohu-oauth-api
+    Endpoint: http://xxx.xxx.xxx.xxx:14268/api/traces
+    Sampler: 1.0
+    Batcher: jaeger
+
+  TokenEnhancerRpcClientConf:
+    Target: consul://xxx.xxx.xxx.xxx:9086/gohu-oauth-token-enhancer.rpc?wait=10s&token=<input consul token here>
+
+  TokenStoreRpcClientConf:
+    Target: consul://xxx.xxx.xxx.xxx:9086/gohu-oauth-token-store.rpc?wait=10s&token=<input consul token here>
+
+Rpc:
+  TokenEnhancer:
+    Name: gohu-oauth-tokan-enhancer-rpc
+    ListenOn: 0.0.0.0:11111
+
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086
+      Key: gohu-oauth-token-enhancer.rpc
+      Token: <input consul token here>
+      Meta:
+        Protocol: grpc
+      Tag:
+        - tag
+        - rpc
+    TokenStoreRpcClientConf:
+      Target: consul://xxx.xxx.xxx.xxx:9086/gohu-oauth-token-store.rpc?wait=10s&token=<input consul token here>
+
+    Telemetry:
+      Name: gohu-token-enhancer-rpc
+      Endpoint: http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+  TokenStore:
+    Name: gohu-oauth-token-store-rpc
+    ListenOn: 0.0.0.0:11112
+
+    Consul:
+      Host: xxx.xxx.xxx.xxx:9086
+      Key: gohu-oauth-token-store.rpc
+      Token: <input consul token here>
+      Meta:
+        Protocol: grpc
+      Tag:
+        - tag
+        - rpc
+
+    Telemetry:
+      Name: gohu-token-store-rpc
+      Endpoint: http://xxx.xxx.xxx.xxx:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+JWTAuth:
+  Secret: '50b59844bd3b7ada295c0584318f75175c73713b98f3f604967a5d31'
+  Issuer: 'gohu.xxx.com'
+
+Client:
+  default:
+    Secret: '71a022fc02222d9214are3641bbfd35a706f3e66975a1f949a80abc3'
+    AccessTokenValiditySeconds: 86400 # JWT token有效时间,单位:秒 (过期时间一天)
+    RefreshTokenValiditySeconds: 604800 # refresh token有效时间,单位:秒 (缓存时间七天) 在该时间段内可以获得JWT令牌和refresh token
+    RegisteredRedirectUri: gohu.xxx.com
+    AuthorizedGrantTypes:
+      - 'all'
+
+Cookie:
+  Secret: '50b59844bd347ada295c0588318f75175c73713b98f3f604967a5d31'
+  Domain: 'gohu.xxx.com'
+  MaxAge: 604800
+  Secure: false
+  HttpOnly: true
+
+IdGeneratorOptions:
+  Method: 0
+  BaseTime: 1662142722414
+  WorkerId: 1
+  WorkerIdBitLength: 6
+  SeqBitLength: 6
+  MaxSeqNumber: 0
+  MinSeqNumber: 5
+  TopOverCostCount: 2000
+
+Database:
+  Redis:
+    ServerNum: 1
+    DatabaseNum: 2
