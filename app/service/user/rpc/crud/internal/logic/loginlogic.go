@@ -86,6 +86,9 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (res *pb.LoginRes, err error) {
 				Ok:   true,
 				Data: &pb.LoginRes_Data{AuthToken: basicAuthString},
 			}
+
+			logger.Debugf("send message: %v", res.String())
+			return res, nil
 		}
 	}
 	switch err {
